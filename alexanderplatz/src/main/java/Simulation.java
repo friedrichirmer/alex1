@@ -29,6 +29,7 @@ public class Simulation {
 
     public static final double SCALE = 25;
 
+    
     public static final double H = 0.02;
 
     private final Vis vis;
