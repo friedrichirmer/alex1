@@ -164,9 +164,12 @@ public class Vehicle {
         		PVector wallB = new PVector ((float)w.getX2(),(float) w.getY2());
         		PVector vehic = new PVector ((float)this.x,(float) this.y); 
         		
-        		PVector vecv = PVector.sub(wallB, wallA);
-        		PVector vecw = PVector.sub(vehic, wallA);
-        		PVector vecw2 = PVector.sub(vehic, wallB);  
+        		PVector vecv = wallB.get();
+        		vecv.sub(wallA);
+        		PVector vecw = vehic.get();
+        		vehic.sub(wallA);
+        		PVector vecw2 = vehic.get();
+        		vehic.sub(wallB);  
         		
         		float c1 = 0;
      			float c2 = 0; 
@@ -180,7 +183,7 @@ public class Vehicle {
    				PVector t = null; 
         		PVector n = null;
         		
-        		if (i == 4) System.out.println(vehs.indexOf(this)+ " : " + c1 + "  -  " + c2);
+        		
      			
 				if ( c1 <= 0 ) {
      			    lot = PVector.dist(vehic, wallA);
@@ -205,16 +208,25 @@ public class Vehicle {
      			if ((c1 > 0) && (c1 < c2)) {
      				     				
      				float b = c1 / c2;
+     				
      				PVector bv = PVector.mult(vecv, b);
      				PVector Pb = PVector.add(wallA, bv);
+     				     				
      				lot = PVector.dist(vehic, Pb);
      				radlot = this.getRadius() - lot;
      				length = vecv.mag();
      			
             		n = Pb.normalize(n);
             	    t = n.get();
+            	    
+            	    if (i == 4) {
+         				System.out.println(vehs.indexOf(this)+ " : " + c1 + "  -  " + c2);
+         				System.out.println(Pb);
+         			}
             	
      			}
+     			
+     			
      			    		   
      			//System.out.println("vor  "+t);
         	    //n.rotate((float)((Math.PI)));
