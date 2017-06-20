@@ -389,7 +389,7 @@ public class Vehicle {
 	
 	@Override
 	public String toString(){
-		return "ID=" + id + " ; Pos=[" + this.x + ";" + this.y + "]";
+		return "" + id + " @ [" + this.x + ";" + this.y + "]";
 	}
 
 }

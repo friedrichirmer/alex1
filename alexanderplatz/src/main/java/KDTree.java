@@ -18,7 +18,7 @@ public class KDTree {
 		yMax = Double.MAX_VALUE;
 	}
 	
-	KDTree(List<Vehicle> subList, KDTree kdTree) {
+	private KDTree(List<Vehicle> subList, KDTree kdTree) {
 		this.origin = subList;
 		this.xMin = kdTree.xMin;
 		this.xMax = kdTree.xMax;
@@ -27,14 +27,22 @@ public class KDTree {
 	}
 
 	public KDTree buildKDTree (){
-		return this.buildKDTree(0);
+		return this.buildKDTree(1);
 	}
 	
 	private KDTree buildKDTree (int depth){
 		
+		
 		if(this.origin.size() != 1){
+			
+			//sortieren und ränder merken
 			if(depth % 2 == 0){
-				if(depth == 0){
+				Collections.sort(this.origin, new YComparator());
+				this.yMin = origin.get(0).getY();
+				this.yMax = origin.get(origin.size()-1).getY();
+			}
+			else{
+				if(depth == 1){
 					Collections.sort(this.origin, new YComparator());
 					this.yMin = origin.get(0).getY();
 					this.yMax = origin.get(origin.size()-1).getY();
@@ -43,22 +51,38 @@ public class KDTree {
 				this.xMin = origin.get(0).getX();
 				this.xMax = origin.get(origin.size()-1).getX();
 			}
-			else{
-				Collections.sort(this.origin, new YComparator());
-				this.yMin = origin.get(0).getY();
-				this.yMax = origin.get(origin.size()-1).getY();
+			
+			//teilen
+			int midIndex;
+			if(this.origin.size() % 2 == 0){
+				midIndex = this.origin.size()/2;
 			}
-			Double midIndex = (double) (this.origin.size()/2);
-			leftChild = new KDTree(this.origin.subList(0, midIndex.intValue()), this );
-			rightChild = new KDTree(this.origin.subList(midIndex.intValue() + 1, this.origin.size()), this);
+			else{
+				midIndex = (int) this.origin.size()/2;
+			}
+			
+			if(this.origin.size() == 2){
+				List<Vehicle> l = new ArrayList<Vehicle>();
+				l.add(this.origin.get(0));
+				List<Vehicle> r = new ArrayList<Vehicle>();
+				r.add(this.origin.get(1));
+				
+				leftChild = new KDTree(l, this );
+				rightChild = new KDTree(r, this);
+			}
+			else{
+				//achtung bei ser subList-Methode ist die Obergrenze exklusiv!!
+				leftChild = new KDTree(this.origin.subList(0, midIndex), this );
+				rightChild = new KDTree(this.origin.subList(midIndex, this.origin.size()), this);
+			}
 			
 			if(depth % 2 == 0){
-				leftChild.xMax = this.origin.get(midIndex.intValue()).getX();
-				rightChild.xMin = this.origin.get(midIndex.intValue() +1 ).getX();
+				leftChild.yMax = this.origin.get(midIndex-1).getY();
+				rightChild.yMin = this.origin.get(midIndex).getY();
 			}
 			else{
-				leftChild.yMax = this.origin.get(midIndex.intValue()).getY();
-				rightChild.yMin = this.origin.get(midIndex.intValue() +1 ).getY();
+				leftChild.xMax = this.origin.get(midIndex-1).getX();
+				rightChild.xMin = this.origin.get(midIndex).getX();
 			}
 			
 			leftChild.buildKDTree(depth+1);
@@ -112,16 +136,47 @@ public class KDTree {
 		if(this.xMax < left || this.xMin > right || this.yMax < bottom || this.yMin > top) return false;
 		
 		//case 1: Range is fully contained in this partition
-		if(this.xMin < left && this.yMin < bottom && this.xMax > right && this.yMax > top)	return true;
+		if(this.xMin <= left && this.yMin <= bottom && this.xMax >= right && this.yMax >= top)	return true;
 		
-		if( (left < this.xMax && this.xMax < right) || (left < this.xMin && this.xMin < right) )
-			return( (this.yMin > bottom && this.yMin < top) || (this.yMax < top && this.yMax > bottom));
+		if( (left <= this.xMax && this.xMax <= right) || (left <= this.xMin && this.xMin <= right) )
+			return( (this.yMin >= bottom && this.yMin <= top) || (this.yMax <= top && this.yMax >= bottom));
 		
 		return false;
 	}
 
 	private boolean isFullyContainedInRange(double xMin, double yMin, double xMax, double yMax){
-		return(this.xMax < xMax && this.xMin > xMin && this.yMax < yMax && this.yMin > yMin);
+		return(this.xMax <= xMax && this.xMin >= xMin && this.yMax <= yMax && this.yMin >= yMin);
+	}
+
+	private String printVehicleList(){
+		String str = "{ ";
+		for(Vehicle v : this.origin){
+			str += v.toString() + " ; ";
+		}
+		str += "}";
+		return str;
+	}
+	
+	@Override
+	public String toString(){
+		String str = "ROOT : \t " + this.printVehicleList();
+		if(leftChild != null)		str+= "LEFTCHILD: \t " + this.leftChild.printVehicleList();
+		if(rightChild!= null) str+= "RIGHTCHILD: \t " + this.rightChild.printVehicleList();
+		
+		str+= "\n minY = " + this.yMin + " maxY = " + this.yMax;
+		str+= "\n"
+			+ "  ´\n"
+			+ " ´\n";
+				
+		if(this.leftChild != null)		str+= this.leftChild.toString();
+		
+		str+= "\n"
+				+ "      `\n"
+				+ "       `\n";
+
+		if(this.rightChild != null)		str+= rightChild.toString() + "\n\n";
+		
+		return str;
 	}
 	
 	class XComparator implements Comparator<Vehicle>{
