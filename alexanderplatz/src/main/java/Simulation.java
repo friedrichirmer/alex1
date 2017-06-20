@@ -101,11 +101,11 @@ public class Simulation {
        
         Simulation sim = new Simulation(net);
         
-        Vehicle v1 = new Vehicle(n2, n8, net);
-        Vehicle v2 = new Vehicle(n5, n8, net);
-        Vehicle v3 = new Vehicle(n9, n5, net);
-        Vehicle v4 = new Vehicle(n3, n6, net);
-        Vehicle v5 = new Vehicle(n1, n4, net);
+        Vehicle v1 = new Vehicle(n2, n8, net, 1);
+        Vehicle v2 = new Vehicle(n5, n8, net, 2);
+        Vehicle v3 = new Vehicle(n9, n5, net, 3);
+        Vehicle v4 = new Vehicle(n3, n6, net, 4);
+        Vehicle v5 = new Vehicle(n1, n4, net, 5);
         sim.add(v1);
         sim.add(v2);
         sim.add(v3);

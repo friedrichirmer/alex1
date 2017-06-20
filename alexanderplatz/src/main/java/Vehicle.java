@@ -28,7 +28,6 @@ import java.util.Random;
 import processing.core.PVector;
 
 /**
- * Created by laemmel on 18/04/16.
  */
 
 public class Vehicle {
@@ -55,6 +54,7 @@ public class Vehicle {
     double pushX = 0;
     double pushY = 0;
 
+    private int id;
 
     private int routeIndex = 0;
 	private Network net;
@@ -72,7 +72,7 @@ public class Vehicle {
 	
 
 	
-    public Vehicle(Node src, Node dstn, Network net) {
+    public Vehicle(Node src, Node dstn, Network net, int id) {
     	
     	this.x = src.getX();
         this.y = src.getY();
@@ -86,7 +86,7 @@ public class Vehicle {
         this.maxSpeed = 2;
         this.vtx = 0;
         this.finish = false;     
-        
+        this.id = id;
     }
     
     /**
@@ -94,10 +94,11 @@ public class Vehicle {
      * @param x
      * @param y
      */
-    public Vehicle(double x, double y){
+    public Vehicle(double x, double y, int id){
     	this.x = x;
         this.y = y;
         this.route = null;
+        this.id = id;
     }
 
     public void update(List<Vehicle> vehs) {
@@ -382,8 +383,13 @@ public class Vehicle {
 		return forceWalls;
 	}
 
-	//public int getId() {
-	//	return id;
-	//}
+	public int getId() {
+		return id;
+	}
+	
+	@Override
+	public String toString(){
+		return "ID=" + id + " ; Pos=[" + this.x + ";" + this.y + "]";
+	}
 
 }
