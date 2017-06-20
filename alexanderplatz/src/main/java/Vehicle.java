@@ -88,6 +88,17 @@ public class Vehicle {
         this.finish = false;     
         
     }
+    
+    /**
+     * !! Dieser Konstruktor ist nur zum einfacheren Testen von KDTree gedacht und sollte i.A. nicht benutzt werden!!
+     * @param x
+     * @param y
+     */
+    public Vehicle(double x, double y){
+    	this.x = x;
+        this.y = y;
+        this.route = null;
+    }
 
     public void update(List<Vehicle> vehs) {
     	
