@@ -1,4 +1,5 @@
-package alex;/* *********************************************************************** *
+package alex;
+/* *********************************************************************** *
  * project: simsocsys
  *
  *                                                                         *
@@ -37,7 +38,7 @@ public class Simulation {
     private static final double MAX_TIME = 1000;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 2;
 
     private final Vis vis;
     private List<Vehicle> vehicles = new ArrayList<>();
@@ -134,7 +135,7 @@ public class Simulation {
                   	this.vehicles.remove(vehicle);
                   	break;
                   }
-            	vehicle.update(this.vehicles);
+            	vehicle.update(this.vehicles, time);
             }
             
             for (Vehicle vehicle : this.vehicles) {
@@ -144,7 +145,7 @@ public class Simulation {
             List<VehicleInfo> vehicleInfoList = new ArrayList<>();
             for (Vehicle vehicle : this.vehicles) {
                 VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
-                		vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls());
+                		vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.isInTheSimulation());
                 vehicleInfoList.add(vehicleInfo);
             }
             

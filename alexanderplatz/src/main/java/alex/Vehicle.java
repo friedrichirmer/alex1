@@ -38,6 +38,7 @@ public class Vehicle {
 
 
     private final List<Link> route;
+    private double startTime;
     private double vtx = 0;
     private double vty = 0;
     private double vx = 0;
@@ -73,6 +74,7 @@ public class Vehicle {
 	private PVector forceTarget;
 	double pushWallX;
 	double pushWallY;
+    private boolean isInTheSimulation = false;
 	
 
 	
@@ -91,6 +93,12 @@ public class Vehicle {
         this.vtx = 0;
         this.finish = false;     
         this.id = id;
+        this.startTime = startTime;
+    }
+
+    public boolean isInTheSimulation() {
+
+        return isInTheSimulation;
     }
 
     /**
@@ -106,7 +114,12 @@ public class Vehicle {
     }
 
 
-    public void update(List<Vehicle> vehs) {
+    public void update(List<Vehicle> vehs, double time) {
+
+        if ( startTime > time) {
+            return;
+        }
+        isInTheSimulation = true;
     	
     	Link currentLink = this.route.get(routeIndex);
     	

@@ -44,10 +44,11 @@ public class VehicleInfo {
 	private PVector forceTarget;
 	private PVector forceVehicles;
 	private PVector forceWalls;
+    private final boolean isInTheSimulation;
 	
     
-    public VehicleInfo(double x, double y, double phi, double radius, double colourR, double colourG, double colourB, 
-    		PVector forceTarget, PVector forceVehicles, PVector forceWalls) {
+    public VehicleInfo(double x, double y, double phi, double radius, double colourR, double colourG, double colourB,
+                       PVector forceTarget, PVector forceVehicles, PVector forceWalls, boolean isInTheSimulation) {
         this.x = (int) (Simulation.SCALE * x);
         this.y = (int) (Simulation.SCALE * y);
         this.phi = phi;
@@ -57,73 +58,75 @@ public class VehicleInfo {
         this.colourB = (float) colourB;
         this.forceTarget = forceTarget;
         this.forceVehicles = forceVehicles;
-        this.forceWalls = forceWalls;		
+        this.forceWalls = forceWalls;
 
+        this.isInTheSimulation = isInTheSimulation;
     }
     
 
     public void draw(PApplet p) {
-        p.pushMatrix();
+        if (isInTheSimulation) {
+            p.pushMatrix();
 
-        p.translate(x, y);
+            p.translate(x, y);
 
-        p.rotate((float) (phi));
+            p.rotate((float) (phi));
 
-        p.fill(255, 64, 64, 200);
-//        p.stroke(255,0,0);
-     
-        p.ellipseMode(PConstants.CENTER);
-        p.fill(255, 0, 0);
-        p.ellipse(radius / 2, -radius / 2, 2, 2);
-        p.fill(255, 0, 0);
-        p.ellipse(radius / 2, radius / 2, 2, 2);
-        p.fill(colourR,colourG,colourB);
-        p.ellipse(radius / 4, 0, radius, radius);
-        p.ellipse(radius / 4, 0, 7, 7);
-        p.popMatrix();
-        
-//        p.strokeWeight(2);
-//        p.stroke(255, 0, 0);
-//        p.line((float)x,(float)y ,((float)x + forceTarget.x),(float)y + forceTarget.y);
-//        PVector tarl = forceTarget.get();
-//        PVector tarr = forceTarget.get();
-//        tarl.rotate((float) 2.5);
-//        tarl.setMag((float) 10);
-//        tarr.rotate((float) -2.5);
-//        tarr.setMag((float) 10);
-//        p.line((float)x + forceTarget.x,(float)y + forceTarget.y,(float)x + forceTarget.x + tarr.x,(float)y + forceTarget.y+tarr.y);
-//        p.line((float)x + forceTarget.x,(float)y + forceTarget.y,(float)x + forceTarget.x + tarl.x,(float)y + forceTarget.y+tarl.y);
-//        p.strokeWeight(1);
-//        p.stroke(0, 0, 0);
-        
-//        p.strokeWeight(2);
-//        p.stroke(0, 0, 255);
-//        p.line((float)x,(float)y ,((float)x + forceVehicles.x),(float)y + forceVehicles.y);
-//        PVector varl = forceVehicles.get();
-//        PVector varr = forceVehicles.get();
-//        varl.rotate((float) 2.5);
-//        varl.setMag((float) 10);
-//        varr.rotate((float) -2.5);
-//        varr.setMag((float) 10);
-//        p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varr.x,(float)y + forceVehicles.y + varr.y);
-//        p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varl.x,(float)y + forceVehicles.y + varl.y);
-//        p.strokeWeight(1);
-//        p.stroke(0, 0, 0);
-//        
-        p.strokeWeight(2);
-        p.stroke(0, 255, 0);
-        p.line((float)x,(float)y ,((float)x + forceWalls.x),(float)y + forceWalls.y);
-        PVector warl = forceWalls.get();
-        PVector warr = forceWalls.get();
-        warl.rotate((float) 2.5);
-        warl.setMag((float) 10);
-        warr.rotate((float) -2.5);
-        warr.setMag((float) 10);
-        p.line((float)x + forceWalls.x,(float)y + forceWalls.y,(float)x + forceWalls.x + warr.x,(float)y + forceWalls.y + warr.y);
-        p.line((float)x + forceWalls.x,(float)y + forceWalls.y,(float)x + forceWalls.x + warl.x,(float)y + forceWalls.y + warl.y);
-        p.strokeWeight(1);
-        p.stroke(0, 0, 0);
-        
-      
+            p.fill(255, 64, 64, 200);
+            //        p.stroke(255,0,0);
+
+            p.ellipseMode(PConstants.CENTER);
+            p.fill(255, 0, 0);
+            p.ellipse(radius / 2, -radius / 2, 2, 2);
+            p.fill(255, 0, 0);
+            p.ellipse(radius / 2, radius / 2, 2, 2);
+            p.fill(colourR, colourG, colourB);
+            p.ellipse(radius / 4, 0, radius, radius);
+            p.ellipse(radius / 4, 0, 7, 7);
+            p.popMatrix();
+
+            //        p.strokeWeight(2);
+            //        p.stroke(255, 0, 0);
+            //        p.line((float)x,(float)y ,((float)x + forceTarget.x),(float)y + forceTarget.y);
+            //        PVector tarl = forceTarget.get();
+            //        PVector tarr = forceTarget.get();
+            //        tarl.rotate((float) 2.5);
+            //        tarl.setMag((float) 10);
+            //        tarr.rotate((float) -2.5);
+            //        tarr.setMag((float) 10);
+            //        p.line((float)x + forceTarget.x,(float)y + forceTarget.y,(float)x + forceTarget.x + tarr.x,(float)y + forceTarget.y+tarr.y);
+            //        p.line((float)x + forceTarget.x,(float)y + forceTarget.y,(float)x + forceTarget.x + tarl.x,(float)y + forceTarget.y+tarl.y);
+            //        p.strokeWeight(1);
+            //        p.stroke(0, 0, 0);
+
+            //        p.strokeWeight(2);
+            //        p.stroke(0, 0, 255);
+            //        p.line((float)x,(float)y ,((float)x + forceVehicles.x),(float)y + forceVehicles.y);
+            //        PVector varl = forceVehicles.get();
+            //        PVector varr = forceVehicles.get();
+            //        varl.rotate((float) 2.5);
+            //        varl.setMag((float) 10);
+            //        varr.rotate((float) -2.5);
+            //        varr.setMag((float) 10);
+            //        p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varr.x,(float)y + forceVehicles.y + varr.y);
+            //        p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varl.x,(float)y + forceVehicles.y + varl.y);
+            //        p.strokeWeight(1);
+            //        p.stroke(0, 0, 0);
+            //
+            p.strokeWeight(2);
+            p.stroke(0, 255, 0);
+            p.line((float) x, (float) y, ((float) x + forceWalls.x), (float) y + forceWalls.y);
+            PVector warl = forceWalls.get();
+            PVector warr = forceWalls.get();
+            warl.rotate((float) 2.5);
+            warl.setMag((float) 10);
+            warr.rotate((float) -2.5);
+            warr.setMag((float) 10);
+            p.line((float) x + forceWalls.x, (float) y + forceWalls.y, (float) x + forceWalls.x + warr.x, (float) y + forceWalls.y + warr.y);
+            p.line((float) x + forceWalls.x, (float) y + forceWalls.y, (float) x + forceWalls.x + warl.x, (float) y + forceWalls.y + warl.y);
+            p.strokeWeight(1);
+            p.stroke(0, 0, 0);
+
+        }
     }
 }
