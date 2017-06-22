@@ -29,7 +29,7 @@ public class KDTreeTest {
 		
 		List<Vehicle> vehicles = new ArrayList<Vehicle>();
 		for(int i = 0; i < 10; i++){
-			Vehicle v = new Vehicle(i*10,i*10,i);
+			Vehicle v = new Vehicle(i*10,i*10, i);
 			vehicles.add(v);
 		}
 		

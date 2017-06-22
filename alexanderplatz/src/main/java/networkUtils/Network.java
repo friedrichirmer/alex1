@@ -1,5 +1,6 @@
 package networkUtils;
 
+import alex.Simulation;
 import processing.core.PApplet;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 
 public class Network {
-    public final Map<Integer,Node> nodes = new HashMap<Integer,Node>();
+    public final Map<Integer, Node> nodes = new HashMap<Integer,Node>();
    	public final Map<Integer,Link> links = new HashMap<Integer,Link>();
 	public List<Wall> walls = new ArrayList<>();
 
@@ -29,9 +30,11 @@ public class Network {
    		return n;
    	}
 
-   	
-   	
-   	public Link createLink(Node from, Node to, int room) {
+	public Map<Integer, Node> getNodes() {
+		return nodes;
+	}
+
+	public Link createLink(Node from, Node to, int room) {
    		int id = counterL;
    		Link l = new Link(from,to,id, room);
    		this.links.put(id,l);

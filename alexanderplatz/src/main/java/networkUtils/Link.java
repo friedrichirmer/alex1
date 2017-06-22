@@ -1,5 +1,7 @@
 package networkUtils;
 
+import alex.Vehicle;
+
 /**
  * Created by laemmel on 27.04.17.
  */

@@ -23,7 +23,9 @@ import networkUtils.Network;
 import networkUtils.Node;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by laemmel on 24/04/16.
@@ -32,8 +34,10 @@ public class Simulation {
 
     public static final double SCALE = 25;
 
-    
-    public static final double TIME_STEP = 0.02;
+    private static final double MAX_TIME = 1000;
+    static final double TIME_STEP = 0.02;
+    private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
 
     private final Vis vis;
     private List<Vehicle> vehicles = new ArrayList<>();
@@ -57,7 +61,9 @@ public class Simulation {
         Node node10 = network.createNode(19,9,10);
         Node node11 = network.createNode(14,6,11);
         Node node12 = network.createNode(18,6,12);
-        
+
+        getListOfNodeIds(network);
+
         network.createLink(node1,node2,1);
         network.createLink(node2,node3,1);
         network.createLink(node3,node4,1);
@@ -103,26 +109,25 @@ public class Simulation {
             
        
         Simulation simulation = new Simulation(network);
+        addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
         
-        Vehicle v1 = new Vehicle(node2, node8, network, 1);
-        Vehicle v2 = new Vehicle(node5, node8, network, 2);
-        Vehicle v3 = new Vehicle(node9, node5, network, 3);
-        Vehicle v4 = new Vehicle(node3, node6, network, 4);
-        Vehicle v5 = new Vehicle(node1, node4, network, 5);
-        simulation.add(v1);
-        simulation.add(v2);
-        simulation.add(v3);
-        simulation.add(v4);
-        simulation.add(v5);
         simulation.run();
         
+    }
+
+    private static void getListOfNodeIds(Network network) {
+        Map nodesMap = network.getNodes();
+        Iterator<Integer> nodeIdIterator = nodesMap.keySet().iterator();
+        while ( nodeIdIterator.hasNext()){
+            Integer nodeId = nodeIdIterator.next();
+            listOfNodesIds.add(nodeId);
+        }
     }
 
     private void run() {
         double time = 0;
 
-        double maxTime = 1000;
-        while (time < maxTime) {
+        while (time < MAX_TIME) {
         	
             for (Vehicle vehicle : this.vehicles) {
             	if (vehicle.getFinish() == true) {
@@ -155,6 +160,29 @@ public class Simulation {
             
         }
         
+    }
+
+    private static void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles) {
+        System.out.println("Creating " + numberOfRandomVehicles + " random vehicles");
+        for (int i = 0; i < numberOfRandomVehicles; i++){
+            Integer startNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
+            Integer finishNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
+            System.out.println("trying to create the route from the node " + startNodeId + " to the node " + finishNodeId);
+            if (!startNodeId.equals(finishNodeId)){
+                createRandomDeparture(network, sim, startNodeId, finishNodeId, i * (int) (Math.random()*20000000));
+            }
+
+
+        }
+    }
+
+    private static void createRandomDeparture(Network network, Simulation sim, Integer startNodeId, Integer finishNodeId, int i) {
+        double startTime = (Math.random() * (MAX_TIME - 980));
+        String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
+        Node startNode = network.nodes.get(startNodeId);
+        Node finishNode = network.nodes.get(finishNodeId);
+        sim.add(new Vehicle(network, startNode, finishNode, startTime, vehicleId));
+        System.out.println("Random Vehicle " + vehicleId + " is created");
     }
 
     private void add(Vehicle vehicle) {

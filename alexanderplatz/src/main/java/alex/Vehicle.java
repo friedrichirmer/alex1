@@ -1,4 +1,5 @@
-package alex;/* *********************************************************************** *
+package alex;
+/* *********************************************************************** *
  * project: simsocsys
  *
  *                                                                         *
@@ -57,7 +58,7 @@ public class Vehicle {
     double pushX = 0;
     double pushY = 0;
 
-    private int id;
+    private String id;
 
     private int routeIndex = 0;
 	private Network net;
@@ -75,10 +76,10 @@ public class Vehicle {
 	
 
 	
-    public Vehicle(Node startNode, Node destinationNode, Network network, int id) {
+    public Vehicle(Network network, Node startNode, Node destinationNode, double startTime, String id) {
     	
-    	this.x = startNode.getX();
-        this.y = startNode.getY();
+    	this.x = startNode.getX() + random.nextDouble() * 1;
+        this.y = startNode.getY() + random.nextDouble() * 1;
         this.net = network;
         this.route = Dijkstra.dijkstra(network, startNode, destinationNode);
     	System.out.println("route: " + route.toString());
@@ -91,7 +92,7 @@ public class Vehicle {
         this.finish = false;     
         this.id = id;
     }
-    
+
     /**
      * !! Dieser Konstruktor ist nur zum einfacheren Testen von alex.KDTree gedacht und sollte i.A. nicht benutzt werden!!
      * @param x
@@ -101,8 +102,9 @@ public class Vehicle {
     	this.x = x;
         this.y = y;
         this.route = null;
-        this.id = id;
+        this.id = String.valueOf(id);
     }
+
 
     public void update(List<Vehicle> vehs) {
     	
@@ -386,7 +388,7 @@ public class Vehicle {
 		return forceWalls;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
