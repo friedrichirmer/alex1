@@ -73,7 +73,6 @@ public class VehicleInfo {
             p.rotate((float) (phi));
 
             p.fill(255, 64, 64, 200);
-            //        p.stroke(255,0,0);
 
             p.ellipseMode(PConstants.CENTER);
             p.fill(255, 0, 0);
@@ -84,6 +83,12 @@ public class VehicleInfo {
             p.ellipse(radius / 4, 0, radius, radius);
             p.ellipse(radius / 4, 0, 7, 7);
             p.popMatrix();
+            
+            /**
+             * Pfeile können die Richtungen und Stärken von Kräften anzeigen (bei Bedarf aktivieren)
+             * 
+             * Roter Pfeil zeigt die Kraft in Richtung des aktuellen Ziels an (nur bei Richtungsänderungen)
+             */
 
             //        p.strokeWeight(2);
             //        p.stroke(255, 0, 0);
@@ -98,34 +103,42 @@ public class VehicleInfo {
             //        p.line((float)x + forceTarget.x,(float)y + forceTarget.y,(float)x + forceTarget.x + tarl.x,(float)y + forceTarget.y+tarl.y);
             //        p.strokeWeight(1);
             //        p.stroke(0, 0, 0);
+            
+            /**
+             * Blauer Pfeil zeigt die abst0ßenden Kräfte von anderen Fahrzeugen
+             */
 
-            //        p.strokeWeight(2);
-            //        p.stroke(0, 0, 255);
-            //        p.line((float)x,(float)y ,((float)x + forceVehicles.x),(float)y + forceVehicles.y);
-            //        PVector varl = forceVehicles.get();
-            //        PVector varr = forceVehicles.get();
-            //        varl.rotate((float) 2.5);
-            //        varl.setMag((float) 10);
-            //        varr.rotate((float) -2.5);
-            //        varr.setMag((float) 10);
-            //        p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varr.x,(float)y + forceVehicles.y + varr.y);
-            //        p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varl.x,(float)y + forceVehicles.y + varl.y);
-            //        p.strokeWeight(1);
-            //        p.stroke(0, 0, 0);
-            //
-            p.strokeWeight(2);
-            p.stroke(0, 255, 0);
-            p.line((float) x, (float) y, ((float) x + forceWalls.x), (float) y + forceWalls.y);
-            PVector warl = forceWalls.get();
-            PVector warr = forceWalls.get();
-            warl.rotate((float) 2.5);
-            warl.setMag((float) 10);
-            warr.rotate((float) -2.5);
-            warr.setMag((float) 10);
-            p.line((float) x + forceWalls.x, (float) y + forceWalls.y, (float) x + forceWalls.x + warr.x, (float) y + forceWalls.y + warr.y);
-            p.line((float) x + forceWalls.x, (float) y + forceWalls.y, (float) x + forceWalls.x + warl.x, (float) y + forceWalls.y + warl.y);
-            p.strokeWeight(1);
-            p.stroke(0, 0, 0);
+//                    p.strokeWeight(2);
+//                    p.stroke(0, 0, 255);
+//                    p.line((float)x,(float)y ,((float)x + forceVehicles.x),(float)y + forceVehicles.y);
+//                    PVector varl = forceVehicles.get();
+//                    PVector varr = forceVehicles.get();
+//                    varl.rotate((float) 2.5);
+//                    varl.setMag((float) 10);
+//                    varr.rotate((float) -2.5);
+//                    varr.setMag((float) 10);
+//                    p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varr.x,(float)y + forceVehicles.y + varr.y);
+//                    p.line((float)x + forceVehicles.x,(float)y + forceVehicles.y,(float)x + forceVehicles.x + varl.x,(float)y + forceVehicles.y + varl.y);
+//                    p.strokeWeight(1);
+//                    p.stroke(0, 0, 0);
+
+            /**
+             * Grüner Pfeil zeigt die Summe der Wandkräfte auf ein Fahrzeug
+             */
+          
+//            p.strokeWeight(2);
+//            p.stroke(0, 255, 0);
+//            p.line((float) x, (float) y, ((float) x + forceWalls.x), (float) y + forceWalls.y);
+//            PVector warl = forceWalls.get();
+//            PVector warr = forceWalls.get();
+//            warl.rotate((float) 2.5);
+//            warl.setMag((float) 10);
+//            warr.rotate((float) -2.5);
+//            warr.setMag((float) 10);
+//            p.line((float) x + forceWalls.x, (float) y + forceWalls.y, (float) x + forceWalls.x + warr.x, (float) y + forceWalls.y + warr.y);
+//            p.line((float) x + forceWalls.x, (float) y + forceWalls.y, (float) x + forceWalls.x + warl.x, (float) y + forceWalls.y + warl.y);
+//            p.strokeWeight(1);
+//            p.stroke(0, 0, 0);
 
         }
     }

@@ -48,7 +48,7 @@ public class Vehicle {
     private double length = 0.2;
     private double width = 0.2;
     private double speed = 1;
-    private double maxSpeed = 2;
+    private double maxSpeed = 3;
     private double rad;
     private double x;
     private double y;
@@ -75,6 +75,7 @@ public class Vehicle {
 	double pushWallX;
 	double pushWallY;
     private boolean isInTheSimulation = false;
+	private double mass;
 	
 
 	
@@ -94,6 +95,7 @@ public class Vehicle {
         this.finish = false;     
         this.id = id;
         this.startTime = startTime;
+        this.mass = 80;
     }
 
     public boolean isInTheSimulation() {
@@ -131,6 +133,11 @@ public class Vehicle {
         pushWallX = 0;
     	pushWallY = 0;
         
+    	/**
+    	 * Die erste Schleife iteriert über alle übrigen Fahrzeuge und summiert die abstoßenden Kräfte.
+    	 * Hier haben Kräfte und Vektoren haben je eine x- und eine y-Komponente.
+    	 */
+    	   	
         for (int i=0; i<vehs.size(); i++) {
         	
         	Vehicle v;
@@ -181,40 +188,44 @@ public class Vehicle {
         
         forceVehicles = new PVector((float)pushX, (float)pushY);
                
+        /**
+         * Die zweite Schleife iteriert über alle Wände und berechnet die abstoßenden Kräfte
+         * Hier wird mit Vektoren gerechnet
+         */
         
         for (int i =0;i<net.walls.size();i++ ) {
-        	//System.out.println(net.walls.size());
+
         	Wall w = net.walls.get(i);
         	
-     		
-        	      			    		   
-        			    		   
-        		PVector wallA = new PVector ((float)w.getX1(),(float) w.getY1());
-        		PVector wallB = new PVector ((float)w.getX2(),(float) w.getY2());
-        		PVector vehic = new PVector ((float)this.x,(float) this.y); 
+        		PVector wallA = new PVector ((float)w.getX1(),(float) w.getY1()); 	//Ende 1 der Wand
+        		PVector wallB = new PVector ((float)w.getX2(),(float) w.getY2());	//Ende 2 der Wand
+        		PVector vehic = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
         		
         
         		
-        		PVector vecv = wallB.get();
-        		vecv.sub(wallA);
-        		PVector vecw = vehic.get();
+        		PVector vecv = wallB.get();			// Vektor zeigt von Ende 1 auf Ende 2 der Wand
+        		vecv.sub(wallA);		
+        		PVector vecw = vehic.get();			// Vektor zeigt von Ende 1 auf Fahrzeug
         		vecw.sub(wallA);
-        		PVector vecw2 = vehic.get();
+        		PVector vecw2 = vehic.get();		// Vektor zeigt von Ende 2 auf Fahrzeug
         		vecw2.sub(wallB);  
         		
-        		float c1 = 0;
-     			float c2 = 0; 
+        		float c1 = 0;	// Hilfsgröße zur Bestimmung der Position relativ zur Wand
+     			float c2 = 0; 	// Hilfsgröße zur Bestimmung der Position relativ zur Wand
      		
      			c1 = vecw.dot(vecv);
      			c2 = vecv.dot(vecv);
      			
-     			double lot;
-     			double radlot = 1;
-     			double length = 1;
-   				PVector t = null; 
-        		PVector n = null;
+     			double lot;		// Länge des Lots
+     			double radlot = 1;	// Radius des Fahrzeugs minus Länge des Lots (meistens negativ)
+
+   				PVector t = null; 	// tangetialer Richtungsvektor für die Kraft
+        		PVector n = null;	// normaler Richtungsvektor für die Kraft
         		
-        		
+        		/**
+        		 * Fall 1:
+        		 * Die Kraft zeigt von der einen Ecke der Wand
+        		 */
      			
 				if ( c1 <= 0 ) {
      			    lot = PVector.dist(vehic, wallA);
@@ -226,6 +237,10 @@ public class Vehicle {
             	   
 				}
 				
+				/**
+				 * Fall 2:
+				 * Die Kraft zeigt von der anderen Ecke der Wand
+				 */
 				
      			if ( c2 <= c1 ) {
      				lot = PVector.dist(vehic, wallB);
@@ -237,34 +252,32 @@ public class Vehicle {
             	    t = n.get();
      			}
      			
+     			/**
+     			 * Fall 3:
+     			 * Die Kraft zeigt vom Lot senkrecht auf das Fahrzeug
+     			 */
+     			
      			if ((c1 > 0) && (c1 < c2)) {
      				     				
      				float b = c1 / c2;
-     				
-     				
-     				PVector bv = PVector.mult(vecv, b);
-     				PVector Pb = PVector.add(wallA, bv);
-     				PVector PbP = vehic.get();
-     				PbP.sub(Pb);
      				     				
-     				lot = PVector.dist(vehic, Pb);
+     				PVector bv = PVector.mult(vecv, b);
+     				PVector pb = PVector.add(wallA, bv); 	// Vektor pb ist der Lotfußpunkt auf der Wand
+     				
+     				PVector pbV = vehic.get();				// Vektor pbV zeigt vom Lotfußpunkt auf das Fahrzeug (Richtung der Kraft)
+     				pbV.sub(pb);
+     				     				
+     				lot = PVector.dist(vehic, pb);
      				radlot = this.getRadius() - lot;
      				length = vecv.mag();
      				
-     				n = PbP.get();
+     				n = pbV.get();
      			    n.normalize();
             	    t = n.get();
             	    
             	    }
-//            	
-     			
-     			
-     			
-     			    		   
-     			//System.out.println("vor  "+t);
-        	    //n.rotate((float)((Math.PI)));
+
         	    t.rotate((float)((Math.PI)/2));
-        	    //System.out.println("nach  "+t);
         	    
         		double g;
         		if (radlot >= 0) {
@@ -274,19 +287,8 @@ public class Vehicle {
         		
         		else   	g=0;
         		 	
-//            	double dirTX = (w.getX2()-w.getX1()) / length; 		
-//            	double dirNX = (w.getX2()-w.getX1()) / length;		
-//            	double dirNY = (w.getY2()-w.getY1()) / length;		
-//            	double dirTY = -(w.getY2()-w.getY1()) / length;		
-
             	double vdifx = this.vtx * t.x;
             	double vdify = this.vty * t.y;
-
-//				if ((w.getId() == 2)) {
-//					System.out.println("person " + vehs.indexOf(this) + "  " + radlot);
-//					// System.out.println("t: " + t);
-//					System.out.println("n:   " + n.heading());
-//				}
 
 				pushWallX = pushWallX + 
         			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.x +
@@ -301,6 +303,11 @@ public class Vehicle {
                 
         forceWalls = new PVector((float)pushWallX, (float)pushWallY);
 
+        /**
+         * Alle Kräfte werden summiert.
+         * Hier wieder mit getrennten x- und y-Komponenten.
+         */
+        
         double dx = currentLink.getTo().getX() - this.x;
         double dy = currentLink.getTo().getY() - this.y;
 
@@ -308,19 +315,18 @@ public class Vehicle {
         dx /= dist;
         dy /= dist;
         
-        forceTarget = new PVector((float) (85 * (dx * this.speed - vtx) / 0.5), (float) (85 * (dy * this.speed - vty) / 0.5 ));
-        //forceTarget.normalize();
-                 
-        forceX = (85 * (dx * this.speed - vtx) / 0.5) + pushX + pushWallX ;
-        forceY = (85 * (dy * this.speed - vty) / 0.5) + pushY + pushWallY ;
+        forceTarget = new PVector((float) (this.mass * (dx * this.speed - vtx) / 0.5), (float) (this.mass * (dy * this.speed - vty) / 0.5 ));
+
+        forceX = (this.mass * (dx * this.speed - vtx) / 0.5) + pushX + pushWallX ;
+        forceY = (this.mass * (dy * this.speed - vty) / 0.5) + pushY + pushWallY ;
         
         
                 
         vx = vtx + Simulation.TIME_STEP *(forceX/80);
         vy = vty + Simulation.TIME_STEP *(forceY/80);
         
-        //	Begrenzung der Krï¿½fte
-        if (Math.sqrt((vx*vx)+(vy*vy)) > 3) {
+        //	Begrenzung der Kräfte
+        if (Math.sqrt((vx*vx)+(vy*vy)) > maxSpeed) {
         	double speed = Math.sqrt((vx*vx)+(vy*vy));
         	vx = Math.sqrt(speed) * vx / speed ;
         	vy = Math.sqrt(speed) * vy / speed ;
@@ -342,7 +348,6 @@ public class Vehicle {
         Link currentLink = this.route.get(routeIndex);
         if (currentLink.hasVehicleReachedEndOfLink(this)) {
             routeIndex++; 
-            System.out.println("neue route: " + this.routeIndex);
         	if (this.route.size() == routeIndex) {
         	   this.finish = true;
         	}
@@ -395,12 +400,10 @@ public class Vehicle {
 	}
 
 	public PVector getForceVehicles() {
-		// TODO Auto-generated method stub
-		return forceVehicles;
+			return forceVehicles;
 	}
 
 	public PVector getForceWalls() {
-		// TODO Auto-generated method stub
 		return forceWalls;
 	}
 
