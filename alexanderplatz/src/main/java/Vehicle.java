@@ -19,7 +19,6 @@
  * *********************************************************************** */
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,12 +71,12 @@ public class Vehicle {
 	
 
 	
-    public Vehicle(Node src, Node dstn, Network net, int id) {
+    public Vehicle(Node startNode, Node destinationNode, Network network, int id) {
     	
-    	this.x = src.getX();
-        this.y = src.getY();
-        this.net = net;
-        this.route = Dijkstra.dijkstra(net, src, dstn);
+    	this.x = startNode.getX();
+        this.y = startNode.getY();
+        this.net = network;
+        this.route = Dijkstra.dijkstra(network, startNode, destinationNode);
     	System.out.println("route: " + route.toString());
         this.rad = 0.25 + random.nextDouble()*0.1;
         this.colourR = (float) (255*Math.random());
@@ -295,10 +294,10 @@ public class Vehicle {
         
         
                 
-        vx = vtx + Simulation.H*(forceX/80);
-        vy = vty + Simulation.H*(forceY/80);
+        vx = vtx + Simulation.TIME_STEP *(forceX/80);
+        vy = vty + Simulation.TIME_STEP *(forceY/80);
         
-        //	Begrenzung der Kräfte
+        //	Begrenzung der Krï¿½fte
         if (Math.sqrt((vx*vx)+(vy*vy)) > 3) {
         	double speed = Math.sqrt((vx*vx)+(vy*vy));
         	vx = Math.sqrt(speed) * vx / speed ;
@@ -312,8 +311,8 @@ public class Vehicle {
     
     public void move() {
 
-        this.x = this.x + Simulation.H * this.vx;
-        this.y = this.y + Simulation.H * this.vy;
+        this.x = this.x + Simulation.TIME_STEP * this.vx;
+        this.y = this.y + Simulation.TIME_STEP * this.vy;
         
         vtx = vx;
         vty = vy;

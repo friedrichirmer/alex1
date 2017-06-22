@@ -30,88 +30,88 @@ public class Simulation {
     public static final double SCALE = 25;
 
     
-    public static final double H = 0.02;
+    public static final double TIME_STEP = 0.02;
 
     private final Vis vis;
-    private List<Vehicle> vehs = new ArrayList<>();
+    private List<Vehicle> vehicles = new ArrayList<>();
 
-    public Simulation(Network net) {
-        this.vis = new Vis(net);
+    public Simulation(Network network) {
+        this.vis = new Vis(network);
     }
 
     public static void main(String[] args) {
 
-        Network net = new Network();
-        Node n1 = net.createNode(3,3,1);
-        Node n2 = net.createNode(13,3,2);
-        Node n3 = net.createNode(13,6,3);
-        Node n4 = net.createNode(13,9,4);
-        Node n5 = net.createNode(3,9,5);
-        Node n6 = net.createNode(19,6,6);
-        Node n7 = net.createNode(19,3,7);
-        Node n8 = net.createNode(29,3,8);
-        Node n9 = net.createNode(29,9,9);
-        Node n10 = net.createNode(19,9,10);
-        Node n11 = net.createNode(14,6,11);
-        Node n12 = net.createNode(18,6,12);
+        Network network = new Network();
+        Node node1 = network.createNode(3,3,1);
+        Node node2 = network.createNode(13,3,2);
+        Node node3 = network.createNode(13,6,3);
+        Node node4 = network.createNode(13,9,4);
+        Node node5 = network.createNode(3,9,5);
+        Node node6 = network.createNode(19,6,6);
+        Node node7 = network.createNode(19,3,7);
+        Node node8 = network.createNode(29,3,8);
+        Node node9 = network.createNode(29,9,9);
+        Node node10 = network.createNode(19,9,10);
+        Node node11 = network.createNode(14,6,11);
+        Node node12 = network.createNode(18,6,12);
         
-        net.createLink(n1,n2,1);
-        net.createLink(n2,n3,1);
-        net.createLink(n3,n4,1);
-        net.createLink(n4,n5,1);
-        net.createLink(n5,n1,1);
-        net.createLink(n3, n11, 1);
-        net.createLink(n11,n12,2);
-        net.createLink(n12,n6,3);
-        net.createLink(n6,n7,3);
-        net.createLink(n7,n8,3);
-        net.createLink(n8,n9,3);
-        net.createLink(n9,n10,3);
-        net.createLink(n10,n6,3);
-        net.createLink(n2,n1,1);
-        net.createLink(n3,n2,1);
-        net.createLink(n3,n4,1);
-        net.createLink(n5,n4,1);
-        net.createLink(n1,n5,1);
-        net.createLink(n11,n3,1);
-        net.createLink(n12,n11,2);
-        net.createLink(n6,n12,3);
-        net.createLink(n7,n6,3);
-        net.createLink(n8,n7,3);
-        net.createLink(n9,n8,3);
-        net.createLink(n10,n9,3);
-        net.createLink(n6,n10,3);
+        network.createLink(node1,node2,1);
+        network.createLink(node2,node3,1);
+        network.createLink(node3,node4,1);
+        network.createLink(node4,node5,1);
+        network.createLink(node5,node1,1);
+        network.createLink(node3, node11, 1);
+        network.createLink(node11,node12,2);
+        network.createLink(node12,node6,3);
+        network.createLink(node6,node7,3);
+        network.createLink(node7,node8,3);
+        network.createLink(node8,node9,3);
+        network.createLink(node9,node10,3);
+        network.createLink(node10,node6,3);
+        network.createLink(node2,node1,1);
+        network.createLink(node3,node2,1);
+        network.createLink(node3,node4,1);
+        network.createLink(node5,node4,1);
+        network.createLink(node1,node5,1);
+        network.createLink(node11,node3,1);
+        network.createLink(node12,node11,2);
+        network.createLink(node6,node12,3);
+        network.createLink(node7,node6,3);
+        network.createLink(node8,node7,3);
+        network.createLink(node9,node8,3);
+        network.createLink(node10,node9,3);
+        network.createLink(node6,node10,3);
               
-        net.createWall(2,2,14,2,1);
-        //net.createWall(6,2,9,5.5,1);
-        net.createWall(14,2,14,5,1);
-        net.createWall(14,7,14,10,1);
-        net.createWall(14,10,2,10,1);
-        net.createWall(2,10,2,2,1);
+        network.createWall(2,2,14,2,1);
+        //network.createWall(6,2,9,5.5,1);
+        network.createWall(14,2,14,5,1);
+        network.createWall(14,7,14,10,1);
+        network.createWall(14,10,2,10,1);
+        network.createWall(2,10,2,2,1);
         
-        net.createWall(14,5,18,5,2);
-        net.createWall(14,7,18,7,2);
+        network.createWall(14,5,18,5,2);
+        network.createWall(14,7,18,7,2);
         
-        net.createWall(18,5,18,2,3);
-        net.createWall(18,2,30,2,3);
-        net.createWall(30,2,30,10,3);
-        net.createWall(30,10,18,10,3);
-        net.createWall(18,10,18,7,3);
+        network.createWall(18,5,18,2,3);
+        network.createWall(18,2,30,2,3);
+        network.createWall(30,2,30,10,3);
+        network.createWall(30,10,18,10,3);
+        network.createWall(18,10,18,7,3);
             
        
-        Simulation sim = new Simulation(net);
+        Simulation simulation = new Simulation(network);
         
-        Vehicle v1 = new Vehicle(n2, n8, net, 1);
-        Vehicle v2 = new Vehicle(n5, n8, net, 2);
-        Vehicle v3 = new Vehicle(n9, n5, net, 3);
-        Vehicle v4 = new Vehicle(n3, n6, net, 4);
-        Vehicle v5 = new Vehicle(n1, n4, net, 5);
-        sim.add(v1);
-        sim.add(v2);
-        sim.add(v3);
-        sim.add(v4);
-        sim.add(v5);
-        sim.run();
+        Vehicle v1 = new Vehicle(node2, node8, network, 1);
+        Vehicle v2 = new Vehicle(node5, node8, network, 2);
+        Vehicle v3 = new Vehicle(node9, node5, network, 3);
+        Vehicle v4 = new Vehicle(node3, node6, network, 4);
+        Vehicle v5 = new Vehicle(node1, node4, network, 5);
+        simulation.add(v1);
+        simulation.add(v2);
+        simulation.add(v3);
+        simulation.add(v4);
+        simulation.add(v5);
+        simulation.run();
         
     }
 
@@ -121,31 +121,31 @@ public class Simulation {
         double maxTime = 1000;
         while (time < maxTime) {
         	
-            for (Vehicle v : this.vehs) {
-            	if (v.getFinish() == true) {
-                  	this.vehs.remove(v);
+            for (Vehicle vehicle : this.vehicles) {
+            	if (vehicle.getFinish() == true) {
+                  	this.vehicles.remove(vehicle);
                   	break;
                   }
-            	v.update(this.vehs);
+            	vehicle.update(this.vehicles);
             }
             
-            for (Vehicle v : this.vehs) {
-                v.move();
+            for (Vehicle vehicle : this.vehicles) {
+                vehicle.move();
             }
                         
-            List<VehicleInfo> vInfos = new ArrayList<>();
-            for (Vehicle v : this.vehs) {
-                VehicleInfo vi = new VehicleInfo(v.getX(), v.getY(), v.getPhi(), v.getRadius(), v.getColourR(), v.getColourG(), v.getColourB(),
-                		v.getForceTarget(), v.getForceVehicles(), v.getForceWalls());
-                vInfos.add(vi);
+            List<VehicleInfo> vehicleInfoList = new ArrayList<>();
+            for (Vehicle vehicle : this.vehicles) {
+                VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
+                		vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls());
+                vehicleInfoList.add(vehicleInfo);
             }
             
-            this.vis.update(time, vInfos);
+            this.vis.update(time, vehicleInfoList);
             
-            time += H;
+            time += TIME_STEP;
 
             try {
-                Thread.sleep((long) (H * 1000));
+                Thread.sleep((long) (TIME_STEP * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -154,8 +154,8 @@ public class Simulation {
         
     }
 
-    private void add(Vehicle v) {
-        this.vehs.add(v);
+    private void add(Vehicle vehicle) {
+        this.vehicles.add(vehicle);
     }
     
 }
