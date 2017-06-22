@@ -1,4 +1,4 @@
-/* *********************************************************************** *
+package alex;/* *********************************************************************** *
  * project: simsocsys
  *
  *                                                                         *
@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import networkUtils.Link;
+import networkUtils.Network;
+import networkUtils.Node;
+import networkUtils.Wall;
 import processing.core.PVector;
 
 /**
@@ -89,7 +93,7 @@ public class Vehicle {
     }
     
     /**
-     * !! Dieser Konstruktor ist nur zum einfacheren Testen von KDTree gedacht und sollte i.A. nicht benutzt werden!!
+     * !! Dieser Konstruktor ist nur zum einfacheren Testen von alex.KDTree gedacht und sollte i.A. nicht benutzt werden!!
      * @param x
      * @param y
      */

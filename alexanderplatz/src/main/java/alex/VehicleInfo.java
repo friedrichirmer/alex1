@@ -1,4 +1,4 @@
-/* *********************************************************************** *
+package alex;/* *********************************************************************** *
  * project: simsocsys
  *
  *                                                                         *
@@ -18,9 +18,6 @@
  *                                                                         *
  * *********************************************************************** */
 
-
-import java.util.HashMap;
-import java.util.Map;
 
 import processing.core.PApplet;
 import processing.core.PConstants;

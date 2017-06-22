@@ -1,3 +1,5 @@
+package networkUtils;
+
 /**
  * Created by laemmel on 27.04.17.
  */

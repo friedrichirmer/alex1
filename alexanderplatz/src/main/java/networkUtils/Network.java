@@ -1,3 +1,5 @@
+package networkUtils;
+
 import processing.core.PApplet;
 
 import java.util.ArrayList;
@@ -36,10 +38,10 @@ public class Network {
    		from.addOutLink(l);
    		to.addInLink(l);
         LinkInfo li = new LinkInfo();
-        li.x0 = (float)(from.getX()*Simulation.SCALE);
-        li.y0 = (float)(from.getY()*Simulation.SCALE);
-        li.x1 = (float)(to.getX()*Simulation.SCALE);
-        li.y1 = (float)(to.getY()*Simulation.SCALE);
+        li.x0 = (float)(from.getX()* Simulation.SCALE);
+        li.y0 = (float)(from.getY()* Simulation.SCALE);
+        li.x1 = (float)(to.getX()* Simulation.SCALE);
+        li.y1 = (float)(to.getY()* Simulation.SCALE);
         linkInfos.add(li);
         counterL++;
    		return l;
@@ -62,10 +64,10 @@ public class Network {
    	    
    	    for (int i = 0; i<walls.size(); i++) {
    	    	Wall wa = walls.get(i);
-   	    	float wx1 = (float)(wa.getX1()*Simulation.SCALE) ;
-   	    	float wy1 = (float)(wa.getY1()*Simulation.SCALE) ;
-   	    	float wx2 = (float)(wa.getX2()*Simulation.SCALE) ;
-   	    	float wy2 = (float)(wa.getY2()*Simulation.SCALE) ;
+   	    	float wx1 = (float)(wa.getX1()* Simulation.SCALE) ;
+   	    	float wy1 = (float)(wa.getY1()* Simulation.SCALE) ;
+   	    	float wx2 = (float)(wa.getX2()* Simulation.SCALE) ;
+   	    	float wy2 = (float)(wa.getY2()* Simulation.SCALE) ;
    	    	p.strokeWeight(2);
    	    	p.line(wx1,wy1,wx2,wy2);
    	    	p.strokeWeight(1);
