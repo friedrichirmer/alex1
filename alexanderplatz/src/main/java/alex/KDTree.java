@@ -1,9 +1,12 @@
 package alex;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class KDTree {
 
@@ -97,7 +100,7 @@ public class KDTree {
 		return this;
 	}
 	
-	public List<Vehicle> searchKDTree(double xMin, double yMin, double xMax, double yMax){
+	private List<Vehicle> searchKDTree(double xMin, double yMin, double xMax, double yMax){
 		
 		if(this.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
 			return this.origin;
@@ -106,6 +109,32 @@ public class KDTree {
 			return this.processSearch(xMin, yMin, xMax, yMax);
 		}
 		
+	}
+	
+	public List<Vehicle> getClosestNeighboursOfVehicle(Vehicle veh, int nrOfNeighbours, double visualRangeX, double visualRangeY){
+		final double vX = veh.getX();
+		final double vY = veh.getY();
+		
+		List<Vehicle> allNeighbours = this.searchKDTree(vX-visualRangeX, vY-visualRangeY, vX+visualRangeX, vY+visualRangeY);
+		
+		PriorityQueue<Vehicle> qq = new PriorityQueue<>(new Comparator<Vehicle>(){
+
+			@Override
+			public int compare(Vehicle o1, Vehicle o2) {
+				double distO1 = Math.sqrt( (o1.getX()-vX)*(o1.getX()-vX) + (o1.getY()-vY)*(o1.getY()-vY) );
+				double distO2 = Math.sqrt( (o2.getX()-vX)*(o2.getX()-vX) + (o2.getY()-vY)*(o2.getY()-vY) );
+				
+				return distO1 < distO2 ? 1 : (distO1 == distO2 ? 0 : -1);
+			}
+			
+		});
+		
+		for(Vehicle v : allNeighbours){
+			qq.add(v);
+			if(qq.size() > nrOfNeighbours) qq.poll();
+		}
+		
+		return Arrays.asList(qq.toArray(new Vehicle[qq.size()]));
 	}
 	
 	private List<Vehicle> processSearch(double xMin, double yMin, double xMax, double yMax){

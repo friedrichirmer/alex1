@@ -128,22 +128,53 @@ public class Simulation {
     private void run() {
         double time = 0;
 
+        KDTree kdTree = new KDTree(this.vehicles);
+        double visualRangeX = 3;
+        double visualRangeY = 3;
+        int nrOfNeighboursToConsider = 3;
+        
         while (time < MAX_TIME) {
         	
-            for (Vehicle vehicle : this.vehicles) {
+        	/* Tilmann 22.6::
+        	 * bisher wurde unnötig of über vehicles iteriert, müsste auch mit nur 2 mal gehen:
+        	 * 										(1.: Für alle Vehicles: checken vehicle.getFinish)
+        	 * 										(2.: kdTree bauen)
+        	 * 										(3.: Für alle Vehicles: vehicle.update(neighboursToConsider
+        	 * 												dann veh.move()
+        	 * 												dann vehicleInfo() )
+        	 * 
+        	 * Entscheidung:  ENTWEDER____________wir müssen jedes mal wenn wir feststellen dass mind. ein vehicle gefinished ist den kdTree neu bauen
+        	 * 											=> teuer
+        	 * 				  ODER________________wir ignorieren dass ein veh vllt schon draußen ist und lassen die socialforces zu/von ihm trotzdem
+        	 * 									  bis zum nächsten Bau von kdTree berechnen
+        	 * 											=> billig aber ungenau
+        	 *
+        	 *momentan umgesetzt ist erstere option, aber gerade wenn viele agenten unterwegs sind wird das wohl dazu führen,
+        	 * dass wir jeden Zeitschritt den kdTree neu bauen 
+        	 */
+        	
+        	boolean vehicleListhasChanged = false;
+            for (Iterator<Vehicle> it = this.vehicles.iterator(); it.hasNext();) {
+            	Vehicle vehicle = it.next();
             	if (vehicle.getFinish() == true) {
-                  	this.vehicles.remove(vehicle);
-                  	break;
+                  	it.remove();
+                  	vehicleListhasChanged = true;
                   }
-            	vehicle.update(this.vehicles, time);
             }
+
+            if(time % 1 == 0 || vehicleListhasChanged){
+        		kdTree = new KDTree(this.vehicles);
+        		kdTree.buildKDTree();
+        	}
+        	
+            List<VehicleInfo> vehicleInfoList = new ArrayList<>();
             
             for (Vehicle vehicle : this.vehicles) {
+            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
+            	vehicle.update(neighboursToConsider, time);
+            
                 vehicle.move();
-            }
                         
-            List<VehicleInfo> vehicleInfoList = new ArrayList<>();
-            for (Vehicle vehicle : this.vehicles) {
                 VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
                 		vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.isInTheSimulation());
                 vehicleInfoList.add(vehicleInfo);
