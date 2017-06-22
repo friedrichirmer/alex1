@@ -186,20 +186,21 @@ public class Vehicle {
         	//System.out.println(net.walls.size());
         	Wall w = net.walls.get(i);
         	
-        	//if (w.getRoom() == currentLink.getRoom()) {
-        		
+     		
         	      			    		   
         			    		   
         		PVector wallA = new PVector ((float)w.getX1(),(float) w.getY1());
         		PVector wallB = new PVector ((float)w.getX2(),(float) w.getY2());
         		PVector vehic = new PVector ((float)this.x,(float) this.y); 
         		
+        
+        		
         		PVector vecv = wallB.get();
         		vecv.sub(wallA);
         		PVector vecw = vehic.get();
-        		vehic.sub(wallA);
+        		vecw.sub(wallA);
         		PVector vecw2 = vehic.get();
-        		vehic.sub(wallB);  
+        		vecw2.sub(wallB);  
         		
         		float c1 = 0;
      			float c2 = 0; 
@@ -231,7 +232,8 @@ public class Vehicle {
      				radlot = this.getRadius() - lot;
      				length = vecv.mag();
      				
-     				n = vecw2.normalize(n);
+     				n = vecw2.get();
+     				n.normalize();
             	    t = n.get();
      			}
      			
@@ -239,22 +241,23 @@ public class Vehicle {
      				     				
      				float b = c1 / c2;
      				
+     				
      				PVector bv = PVector.mult(vecv, b);
      				PVector Pb = PVector.add(wallA, bv);
+     				PVector PbP = vehic.get();
+     				PbP.sub(Pb);
      				     				
      				lot = PVector.dist(vehic, Pb);
      				radlot = this.getRadius() - lot;
      				length = vecv.mag();
-     			
-            		n = Pb.normalize(n);
+     				
+     				n = PbP.get();
+     			    n.normalize();
             	    t = n.get();
             	    
-            	    if (i == 4) {
-         				System.out.println(vehs.indexOf(this)+ " : " + c1 + "  -  " + c2);
-         				System.out.println(Pb);
-         			}
-            	
-     			}
+            	    }
+//            	
+     			
      			
      			
      			    		   
@@ -266,7 +269,7 @@ public class Vehicle {
         		double g;
         		if (radlot >= 0) {
         			g = 1;
-        			System.out.println("g=1");
+        			
         		}
         		
         		else   	g=0;

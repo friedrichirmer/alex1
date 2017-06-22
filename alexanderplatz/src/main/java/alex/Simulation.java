@@ -38,7 +38,7 @@ public class Simulation {
     private static final double MAX_TIME = 1000;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 2;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 23;
 
     private final Vis vis;
     private List<Vehicle> vehicles = new ArrayList<>();
@@ -50,7 +50,7 @@ public class Simulation {
     public static void main(String[] args) {
 
         Network network = new Network();
-        Node node1 = network.createNode(3,3,1);
+        Node node1 = network.createNode(3.5,3.5,1);
         Node node2 = network.createNode(13,3,2);
         Node node3 = network.createNode(13,6,3);
         Node node4 = network.createNode(13,9,4);
@@ -93,10 +93,10 @@ public class Simulation {
         network.createLink(node6,node10,3);
               
         network.createWall(2,2,14,2,1);
-        //network.createWall(6,2,9,5.5,1);
+        network.createWall(6,2,9,5.5,1);
         network.createWall(14,2,14,5,1);
-        network.createWall(14,7,14,10,1);
-        network.createWall(14,10,2,10,1);
+        network.createWall(14,7,13,11,1);
+        network.createWall(13,11,2,10,1);
         network.createWall(2,10,2,2,1);
         
         network.createWall(14,5,18,5,2);
