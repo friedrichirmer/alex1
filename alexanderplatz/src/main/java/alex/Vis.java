@@ -24,6 +24,9 @@ import processing.core.PApplet;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ import java.util.List;
  * Created by laemmel on 17/04/16.
  */
 
-public class Vis extends PApplet {
+public class Vis extends PApplet implements MouseListener {
 
 	
 	private List<VehicleInfo> vehs = new ArrayList<>();
@@ -45,8 +48,16 @@ public class Vis extends PApplet {
     private double phi = 0;
     private final Network net;
 
+    private int densityWindowX1;
+	private int densityWindowY1;
+	private int densityWindowX2;
+	private int densityWindowY2;
+
+	private Voronoi voronoi;
+	
     public Vis(Network net) {
         this.net = net;
+		this.voronoi = new Voronoi();
         JFrame fr = new JFrame();
         fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         fr.setSize(WIDTH, HEIGHT);
@@ -58,16 +69,48 @@ public class Vis extends PApplet {
         panel.add(this);
         panel.setEnabled(true);
         panel.setVisible(true);
-
+       
+        
+        
         this.init();
         frameRate(90);
 
+        
         fr.setVisible(true);
+        
+        panel.addMouseListener(this);
+        
+    
+        //panel.addMouseListener(new MouseClick());
 
         size(WIDTH, HEIGHT);
         background(255);
+        
+        
 
     }
+    
+    /**
+     * Mit der rechten(!) Maustaste kann ein Fenster für die Dichtemessung aufgezogen werden.
+     */
+    
+    public void mousePressed( MouseEvent e ) {
+    	
+    	if (e.getButton() == 1) {
+    		voronoi.reset(); // Bei einem Mausklick wird die Messung automatisch zurückgesetzt
+    		//System.out.println("gepresst: [" + e.getX() + "] [" + e.getY() + "]");
+    		voronoi.corner1(e.getX() , e.getY());
+    	}
+	}
+    
+    public void mouseReleased( MouseEvent e ) {
+    	if (e.getButton() == 1) {
+    		//System.out.println("losgelassen: [" + e.getX() + "] [" + e.getY() + "]");
+    		voronoi.corner2(e.getX(), e.getY());
+    	}
+
+	}
+    
 
     @Override
     public void draw() {
@@ -80,13 +123,17 @@ public class Vis extends PApplet {
                 v.draw(this);
             }
         } 
+        
+        voronoi.draw(this);
+    
     } 
 
-    public void update(double time, List<VehicleInfo> vehs) {
+
+	public void update(double time, List<VehicleInfo> vehs) {
         synchronized (this.vehs) {
             this.vehs = new ArrayList<VehicleInfo>(vehs);
         }
-
+        
     }
 
 }
