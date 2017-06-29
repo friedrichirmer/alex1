@@ -49,6 +49,7 @@ public class Vehicle {
     private double width = 0.2;
     private double speed = 1;
     private double maxSpeed = 3;
+    private double tau = 0.5;
     private double rad;
     private double x;
     private double y;
@@ -76,6 +77,7 @@ public class Vehicle {
 	double pushWallY;
     private boolean isInTheSimulation = false;
 	private double mass;
+	private double walkParallelThreshold = Double.MAX_VALUE;
 	
 
 	
@@ -133,8 +135,8 @@ public class Vehicle {
         pushWallX = 0;
     	pushWallY = 0;
         
-    	/**
-    	 * Die erste Schleife iteriert über alle übrigen Fahrzeuge und summiert die abstoßenden Kräfte.
+    	/*
+    	 * Die erste Schleife iteriert über alle per Parameter vehs übergebenen Fahrzeuge und summiert die abstoßenden Kräfte.
     	 * Hier haben Kräfte und Vektoren haben je eine x- und eine y-Komponente.
     	 */
     	   	
@@ -188,7 +190,7 @@ public class Vehicle {
         
         forceVehicles = new PVector((float)pushX, (float)pushY);
                
-        /**
+        /*
          * Die zweite Schleife iteriert über alle Wände und berechnet die abstoßenden Kräfte
          * Hier wird mit Vektoren gerechnet
          */
@@ -222,7 +224,7 @@ public class Vehicle {
    				PVector t = null; 	// tangetialer Richtungsvektor für die Kraft
         		PVector n = null;	// normaler Richtungsvektor für die Kraft
         		
-        		/**
+        		/*
         		 * Fall 1:
         		 * Die Kraft zeigt von der einen Ecke der Wand
         		 */
@@ -237,7 +239,7 @@ public class Vehicle {
             	   
 				}
 				
-				/**
+				/*
 				 * Fall 2:
 				 * Die Kraft zeigt von der anderen Ecke der Wand
 				 */
@@ -252,7 +254,7 @@ public class Vehicle {
             	    t = n.get();
      			}
      			
-     			/**
+     			/*
      			 * Fall 3:
      			 * Die Kraft zeigt vom Lot senkrecht auf das Fahrzeug
      			 */
@@ -303,22 +305,75 @@ public class Vehicle {
                 
         forceWalls = new PVector((float)pushWallX, (float)pushWallY);
 
-        /**
+        
+        
+        // Berechnung der Wunschrichtung
+        
+    	
+        double dx = currentLink.getTo().getX() - this.x;
+    	double dy = currentLink.getTo().getY() - this.y;
+    	
+    	double dist = Math.sqrt(dx*dx+dy*dy);
+    	dx /= dist;
+    	dy /= dist;
+        
+        if(this.walkParallelThreshold  < Double.MAX_VALUE){
+        	// wir müssen hier das Lot vom Vehicle auf den aktuellen Link fällen
+        	// siehe http://geomalgorithms.com/a02-_lines.html
+        	
+        	PVector vFromNode = new PVector((float) currentLink.getFrom().getX(), (float) currentLink.getFrom().getY());
+        	PVector vToNode = new PVector((float) currentLink.getTo().getX(), (float) currentLink.getTo().getY());
+    		PVector vVehicle = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
+
+        	
+        	PVector vBackLink = vToNode.get();
+        	vBackLink.sub(vToNode);
+        	
+        	PVector vehToFromNode = vVehicle.get();
+        	vehToFromNode.sub(vFromNode);
+        	
+        	float c1 = PVector.dot(vehToFromNode, vBackLink);
+        	
+        	float c2 = PVector.dot(vBackLink, vBackLink);
+        	
+//        	if(c2 <= c1){ //Vehicle befindet sich schon über den toNode (bzw Zielline) hinaus => gleich zum nächsten Link übergehen?
+//        		
+//        	}
+        	
+        	if( !(c1 <= 0) && c2 > c1){
+        		PVector pointOnLink = vBackLink.get();
+        		pointOnLink.mult(c1/c2);
+        		pointOnLink.add(vFromNode);
+        		
+        		PVector lot = vVehicle.get();
+        		lot.sub(pointOnLink);
+        		
+        		if(lot.mag() <= walkParallelThreshold){
+        			dx = vBackLink.x * -1 / vBackLink.mag();
+        			dy = vBackLink.y * -1 / vBackLink.mag();
+        			System.out.println("vehicle " + this.id + " wants to walk parallel to link " + currentLink.getId());
+        		}
+        		
+        	}
+        }
+        
+        
+        
+        
+        /*
          * Alle Kräfte werden summiert.
          * Hier wieder mit getrennten x- und y-Komponenten.
          */
         
-        double dx = currentLink.getTo().getX() - this.x;
-        double dy = currentLink.getTo().getY() - this.y;
-
-        double dist = Math.sqrt(dx*dx+dy*dy);
-        dx /= dist;
-        dy /= dist;
         
-        forceTarget = new PVector((float) (this.mass * (dx * this.speed - vtx) / 0.5), (float) (this.mass * (dy * this.speed - vty) / 0.5 ));
+        
+        //Hilfsvektor zum Zeichnen der Pfeile in der Visualisierung
+        forceTarget = new PVector((float) (this.mass * (dx * this.speed - vtx) / this.tau), (float) (this.mass * (dy * this.speed - vty) / this.tau));
 
-        forceX = (this.mass * (dx * this.speed - vtx) / 0.5) + pushX + pushWallX ;
-        forceY = (this.mass * (dy * this.speed - vty) / 0.5) + pushY + pushWallY ;
+        
+        //Berechnung der resultierenden Gesamtkraft gemaeß Social-Force-Model
+        forceX = forceTarget.x + pushX + pushWallX ;
+        forceY = forceTarget.y + + pushY + pushWallY ;
         
         
                 

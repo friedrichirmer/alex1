@@ -131,7 +131,7 @@ public class Simulation {
         KDTree kdTree = new KDTree(this.vehicles);
         double visualRangeX = 3;
         double visualRangeY = 3;
-        int nrOfNeighboursToConsider = 3;
+        int nrOfNeighboursToConsider = 5;
         
         while (time < MAX_TIME) {
         	
@@ -149,7 +149,7 @@ public class Simulation {
         	 * 									  bis zum nächsten Bau von kdTree berechnen
         	 * 											=> billig aber ungenau
         	 *
-        	 *momentan umgesetzt ist erstere option, aber gerade wenn viele agenten unterwegs sind wird das wohl dazu führen,
+        	 * momentan umgesetzt ist erstere option, aber gerade wenn viele agenten unterwegs sind wird das wohl dazu führen,
         	 * dass wir jeden Zeitschritt den kdTree neu bauen 
         	 */
         	
