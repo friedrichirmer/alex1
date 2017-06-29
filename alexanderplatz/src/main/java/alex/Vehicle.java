@@ -142,9 +142,6 @@ public class Vehicle {
     	   	
         for (Vehicle v : vehs) {
         	
-        	//Vehicle v;
-        	
-           	//v = vehs.get(i);
         	if (this == v) continue;  
         	
         	double vehx;
