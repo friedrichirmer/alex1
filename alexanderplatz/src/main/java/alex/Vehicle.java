@@ -138,11 +138,11 @@ public class Vehicle {
     	 * Hier haben Kräfte und Vektoren haben je eine x- und eine y-Komponente.
     	 */
     	   	
-        for (int i=0; i<vehs.size(); i++) {
+        for (Vehicle v : vehs) {
         	
-        	Vehicle v;
+        	//Vehicle v;
         	
-           	v = vehs.get(i);
+           	//v = vehs.get(i);
         	if (this == v) continue;  
         	
         	double vehx;

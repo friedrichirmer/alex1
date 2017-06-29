@@ -23,6 +23,7 @@ package alex;
 import networkUtils.Network;
 import networkUtils.Node;
 
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -34,11 +35,11 @@ import java.util.Map;
 public class Simulation {
 
     public static final double SCALE = 25;
-
     private static final double MAX_TIME = 1000;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 23;
+
 
     private final Vis vis;
     private List<Vehicle> vehicles = new ArrayList<>();
@@ -111,7 +112,6 @@ public class Simulation {
        
         Simulation simulation = new Simulation(network);
         addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
-        
         simulation.run();
         
     }
@@ -220,5 +220,7 @@ public class Simulation {
     private void add(Vehicle vehicle) {
         this.vehicles.add(vehicle);
     }
+    
+ 
     
 }
