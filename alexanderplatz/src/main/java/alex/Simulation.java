@@ -176,13 +176,8 @@ public class Simulation {
         		kdTree.buildKDTree();
         	}
 
-            if (time % 1 == 0 && time > 0){
-                Iterator<Link> linkIterator = network.getLinks().values().iterator();
-                while (linkIterator.hasNext()){
-                    Link link= linkIterator.next();
-                    link.calculateRecentLinkWeights(vehicles, time);
-                    System.out.println("The new weight of the link " + link.getId() + " was calculated.");
-                }
+            if (time % 5 == 0 && time > 0){
+                recalculateWeightOfLinksBasedOnCurrentTravelTimes(network, time);
             }
 
             List<VehicleInfo> vehicleInfoList = new ArrayList<>();
@@ -211,6 +206,15 @@ public class Simulation {
             
         }
         
+    }
+
+    private void recalculateWeightOfLinksBasedOnCurrentTravelTimes(Network network, double time) {
+        Iterator<Link> linkIterator = network.getLinks().values().iterator();
+        while (linkIterator.hasNext()){
+            Link link= linkIterator.next();
+            link.calculateRecentLinkWeights(vehicles, time);
+            System.out.println("The new weight of the link " + link.getId() + " was calculated.");
+        }
     }
 
     private static void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles) {
