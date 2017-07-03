@@ -20,6 +20,7 @@ package alex;
  * *********************************************************************** */
 
 
+import networkUtils.Link;
 import networkUtils.Network;
 import networkUtils.Node;
 
@@ -38,11 +39,15 @@ public class Simulation {
     private static final double MAX_TIME = 1000;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 23;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 230;
 
 
     private final Vis vis;
     private List<Vehicle> vehicles = new ArrayList<>();
+
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
 
     public Simulation(Network network) {
         this.vis = new Vis(network);
@@ -112,7 +117,7 @@ public class Simulation {
        
         Simulation simulation = new Simulation(network);
         addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
-        simulation.run();
+        simulation.run(network);
         
     }
 
@@ -125,7 +130,7 @@ public class Simulation {
         }
     }
 
-    private void run() {
+    private void run(Network network) {
         double time = 0;
 
         KDTree kdTree = new KDTree(this.vehicles);
@@ -136,44 +141,57 @@ public class Simulation {
         while (time < MAX_TIME) {
         	
         	/* Tilmann 22.6::
-        	 * bisher wurde unnötig of über vehicles iteriert, müsste auch mit nur 2 mal gehen:
-        	 * 										(1.: Für alle Vehicles: checken vehicle.getFinish)
+        	 * bisher wurde unnï¿½tig of ï¿½ber vehicles iteriert, mï¿½sste auch mit nur 2 mal gehen:
+        	 * 										(1.: Fï¿½r alle Vehicles: checken vehicle.getFinish)
         	 * 										(2.: kdTree bauen)
-        	 * 										(3.: Für alle Vehicles: vehicle.update(neighboursToConsider
+        	 * 										(3.: Fï¿½r alle Vehicles: vehicle.update(neighboursToConsider
         	 * 												dann veh.move()
         	 * 												dann vehicleInfo() )
         	 * 
-        	 * Entscheidung:  ENTWEDER____________wir müssen jedes mal wenn wir feststellen dass mind. ein vehicle gefinished ist den kdTree neu bauen
+        	 * Entscheidung:  ENTWEDER____________wir mï¿½ssen jedes mal wenn wir feststellen dass mind. ein vehicle gefinished ist den kdTree neu bauen
         	 * 											=> teuer
-        	 * 				  ODER________________wir ignorieren dass ein veh vllt schon draußen ist und lassen die socialforces zu/von ihm trotzdem
-        	 * 									  bis zum nächsten Bau von kdTree berechnen
+        	 * 				  ODER________________wir ignorieren dass ein veh vllt schon drauï¿½en ist und lassen die socialforces zu/von ihm trotzdem
+        	 * 									  bis zum nï¿½chsten Bau von kdTree berechnen
         	 * 											=> billig aber ungenau
         	 *
-        	 * momentan umgesetzt ist erstere option, aber gerade wenn viele agenten unterwegs sind wird das wohl dazu führen,
+        	 * momentan umgesetzt ist erstere option, aber gerade wenn viele agenten unterwegs sind wird das wohl dazu fï¿½hren,
         	 * dass wir jeden Zeitschritt den kdTree neu bauen 
         	 */
         	
-        	boolean vehicleListhasChanged = false;
-            for (Iterator<Vehicle> it = this.vehicles.iterator(); it.hasNext();) {
-            	Vehicle vehicle = it.next();
+        	boolean vehicleListHasChanged = false;
+            for (Iterator<Vehicle> vehicleIterator = this.vehicles.iterator(); vehicleIterator.hasNext();) {
+            	Vehicle vehicle = vehicleIterator.next();
             	if (vehicle.getFinish() == true) {
-                  	it.remove();
-                  	vehicleListhasChanged = true;
+                  	vehicleIterator.remove();
+                  	vehicleListHasChanged = true;
                   }
             }
 
-            if(time % 1 == 0 || vehicleListhasChanged){
+            if (time % 1 == 0){
+                System.out.println("TEST: TIME % 1 IS 0");
+            }
+
+            if(time % 1 == 0 || vehicleListHasChanged){
         		kdTree = new KDTree(this.vehicles);
         		kdTree.buildKDTree();
         	}
-        	
+
+            if (time % 1 == 0 && time > 0){
+                Iterator<Link> linkIterator = network.getLinks().values().iterator();
+                while (linkIterator.hasNext()){
+                    Link link= linkIterator.next();
+                    link.calculateRecentLinkWeights(vehicles, time);
+                    System.out.println("The new weight of the link " + link.getId() + " was calculated.");
+                }
+            }
+
             List<VehicleInfo> vehicleInfoList = new ArrayList<>();
             
             for (Vehicle vehicle : this.vehicles) {
             	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
             	vehicle.update(neighboursToConsider, time);
             
-                vehicle.move();
+                vehicle.move(time);
                         
                 VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
                 		vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.isInTheSimulation());
@@ -181,6 +199,7 @@ public class Simulation {
             }
             
             this.vis.update(time, vehicleInfoList);
+
             
             time += TIME_STEP;
 
@@ -208,12 +227,12 @@ public class Simulation {
         }
     }
 
-    private static void createRandomDeparture(Network network, Simulation sim, Integer startNodeId, Integer finishNodeId, int i) {
+    private static void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, int i) {
         double startTime = (Math.random() * (MAX_TIME - 980));
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
-        sim.add(new Vehicle(network, startNode, finishNode, startTime, vehicleId));
+        simulation.add(new Vehicle(network, startNode, finishNode, startTime, vehicleId));
         System.out.println("Random Vehicle " + vehicleId + " is created");
     }
 

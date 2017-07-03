@@ -31,13 +31,8 @@ import networkUtils.Node;
 import networkUtils.Wall;
 import processing.core.PVector;
 
-/**
- */
-
 public class Vehicle {
-
-
-    private final List<Link> route;
+    private List<Link> route;
     private double startTime;
     private double vtx = 0;
     private double vty = 0;
@@ -63,9 +58,10 @@ public class Vehicle {
     private String id;
 
     private int routeIndex = 0;
-	private Network net;
+	private Network network;
 	private boolean finish;
 	private int counterV = 1;
+	private Node destinationNode;
 	private static Random random = new Random(41);
 	
 	public final Map<Vehicle,PVector> forces = new HashMap<Vehicle,PVector>();
@@ -78,15 +74,18 @@ public class Vehicle {
     private boolean isInTheSimulation = false;
 	private double mass;
 	private double walkParallelThreshold = Double.MAX_VALUE;
-	
+	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<>();
 
-	
-    public Vehicle(Network network, Node startNode, Node destinationNode, double startTime, String id) {
+	public List<Link> getRoute() {
+		return route;
+	}
+
+	public Vehicle(Network network, Node startNode, Node destinationNode, double startTime, String id) {
     	
     	this.x = startNode.getX() + random.nextDouble() * 1;
         this.y = startNode.getY() + random.nextDouble() * 1;
-        this.net = network;
-        this.route = Dijkstra.dijkstra(network, startNode, destinationNode);
+        this.network = network;
+        this.route = Dijkstra.returnRoute(network, startNode, destinationNode);
     	System.out.println("route: " + route.toString());
         this.rad = 0.25 + random.nextDouble()*0.1;
         this.colourR = (float) (255*Math.random());
@@ -98,10 +97,11 @@ public class Vehicle {
         this.id = id;
         this.startTime = startTime;
         this.mass = 80;
+        this.mapOfEnterLeaveTimes.put(route.get(0).getId(), new Double[]{startTime, startTime});
+        this.destinationNode = destinationNode;
     }
 
     public boolean isInTheSimulation() {
-
         return isInTheSimulation;
     }
 
@@ -131,13 +131,12 @@ public class Vehicle {
         	
         pushX = 0;
         pushY = 0;
-        
         pushWallX = 0;
     	pushWallY = 0;
         
     	/*
-    	 * Die erste Schleife iteriert über alle per Parameter vehs übergebenen Fahrzeuge und summiert die abstoßenden Kräfte.
-    	 * Hier haben Kräfte und Vektoren haben je eine x- und eine y-Komponente.
+    	 * Die erste Schleife iteriert ï¿½ber alle per Parameter vehs ï¿½bergebenen Fahrzeuge und summiert die abstoï¿½enden Krï¿½fte.
+    	 * Hier haben Krï¿½fte und Vektoren haben je eine x- und eine y-Komponente.
     	 */
     	   	
         for (Vehicle v : vehs) {
@@ -165,9 +164,7 @@ public class Vehicle {
    
            	if (distR >= 0) g = 1;
         	else g=0;
-           	
-           	
-        	
+
         	double dirNX = (-distMX) / distM; 		//richtungsvektor n_x
         	double dirTX = (distMY) / distM;		//richtungsvektor t_x
         	double dirNY = (-distMY) / distM;		//richtungsvektor n_y
@@ -188,13 +185,13 @@ public class Vehicle {
         forceVehicles = new PVector((float)pushX, (float)pushY);
                
         /*
-         * Die zweite Schleife iteriert über alle Wände und berechnet die abstoßenden Kräfte
+         * Die zweite Schleife iteriert ï¿½ber alle Wï¿½nde und berechnet die abstoï¿½enden Krï¿½fte
          * Hier wird mit Vektoren gerechnet
          */
         
-        for (int i =0;i<net.walls.size();i++ ) {
+        for (int i = 0; i< network.walls.size(); i++ ) {
 
-        	Wall w = net.walls.get(i);
+        	Wall w = network.walls.get(i);
         	
         		PVector wallA = new PVector ((float)w.getX1(),(float) w.getY1()); 	//Ende 1 der Wand
         		PVector wallB = new PVector ((float)w.getX2(),(float) w.getY2());	//Ende 2 der Wand
@@ -209,17 +206,17 @@ public class Vehicle {
         		PVector vecw2 = vehic.get();		// Vektor zeigt von Ende 2 auf Fahrzeug
         		vecw2.sub(wallB);  
         		
-        		float c1 = 0;	// Hilfsgröße zur Bestimmung der Position relativ zur Wand
-     			float c2 = 0; 	// Hilfsgröße zur Bestimmung der Position relativ zur Wand
+        		float c1 = 0;	// Hilfsgrï¿½ï¿½e zur Bestimmung der Position relativ zur Wand
+     			float c2 = 0; 	// Hilfsgrï¿½ï¿½e zur Bestimmung der Position relativ zur Wand
      		
      			c1 = vecw.dot(vecv);
      			c2 = vecv.dot(vecv);
      			
-     			double lot;		// Länge des Lots
-     			double radlot = 1;	// Radius des Fahrzeugs minus Länge des Lots (meistens negativ)
+     			double lot;		// Lï¿½nge des Lots
+     			double radlot = 1;	// Radius des Fahrzeugs minus Lï¿½nge des Lots (meistens negativ)
 
-   				PVector t = null; 	// tangetialer Richtungsvektor für die Kraft
-        		PVector n = null;	// normaler Richtungsvektor für die Kraft
+   				PVector t = null; 	// tangetialer Richtungsvektor fï¿½r die Kraft
+        		PVector n = null;	// normaler Richtungsvektor fï¿½r die Kraft
         		
         		/*
         		 * Fall 1:
@@ -261,9 +258,9 @@ public class Vehicle {
      				float b = c1 / c2;
      				     				
      				PVector bv = PVector.mult(vecv, b);
-     				PVector pb = PVector.add(wallA, bv); 	// Vektor pb ist der Lotfußpunkt auf der Wand
+     				PVector pb = PVector.add(wallA, bv); 	// Vektor pb ist der Lotfuï¿½punkt auf der Wand
      				
-     				PVector pbV = vehic.get();				// Vektor pbV zeigt vom Lotfußpunkt auf das Fahrzeug (Richtung der Kraft)
+     				PVector pbV = vehic.get();				// Vektor pbV zeigt vom Lotfuï¿½punkt auf das Fahrzeug (Richtung der Kraft)
      				pbV.sub(pb);
      				     				
      				lot = PVector.dist(vehic, pb);
@@ -315,7 +312,7 @@ public class Vehicle {
     	dy /= dist;
         
         if(this.walkParallelThreshold  < Double.MAX_VALUE){
-        	// wir müssen hier das Lot vom Vehicle auf den aktuellen Link fällen
+        	// wir mï¿½ssen hier das Lot vom Vehicle auf den aktuellen Link fï¿½llen
         	// siehe http://geomalgorithms.com/a02-_lines.html
         	
         	PVector vFromNode = new PVector((float) currentLink.getFrom().getX(), (float) currentLink.getFrom().getY());
@@ -330,10 +327,9 @@ public class Vehicle {
         	vehToFromNode.sub(vFromNode);
         	
         	float c1 = PVector.dot(vehToFromNode, vBackLink);
-        	
         	float c2 = PVector.dot(vBackLink, vBackLink);
         	
-//        	if(c2 <= c1){ //Vehicle befindet sich schon über den toNode (bzw Zielline) hinaus => gleich zum nächsten Link übergehen?
+//        	if(c2 <= c1){ //Vehicle befindet sich schon ï¿½ber den toNode (bzw Zielline) hinaus => gleich zum nï¿½chsten Link ï¿½bergehen?
 //        		
 //        	}
         	
@@ -353,22 +349,17 @@ public class Vehicle {
         		
         	}
         }
-        
-        
-        
-        
+
         /*
-         * Alle Kräfte werden summiert.
+         * Alle Krï¿½fte werden summiert.
          * Hier wieder mit getrennten x- und y-Komponenten.
          */
-        
-        
-        
+
         //Hilfsvektor zum Zeichnen der Pfeile in der Visualisierung
         forceTarget = new PVector((float) (this.mass * (dx * this.speed - vtx) / this.tau), (float) (this.mass * (dy * this.speed - vty) / this.tau));
 
         
-        //Berechnung der resultierenden Gesamtkraft gemaeß Social-Force-Model
+        //Berechnung der resultierenden Gesamtkraft gemaeï¿½ Social-Force-Model
         forceX = forceTarget.x + pushX + pushWallX ;
         forceY = forceTarget.y + + pushY + pushWallY ;
         
@@ -377,7 +368,7 @@ public class Vehicle {
         vx = vtx + Simulation.TIME_STEP *(forceX/80);
         vy = vty + Simulation.TIME_STEP *(forceY/80);
         
-        //	Begrenzung der Kräfte
+        //	Begrenzung der Krï¿½fte
         if (Math.sqrt((vx*vx)+(vy*vy)) > maxSpeed) {
         	double speed = Math.sqrt((vx*vx)+(vy*vy));
         	vx = Math.sqrt(speed) * vx / speed ;
@@ -389,22 +380,31 @@ public class Vehicle {
         
     }
     
-    public void move() {
+    public void move(double time) {
 
         this.x = this.x + Simulation.TIME_STEP * this.vx;
         this.y = this.y + Simulation.TIME_STEP * this.vy;
-        
         vtx = vx;
         vty = vy;
         
         Link currentLink = this.route.get(routeIndex);
+		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
         if (currentLink.hasVehicleReachedEndOfLink(this)) {
-            routeIndex++; 
+			this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
+			System.out.println("THe new agent left the link and contribute to the current travel time on the link " + currentLink.getId());
+			routeIndex++;
         	if (this.route.size() == routeIndex) {
         	   this.finish = true;
-        	}
-        }
-
+        	} else {
+				Link newCurrentLink = this.route.get(routeIndex);
+				this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, time});
+			}
+        } else if (time - timeWhenEnteredLink > 20){
+        	if (time % 5 ==0 && new Random().nextDouble() < 0.1){
+        		Node newStartNode = network.findNearestNode(this.x, this.y);
+        		this.route = Dijkstra.returnRoute(network, newStartNode, destinationNode);
+			}
+		}
     }
 
     public double getX() {
@@ -468,4 +468,7 @@ public class Vehicle {
 		return "" + id + " @ [" + this.x + ";" + this.y + "]";
 	}
 
+	public Map<Integer, Double[]> getMapOfEnterLeaveTimes() {
+		return mapOfEnterLeaveTimes;
+	}
 }

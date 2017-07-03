@@ -4,10 +4,7 @@ import networkUtils.Link;
 import networkUtils.Network;
 import networkUtils.Node;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Dijkstra {
 	
@@ -18,63 +15,64 @@ public class Dijkstra {
 	private static Node source;
 	
 
-	public static List<Link> dijkstra(Network net, Node src, Node dstn) {
-		
+	public static List<Link> returnRoute(Network network, Node originNode, Node destinationNode) {
+
 		List<Node> qu = new ArrayList<Node>();
-		network = net;
+		Dijkstra.network = network;
 
-		for (int i=1; i<=network.nodes.size();i++) {
-			Node no = network.nodes.get(i);
-			nodeWeights.put(no, Double.POSITIVE_INFINITY);
-			predecessor.put(no, null);
-			qu.add(no);
-		}
+		initializeQuListOfNodes(qu);
 
-		nodeWeights.replace(src, (double)0);
-		source = src;
+		nodeWeights.replace(originNode, (double)0);
+		source = originNode;
+		Node currentNode = originNode;
 
-		Node vcurr = src;
-		
-		while (!vcurr.equals(dstn)) {
-			qu.remove(vcurr);
-			expandGraph(vcurr);
-			Node next = qu.get(0);
-			for (int i=0;i<qu.size();i++) {
-				Node no = qu.get(i);
-				if (nodeWeights.get(no) < nodeWeights.get(next)) {
-					next = no;					
-				}		
-			}
-			
-			vcurr = next;
-		}
-				
-		List<Link> path = reconstructPath(dstn);
-		
+		expandAllNodesInTheQuList(destinationNode, qu, currentNode);
+
+		List<Link> path = reconstructPath(destinationNode);
 		return path;
-
-		
 	}
+
 	
 
 
+	private static void expandAllNodesInTheQuList(Node destinationNode, List<Node> qu, Node currentNode) {
+		while (!currentNode.equals(destinationNode)) {
+			qu.remove(currentNode);
+			expandNode(currentNode);
+			Node next = qu.get(0);
+			for (int i = 0; i < qu.size(); i++) {
+				Node node = qu.get(i);
+				if (nodeWeights.get(node) < nodeWeights.get(next)) {
+					next = node;
+				}
+			}
+			currentNode = next;
+		}
+	}
 
-	private static void expandGraph(Node vcurr) {
+	private static void initializeQuListOfNodes(List<Node> qu) {
+		for (int i = 1; i<= Dijkstra.network.nodes.size(); i++) {
+			Node node = Dijkstra.network.nodes.get(i);
+			nodeWeights.put(node, Double.POSITIVE_INFINITY);
+			predecessor.put(node, null);
+			qu.add(node);
+		}
+	}
+
+	private static void expandNode(Node currentNode) {
 		for (int i=1;i<network.links.size();i++) {
-			Link lin =  network.links.get(i);
-			if (lin.getFrom() == vcurr) {
+			Link link =  network.links.get(i);
+			if (link.getFrom() == currentNode) {
 				
-				Node vnew = lin.getTo();
+				Node vnew = link.getTo();
 				double c;
-				c = nodeWeights.get(vcurr) + lin.getWeight();
+				c = nodeWeights.get(currentNode) + link.getWeight();
 				if(c < nodeWeights.get(vnew)) {
 					nodeWeights.put(vnew, c);
-					predecessor.put(vnew, vcurr);
-					
+					predecessor.put(vnew, currentNode);
 				}
 			}
 		}
-
 	}
 	
 	private static List<Link> reconstructPath(Node dstn) {
@@ -106,7 +104,4 @@ public class Dijkstra {
 		return lback;
 		
 	}
-	
-
-	
 }
