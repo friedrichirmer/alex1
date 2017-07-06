@@ -117,13 +117,27 @@ public class Vehicle {
         this.id = String.valueOf(id);
     }
 
+    /**
+     * checks whether the vehicle should enter the sim.
+     * so basically it checks whether vehicle's start time is smaller than given time
+     * @return
+     */
+    public boolean entersSimulation(double time){
+//    	if(this.startTime <= time){
+//    		this.isInTheSimulation = true;
+//    		return true;
+//    	}
+//    	return false;
+    	return (this.startTime <= time);
+    }
+    
 
     public void update(List<Vehicle> vehs, double time) {
 
-        if ( startTime > time) {
-            return;
-        }
-        isInTheSimulation = true;
+//        if ( startTime > time) {
+//            return;
+//        }
+//        isInTheSimulation = true;
     	
     	Link currentLink = this.route.get(routeIndex);
     	
@@ -389,11 +403,11 @@ public class Vehicle {
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
         if (currentLink.hasVehicleReachedEndOfLink(this)) {
 			this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
-			System.out.println("The new agent id " + this.getId() +
-					" left the link " + currentLink.getId()
-					+ ", his travel time was " + (time - timeWhenEnteredLink));
-			System.out.println("entered at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[0]);
-			System.out.println("left at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[1]);
+//			System.out.println("The new agent id " + this.getId() +
+//					" left the link " + currentLink.getId()
+//					+ ", his travel time was " + (time - timeWhenEnteredLink));
+//			System.out.println("entered at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[0]);
+//			System.out.println("left at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[1]);
 			routeIndex++;
         	if (this.route.size() == routeIndex) {
         	   this.finish = true;

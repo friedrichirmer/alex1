@@ -44,11 +44,9 @@ public class VehicleInfo {
 	private PVector forceTarget;
 	private PVector forceVehicles;
 	private PVector forceWalls;
-    private final boolean isInTheSimulation;
-	
     
     public VehicleInfo(double x, double y, double phi, double radius, double colourR, double colourG, double colourB,
-                       PVector forceTarget, PVector forceVehicles, PVector forceWalls, boolean isInTheSimulation) {
+                       PVector forceTarget, PVector forceVehicles, PVector forceWalls) {
         this.x = (int) (Simulation.SCALE * x);
         this.y = (int) (Simulation.SCALE * y);
         this.phi = phi;
@@ -60,12 +58,10 @@ public class VehicleInfo {
         this.forceVehicles = forceVehicles;
         this.forceWalls = forceWalls;
 
-        this.isInTheSimulation = isInTheSimulation;
     }
     
 
     public void draw(PApplet p) {
-        if (isInTheSimulation) {
             p.pushMatrix();
 
             p.translate(x, y);
@@ -141,5 +137,4 @@ public class VehicleInfo {
 //            p.stroke(0, 0, 0);
 
         }
-    }
 }

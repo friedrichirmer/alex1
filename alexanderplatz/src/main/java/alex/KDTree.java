@@ -37,6 +37,9 @@ public class KDTree {
 	
 	private KDTree buildKDTree (int depth){
 		
+		if(this.origin.size() == 0){
+			return null;
+		}
 		
 		if(this.origin.size() != 1){
 			
