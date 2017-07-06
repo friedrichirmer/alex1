@@ -73,7 +73,7 @@ public class Vehicle {
 	double pushWallY;
     private boolean isInTheSimulation = false;
 	private double mass;
-	private final double walkParallelThreshold = 1.0;
+	private final double walkParallelThreshold = 1.0;	//set to Double.MAX_Value to disable parallel walking
 	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<>();
 
 	public List<Link> getRoute() {
@@ -214,14 +214,14 @@ public class Vehicle {
     		PVector vVehicle = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
 
         	
-        	PVector vBackLink = vFromNode.get();
-        	vBackLink.sub(vToNode);
+        	PVector vLink = vToNode.get();
+        	vLink.sub(vFromNode);
         	
-        	PVector vehToFromNode = vVehicle.get();
-        	vehToFromNode.sub(vFromNode);
+        	PVector fromNodeToVeh = vVehicle.get();
+        	fromNodeToVeh.sub(vFromNode);
         	
-        	float c1 = PVector.dot(vehToFromNode, vBackLink);
-        	float c2 = PVector.dot(vBackLink, vBackLink);
+        	float c1 = PVector.dot(fromNodeToVeh, vLink);
+        	float c2 = PVector.dot(vLink, vLink);
         	
 //        	if(c2 <= c1){ //Vehicle befindet sich schon ueber den toNode (bzw Zielline) hinaus => gleich zum naechsten Link uebergehen?
 //        		
@@ -229,16 +229,17 @@ public class Vehicle {
         	
         	if( !(c1 <= 0) && c2 > c1){
         		System.out.println("Berechne das Lot von Vehicle " + this.id + " auf Link " + currentLink.getId());
-        		PVector pointOnLink = vBackLink.get();
-        		pointOnLink.mult(c1/c2);
-        		pointOnLink.add(vFromNode);
+        		PVector lotFootpointOnLink = vLink.get();
+        		lotFootpointOnLink.mult(c1/c2);
+        		lotFootpointOnLink.add(vFromNode);
         		
         		PVector lot = vVehicle.get();
-        		lot.sub(pointOnLink);
+        		lot.sub(lotFootpointOnLink);
         		
         		if(lot.mag() <= walkParallelThreshold){
-        			dx = vBackLink.x * -1 / vBackLink.mag();
-        			dy = vBackLink.y * -1 / vBackLink.mag();
+        			vLink.normalize();
+        			dx = vLink.x;
+        			dy = vLink.y;
         			System.out.println("vehicle " + this.id + " wants to walk parallel to link " + currentLink.getId());
         		}
         		

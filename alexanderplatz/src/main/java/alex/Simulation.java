@@ -35,11 +35,11 @@ import java.util.Map;
  */
 public class Simulation {
 
-    public static final double SCALE = 25;
-    private static final double MAX_TIME = 1000;
+    public static final double SCALE = 30;
+    private static final double MAX_TIME = 100;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 20;
 
 
     private final Vis vis;
@@ -172,10 +172,6 @@ public class Simulation {
                   }
             }
 
-            if (time % 1 == 0){
-                System.out.println("TEST: TIME % 1 IS 0");
-            }
-
             if(time % 1 == 0 || vehicleListHasChanged){
         		kdTree = new KDTree(this.vehicles);
         		kdTree.buildKDTree();
@@ -239,7 +235,7 @@ public class Simulation {
     }
 
     private static void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, int i) {
-        double startTime = (Math.random() * (MAX_TIME - 980));
+        double startTime = (Math.random() * (0.9*MAX_TIME));
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
