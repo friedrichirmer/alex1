@@ -9,10 +9,10 @@ public class RectangleNetCreator {
 	}
 	
 	public Network createNetwork(){
-		Node n0 = this.network.createNode(0, 0, 1);
-		Node n1 = this.network.createNode(10,0,2);
-		Node n2 = this.network.createNode(10, 10, 3);
-		Node n3 = this.network.createNode(0, 10, 4);
+		Node n0 = this.network.createNode(5, 5, 1);
+		Node n1 = this.network.createNode(15,5,2);
+		Node n2 = this.network.createNode(15, 15, 3);
+		Node n3 = this.network.createNode(5, 15, 4);
 		
 		this.network.createLink(n0, n1, 0);
 		this.network.createLink(n1, n0, 0);

@@ -73,7 +73,7 @@ public class Vehicle {
 	double pushWallY;
     private boolean isInTheSimulation = false;
 	private double mass;
-	private double walkParallelThreshold = 1.0;
+	private final double walkParallelThreshold = 1.0;
 	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<>();
 
 	public List<Link> getRoute() {
@@ -313,7 +313,7 @@ public class Vehicle {
     		PVector vVehicle = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
 
         	
-        	PVector vBackLink = vToNode.get();
+        	PVector vBackLink = vFromNode.get();
         	vBackLink.sub(vToNode);
         	
         	PVector vehToFromNode = vVehicle.get();
@@ -336,7 +336,6 @@ public class Vehicle {
         		lot.sub(pointOnLink);
         		
         		if(lot.mag() <= walkParallelThreshold){
-        			System.out.println("vehicle " + this.id + " walks parallel to link " + currentLink.getId());
         			dx = vBackLink.x * -1 / vBackLink.mag();
         			dy = vBackLink.y * -1 / vBackLink.mag();
         			System.out.println("vehicle " + this.id + " wants to walk parallel to link " + currentLink.getId());
