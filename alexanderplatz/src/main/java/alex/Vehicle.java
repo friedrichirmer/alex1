@@ -97,7 +97,7 @@ public class Vehicle {
         this.id = id;
         this.startTime = startTime;
         this.mass = 80;
-        this.mapOfEnterLeaveTimes.put(route.get(0).getId(), new Double[]{startTime, startTime});
+		this.mapOfEnterLeaveTimes.put(route.get(0).getId(), new Double[]{startTime, null});
         this.destinationNode = destinationNode;
     }
 
@@ -191,14 +191,12 @@ public class Vehicle {
         
         for (int i = 0; i< network.walls.size(); i++ ) {
 
-        	Wall w = network.walls.get(i);
+        	Wall wall = network.walls.get(i);
         	
-        		PVector wallA = new PVector ((float)w.getX1(),(float) w.getY1()); 	//Ende 1 der Wand
-        		PVector wallB = new PVector ((float)w.getX2(),(float) w.getY2());	//Ende 2 der Wand
+        		PVector wallA = new PVector ((float)wall.getX1(),(float) wall.getY1()); 	//Ende 1 der Wand
+        		PVector wallB = new PVector ((float)wall.getX2(),(float) wall.getY2());	//Ende 2 der Wand
         		PVector vehic = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
-        		
-        
-        		
+
         		PVector vecv = wallB.get();			// Vektor zeigt von Ende 1 auf Ende 2 der Wand
         		vecv.sub(wallA);		
         		PVector vecw = vehic.get();			// Vektor zeigt von Ende 1 auf Fahrzeug
@@ -292,17 +290,12 @@ public class Vehicle {
         	
             	pushWallY = pushWallY + 
         			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.y + 
-        			240000*g*radlot*vdify*t.y; 
-           	
+        			240000*g*radlot*vdify*t.y;
         		}
 
-                
         forceWalls = new PVector((float)pushWallX, (float)pushWallY);
-
-        
         
         // Berechnung der Wunschrichtung
-        
     	
         double dx = currentLink.getTo().getX() - this.x;
     	double dy = currentLink.getTo().getY() - this.y;
@@ -393,13 +386,17 @@ public class Vehicle {
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
         if (currentLink.hasVehicleReachedEndOfLink(this)) {
 			this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
-//			System.out.println("The new agent left the link and contribute to the current travel time on the link " + currentLink.getId());
+			System.out.println("The new agent id " + this.getId() +
+					" left the link " + currentLink.getId()
+					+ ", his travel time was " + (time - timeWhenEnteredLink));
+			System.out.println("entered at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[0]);
+			System.out.println("left at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[1]);
 			routeIndex++;
         	if (this.route.size() == routeIndex) {
         	   this.finish = true;
         	} else {
 				Link newCurrentLink = this.route.get(routeIndex);
-				this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, time});
+				this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, null});
 			}
         } else if (time - timeWhenEnteredLink > 20){
         	if (time % 5 ==0 && new Random().nextDouble() < 0.1){

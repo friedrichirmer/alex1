@@ -31,10 +31,12 @@ public class Link {
         double dy = from.getY() - to.getY();
         
         this.weight = Math.sqrt(dx * dx + dy * dy);
+        System.out.println("Initial weight of the link " + this.id + " is " + this.weight);
         this.length = Math.sqrt(dx * dx + dy * dy);
 
         this.finishLineX1 = -dy;
         this.finishLineY1 = dx;
+
 
     }
 
@@ -42,15 +44,17 @@ public class Link {
         int numberOfPassesThroughLinkInThePeriod = 0;
         Double sumOfTravelTimes = 0D;
         for (Vehicle vehicle : vehicleList) {
-            Double timeWhenVehicleEnteredThisLink = vehicle.getMapOfEnterLeaveTimes().get(this.getId())[0];
-            Double timeWhenVehicleLeftThisLink = vehicle.getMapOfEnterLeaveTimes().get(this.getId())[1];
-            if (vehicle.getRoute().contains(this) &&
-                    timeWhenVehicleEnteredThisLink > time - 20 && timeWhenVehicleEnteredThisLink > 0) {
-                Double vehicleTravelTimeOnLink = timeWhenVehicleLeftThisLink - timeWhenVehicleEnteredThisLink;
-                sumOfTravelTimes += vehicleTravelTimeOnLink;
-                numberOfPassesThroughLinkInThePeriod++;
+            if (vehicle.getRoute().contains(this) && !(vehicle.getMapOfEnterLeaveTimes().get(this.getId()) == null)){
+                Double timeWhenVehicleEnteredThisLink = vehicle.getMapOfEnterLeaveTimes().get(this.getId())[0];
+                Double timeWhenVehicleLeftThisLink = vehicle.getMapOfEnterLeaveTimes().get(this.getId())[1];
+                if(timeWhenVehicleEnteredThisLink > time - 20 && timeWhenVehicleEnteredThisLink > 0 &&
+                        !(timeWhenVehicleLeftThisLink == null)){
+                    Double vehicleTravelTimeOnLink = timeWhenVehicleLeftThisLink - timeWhenVehicleEnteredThisLink;
+                    sumOfTravelTimes += vehicleTravelTimeOnLink;
+                    numberOfPassesThroughLinkInThePeriod++;
+                }
             }
-        }
+    }
         if (!(numberOfPassesThroughLinkInThePeriod == 0)){
             this.weight = sumOfTravelTimes / numberOfPassesThroughLinkInThePeriod;
             System.out.println("the new weight of the Link " + this.getId() + " is " + weight);

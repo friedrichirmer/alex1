@@ -39,7 +39,7 @@ public class Simulation {
     private static final double MAX_TIME = 1000;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 20;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
 
 
     private final Vis vis;
@@ -187,13 +187,15 @@ public class Simulation {
             
             for (Vehicle vehicle : this.vehicles) {
             	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
-            	vehicle.update(neighboursToConsider, time);
-            
-                vehicle.move(time);
-                        
-                VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
-                		vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.isInTheSimulation());
-                vehicleInfoList.add(vehicleInfo);
+                vehicle.update(neighboursToConsider, time);
+            	if(vehicle.isInTheSimulation()){
+
+                    vehicle.move(time);
+
+                    VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
+                            vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.isInTheSimulation());
+                    vehicleInfoList.add(vehicleInfo);
+                }
             }
             
             this.vis.update(time, vehicleInfoList);
@@ -216,7 +218,7 @@ public class Simulation {
         while (linkIterator.hasNext()){
             Link link= linkIterator.next();
             link.calculateRecentLinkWeights(vehicles, time);
-            System.out.println("The new weight of the link " + link.getId() + " was calculated.");
+            System.out.println("The new weight of the link " + link.getId() + " was calculated");
         }
     }
 
