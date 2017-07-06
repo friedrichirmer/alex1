@@ -190,108 +190,9 @@ public class Vehicle {
          */
         
         for (int i = 0; i< network.walls.size(); i++ ) {
-
         	Wall wall = network.walls.get(i);
-        	
-        		PVector wallA = new PVector ((float)wall.getX1(),(float) wall.getY1()); 	//Ende 1 der Wand
-        		PVector wallB = new PVector ((float)wall.getX2(),(float) wall.getY2());	//Ende 2 der Wand
-        		PVector vehic = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
-
-        		PVector vecv = wallB.get();			// Vektor zeigt von Ende 1 auf Ende 2 der Wand
-        		vecv.sub(wallA);		
-        		PVector vecw = vehic.get();			// Vektor zeigt von Ende 1 auf Fahrzeug
-        		vecw.sub(wallA);
-        		PVector vecw2 = vehic.get();		// Vektor zeigt von Ende 2 auf Fahrzeug
-        		vecw2.sub(wallB);  
-        		
-        		float c1 = 0;	// Hilfsgr��e zur Bestimmung der Position relativ zur Wand
-     			float c2 = 0; 	// Hilfsgr��e zur Bestimmung der Position relativ zur Wand
-     		
-     			c1 = vecw.dot(vecv);
-     			c2 = vecv.dot(vecv);
-     			
-     			double lot;		// L�nge des Lots
-     			double radlot = 1;	// Radius des Fahrzeugs minus L�nge des Lots (meistens negativ)
-
-   				PVector t = null; 	// tangetialer Richtungsvektor f�r die Kraft
-        		PVector n = null;	// normaler Richtungsvektor f�r die Kraft
-        		
-        		/*
-        		 * Fall 1:
-        		 * Die Kraft zeigt von der einen Ecke der Wand
-        		 */
-     			
-				if ( c1 <= 0 ) {
-     			    lot = PVector.dist(vehic, wallA);
-					radlot = this.getRadius() - lot;
-					length = vecv.mag();
-					n = vecw.get();
-					n.normalize();
-					t = n.get();
-            	   
-				}
-				
-				/*
-				 * Fall 2:
-				 * Die Kraft zeigt von der anderen Ecke der Wand
-				 */
-				
-     			if ( c2 <= c1 ) {
-     				lot = PVector.dist(vehic, wallB);
-     				radlot = this.getRadius() - lot;
-     				length = vecv.mag();
-     				
-     				n = vecw2.get();
-     				n.normalize();
-            	    t = n.get();
-     			}
-     			
-     			/*
-     			 * Fall 3:
-     			 * Die Kraft zeigt vom Lot senkrecht auf das Fahrzeug
-     			 */
-     			
-     			if ((c1 > 0) && (c1 < c2)) {
-     				     				
-     				float b = c1 / c2;
-     				     				
-     				PVector bv = PVector.mult(vecv, b);
-     				PVector pb = PVector.add(wallA, bv); 	// Vektor pb ist der Lotfu�punkt auf der Wand
-     				
-     				PVector pbV = vehic.get();				// Vektor pbV zeigt vom Lotfu�punkt auf das Fahrzeug (Richtung der Kraft)
-     				pbV.sub(pb);
-     				     				
-     				lot = PVector.dist(vehic, pb);
-     				radlot = this.getRadius() - lot;
-     				length = vecv.mag();
-     				
-     				n = pbV.get();
-     			    n.normalize();
-            	    t = n.get();
-            	    
-            	    }
-
-        	    t.rotate((float)((Math.PI)/2));
-        	    
-        		double g;
-        		if (radlot >= 0) {
-        			g = 1;
-        			
-        		}
-        		
-        		else   	g=0;
-        		 	
-            	double vdifx = this.vtx * t.x;
-            	double vdify = this.vty * t.y;
-
-				pushWallX = pushWallX + 
-        			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.x +
-        			240000*g*radlot*vdifx*t.x;
-        	
-            	pushWallY = pushWallY + 
-        			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.y + 
-        			240000*g*radlot*vdify*t.y;
-        		}
+       		calcWallForce(wall);
+        }
 
         forceWalls = new PVector((float)pushWallX, (float)pushWallY);
         
@@ -373,6 +274,110 @@ public class Vehicle {
         this.phi = Math.atan2(vy,vx);
         
     }
+
+	/**
+	 * @param wall
+	 */
+	private void calcWallForce(Wall wall) {
+		PVector wallA = new PVector ((float)wall.getX1(),(float) wall.getY1()); 	//Ende 1 der Wand
+		PVector wallB = new PVector ((float)wall.getX2(),(float) wall.getY2());	//Ende 2 der Wand
+		PVector vehic = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
+
+		PVector vecv = wallB.get();			// Vektor zeigt von Ende 1 auf Ende 2 der Wand
+		vecv.sub(wallA);		
+		PVector vecw = vehic.get();			// Vektor zeigt von Ende 1 auf Fahrzeug
+		vecw.sub(wallA);
+		PVector vecw2 = vehic.get();		// Vektor zeigt von Ende 2 auf Fahrzeug
+		vecw2.sub(wallB);  
+		
+		float c1 = 0;	// Hilfsgr��e zur Bestimmung der Position relativ zur Wand
+		float c2 = 0; 	// Hilfsgr��e zur Bestimmung der Position relativ zur Wand
+  		
+		c1 = vecw.dot(vecv);
+		c2 = vecv.dot(vecv);
+		
+		double lot;		// L�nge des Lots
+		double radlot = 1;	// Radius des Fahrzeugs minus L�nge des Lots (meistens negativ)
+
+		PVector t = null; 	// tangetialer Richtungsvektor f�r die Kraft
+		PVector n = null;	// normaler Richtungsvektor f�r die Kraft
+		
+		/*
+		 * Fall 1:
+		 * Die Kraft zeigt von der einen Ecke der Wand
+		 */
+		
+		if ( c1 <= 0 ) {
+		    lot = PVector.dist(vehic, wallA);
+			radlot = this.getRadius() - lot;
+			length = vecv.mag();
+			n = vecw.get();
+			n.normalize();
+			t = n.get();
+		   
+		}
+		
+		/*
+		 * Fall 2:
+		 * Die Kraft zeigt von der anderen Ecke der Wand
+		 */
+		
+		if ( c2 <= c1 ) {
+			lot = PVector.dist(vehic, wallB);
+			radlot = this.getRadius() - lot;
+			length = vecv.mag();
+			
+			n = vecw2.get();
+			n.normalize();
+		    t = n.get();
+		}
+		
+		/*
+		 * Fall 3:
+		 * Die Kraft zeigt vom Lot senkrecht auf das Fahrzeug
+		 */
+		
+		if ((c1 > 0) && (c1 < c2)) {
+			     				
+			float b = c1 / c2;
+			     				
+			PVector bv = PVector.mult(vecv, b);
+			PVector pb = PVector.add(wallA, bv); 	// Vektor pb ist der Lotfu�punkt auf der Wand
+			
+			PVector pbV = vehic.get();				// Vektor pbV zeigt vom Lotfu�punkt auf das Fahrzeug (Richtung der Kraft)
+			pbV.sub(pb);
+			     				
+			lot = PVector.dist(vehic, pb);
+			radlot = this.getRadius() - lot;
+			length = vecv.mag();
+			
+			n = pbV.get();
+		    n.normalize();
+		    t = n.get();
+		    
+		    }
+
+		t.rotate((float)((Math.PI)/2));
+		
+		double g;
+		if (radlot >= 0) {
+			g = 1;
+			
+		}
+		
+		else   	g=0;
+		 	
+		double vdifx = this.vtx * t.x;
+		double vdify = this.vty * t.y;
+
+		pushWallX = pushWallX + 
+			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.x +
+			240000*g*radlot*vdifx*t.x;
+     	
+		pushWallY = pushWallY + 
+			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.y + 
+			240000*g*radlot*vdify*t.y;
+	}
     
     public void move(double time) {
 
