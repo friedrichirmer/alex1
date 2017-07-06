@@ -27,7 +27,7 @@ public class Voronoi {
 	
 	public double calcDensity() {
 		
-		
+		Site site = new Site();
 		
 		return 0;
 	}
