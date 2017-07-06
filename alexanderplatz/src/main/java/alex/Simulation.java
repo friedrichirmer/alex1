@@ -39,7 +39,7 @@ public class Simulation {
     private static final double MAX_TIME = 1000;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 230;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 20;
 
 
     private final Vis vis;
@@ -134,12 +134,15 @@ public class Simulation {
         double time = 0;
 
         KDTree kdTree = new KDTree(this.vehicles);
-        double visualRangeX = 3;
-        double visualRangeY = 3;
+        double visualRangeX = 5;
+        double visualRangeY = 5;
         int nrOfNeighboursToConsider = 5;
         
         while (time < MAX_TIME) {
-        	
+        	time *= 100;
+        	time = Math.round(time);
+        	time /= 100;
+        	System.out.println("TIME=" + time);
         	/* Tilmann 22.6::
         	 * bisher wurde unn�tig of �ber vehicles iteriert, m�sste auch mit nur 2 mal gehen:
         	 * 										(1.: F�r alle Vehicles: checken vehicle.getFinish)

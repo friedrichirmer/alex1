@@ -73,7 +73,7 @@ public class Vehicle {
 	double pushWallY;
     private boolean isInTheSimulation = false;
 	private double mass;
-	private double walkParallelThreshold = Double.MAX_VALUE;
+	private double walkParallelThreshold = 1.0;
 	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<>();
 
 	public List<Link> getRoute() {
@@ -312,7 +312,7 @@ public class Vehicle {
     	dy /= dist;
         
         if(this.walkParallelThreshold  < Double.MAX_VALUE){
-        	// wir m�ssen hier das Lot vom Vehicle auf den aktuellen Link f�llen
+        	// wir muessen hier das Lot vom Vehicle auf den aktuellen Link faellen
         	// siehe http://geomalgorithms.com/a02-_lines.html
         	
         	PVector vFromNode = new PVector((float) currentLink.getFrom().getX(), (float) currentLink.getFrom().getY());
@@ -329,11 +329,12 @@ public class Vehicle {
         	float c1 = PVector.dot(vehToFromNode, vBackLink);
         	float c2 = PVector.dot(vBackLink, vBackLink);
         	
-//        	if(c2 <= c1){ //Vehicle befindet sich schon �ber den toNode (bzw Zielline) hinaus => gleich zum n�chsten Link �bergehen?
+//        	if(c2 <= c1){ //Vehicle befindet sich schon ueber den toNode (bzw Zielline) hinaus => gleich zum naechsten Link uebergehen?
 //        		
 //        	}
         	
         	if( !(c1 <= 0) && c2 > c1){
+        		System.out.println("Berechne das Lot von Vehicle " + this.id + " auf Link " + currentLink.getId());
         		PVector pointOnLink = vBackLink.get();
         		pointOnLink.mult(c1/c2);
         		pointOnLink.add(vFromNode);
@@ -342,6 +343,7 @@ public class Vehicle {
         		lot.sub(pointOnLink);
         		
         		if(lot.mag() <= walkParallelThreshold){
+        			System.out.println("vehicle " + this.id + " walks parallel to link " + currentLink.getId());
         			dx = vBackLink.x * -1 / vBackLink.mag();
         			dy = vBackLink.y * -1 / vBackLink.mag();
         			System.out.println("vehicle " + this.id + " wants to walk parallel to link " + currentLink.getId());
@@ -351,7 +353,7 @@ public class Vehicle {
         }
 
         /*
-         * Alle Kr�fte werden summiert.
+         * Alle Kraefte werden summiert.
          * Hier wieder mit getrennten x- und y-Komponenten.
          */
 
@@ -368,7 +370,7 @@ public class Vehicle {
         vx = vtx + Simulation.TIME_STEP *(forceX/80);
         vy = vty + Simulation.TIME_STEP *(forceY/80);
         
-        //	Begrenzung der Kr�fte
+        //	Begrenzung der Kraefte
         if (Math.sqrt((vx*vx)+(vy*vy)) > maxSpeed) {
         	double speed = Math.sqrt((vx*vx)+(vy*vy));
         	vx = Math.sqrt(speed) * vx / speed ;
@@ -391,7 +393,7 @@ public class Vehicle {
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
         if (currentLink.hasVehicleReachedEndOfLink(this)) {
 			this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
-			System.out.println("THe new agent left the link and contribute to the current travel time on the link " + currentLink.getId());
+//			System.out.println("The new agent left the link and contribute to the current travel time on the link " + currentLink.getId());
 			routeIndex++;
         	if (this.route.size() == routeIndex) {
         	   this.finish = true;
