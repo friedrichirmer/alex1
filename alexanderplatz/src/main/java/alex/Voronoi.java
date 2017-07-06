@@ -1,60 +1,63 @@
 package alex;
 
 
+import be.humphreys.simplevoronoi.Site;
 import processing.core.PApplet;
 
 public class Voronoi {
 	
-	private float x1;
-	private float y1;
-	private float x2;
-	private float y2;
+	private float upperLeftX;
+	private float upperLeftY;
+	private float lowerRightX;
+	private float lowerRightY;
 	
 	
 	
 	public void corner1(double x, double y){
-		x1 = (float) x;
-		y1 = (float) y;
+		upperLeftX = (float) x;
+		upperLeftY = (float) y;
 	}
 
 
 	public void corner2(double x, double y) {
-		x2 = (float) x;
-		y2 = (float) y;
+		lowerRightX = (float) x;
+		lowerRightY = (float) y;
 
 	}
 	
-	public double density() {
+	public double calcDensity() {
+		
+		
 		
 		return 0;
 	}
 	
 	public void  draw(PApplet p) {
-		if (x2 != 0 && y2 != 0) {
+		if (lowerRightX != 0 && lowerRightY != 0) {
 			float width;
 			float height;
 			
 			float upperLeftCornerX;
 			float upperLeftCornerY;
 			
-			double density = this.density();
+			double density = this.calcDensity();
 			
-			if (x1 < x2) {
-				upperLeftCornerX = x1;
-				width = x2 - x1;
+			if (upperLeftX < lowerRightX) {
+				upperLeftCornerX = upperLeftX;
+				width = lowerRightX - upperLeftX;
 			}
 			else {
-				upperLeftCornerX = x2;
-				width = x1 - x2;
+				upperLeftCornerX = lowerRightX;
+				width = upperLeftX - lowerRightX;
 			}
 			
-			if (y1 < y2) {
-				upperLeftCornerY = y1;
-				height = y2 - y1;
+			if (upperLeftY < lowerRightY) {
+				upperLeftCornerY = upperLeftY;
+				height = lowerRightY - upperLeftY;
 			}
 			else {
-				upperLeftCornerY = y2;
-				height = y1 - y2;
+				upperLeftCornerY = lowerRightY;
+				height = upperLeftY - lowerRightY;
 			}
 			
 			p.noFill();
@@ -66,10 +69,10 @@ public class Voronoi {
 
 
 	public void reset() {
-		x1 = 0;
-		y1 = 0;
-		x2 = 0;
-		y2 = 0;
+		upperLeftX = 0;
+		upperLeftY = 0;
+		lowerRightX = 0;
+		lowerRightY = 0;
 		
 	}
 
