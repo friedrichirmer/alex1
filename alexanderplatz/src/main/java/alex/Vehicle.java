@@ -228,7 +228,6 @@ public class Vehicle {
 //        	}
         	
         	if( !(c1 <= 0) && c2 > c1){
-        		System.out.println("Berechne das Lot von Vehicle " + this.id + " auf Link " + currentLink.getId());
         		PVector lotFootpointOnLink = vLink.get();
         		lotFootpointOnLink.mult(c1/c2);
         		lotFootpointOnLink.add(vFromNode);
@@ -240,7 +239,6 @@ public class Vehicle {
         			vLink.normalize();
         			dx = vLink.x;
         			dy = vLink.y;
-        			System.out.println("vehicle " + this.id + " wants to walk parallel to link " + currentLink.getId());
         		}
         		
         	}

@@ -144,7 +144,6 @@ public class Simulation {
         	time *= 100;
         	time = Math.round(time);
         	time /= 100;
-        	System.out.println("TIME=" + time);
         	/* Tilmann 22.6::
         	 * bisher wurde unn�tig of �ber vehicles iteriert, m�sste auch mit nur 2 mal gehen:
         	 * 										(1.: F�r alle Vehicles: checken vehicle.getFinish)
