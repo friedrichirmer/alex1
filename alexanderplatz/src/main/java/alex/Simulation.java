@@ -39,7 +39,7 @@ public class Simulation {
     private static final double MAX_TIME = 1000;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 3;
 
 
     private final Vis vis;
@@ -114,7 +114,9 @@ public class Simulation {
         network.createWall(30,10,18,10,3);
         network.createWall(18,10,18,7,3);
             
-       
+    	//Network network = new RectangleNetCreator().createNetwork();
+    	//getListOfNodeIds(network);
+    	
         Simulation simulation = new Simulation(network);
         addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
         simulation.run(network);
