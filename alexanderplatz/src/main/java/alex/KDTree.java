@@ -103,7 +103,7 @@ public class KDTree {
 		return this;
 	}
 	
-	private List<Vehicle> searchKDTree(double xMin, double yMin, double xMax, double yMax){
+	List<Vehicle> searchKDTree(double xMin, double yMin, double xMax, double yMax){
 		
 		if(this.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
 			return this.origin;
