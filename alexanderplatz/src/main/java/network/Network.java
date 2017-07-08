@@ -1,4 +1,4 @@
-package networkUtils;
+package network;
 
 import alex.Simulation;
 import processing.core.PApplet;

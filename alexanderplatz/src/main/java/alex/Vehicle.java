@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import networkUtils.Link;
-import networkUtils.Network;
-import networkUtils.Node;
-import networkUtils.Wall;
+import network.Link;
+import network.Network;
+import network.Node;
+import network.Wall;
 import processing.core.PVector;
 
 public class Vehicle {

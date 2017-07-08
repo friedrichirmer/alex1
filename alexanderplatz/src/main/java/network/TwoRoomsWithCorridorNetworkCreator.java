@@ -1,4 +1,4 @@
-package networkUtils;
+package network;
 
 import java.util.List;
 

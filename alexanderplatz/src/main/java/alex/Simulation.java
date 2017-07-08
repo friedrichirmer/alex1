@@ -20,17 +20,18 @@ package alex;
  * *********************************************************************** */
 
 
-import networkUtils.Link;
-import networkUtils.Network;
-import networkUtils.Node;
-import networkUtils.RectangleNetCreator;
-import networkUtils.TwoRoomsWithCorridorNetworkCreator;
-
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import network.Link;
+import network.Network;
+import network.NetworkUtils;
+import network.Node;
+import network.RectangleNetCreator;
+import network.TwoRoomsWithCorridorNetworkCreator;
 
 /**
  * Created by laemmel on 24/04/16.
@@ -59,9 +60,9 @@ public class Simulation {
    	
 //  	Network network = new RectangleNetCreator().createNetwork();
     	Network network = new TwoRoomsWithCorridorNetworkCreator().createNetwork();
-    	getListOfNodeIds(network);
     	
     	Simulation simulation = new Simulation(network);
+    	NetworkUtils.createListOfNodeIds(network, simulation);
     	addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
     
 //      Simulation simulation = makeTestScenario(network);
@@ -70,39 +71,7 @@ public class Simulation {
         
     }
 
-	/**
-	 * @param network
-	 * @return
-	 */
-	private static Simulation makeTestScenario(Network network) {
-		Simulation simulation = new Simulation(network);
-        
-        Node startNodeId = network.nodes.get(listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size())));
-        Node finishNodeId = network.nodes.get(listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size())));
-        
-        Vehicle v1 = new Vehicle(network, startNodeId, finishNodeId, 1.0, "1");
-        Vehicle v3 = new Vehicle(network, startNodeId, finishNodeId, 16.0, "3");
-        Vehicle v5 = new Vehicle(network, startNodeId, finishNodeId, 31.0, "5");
-        
-        Vehicle v2 = new Vehicle(network, finishNodeId, startNodeId, 4.5, "2");
-        Vehicle v4 = new Vehicle(network, finishNodeId, startNodeId, 19.5, "4");
-        
-        simulation.add(v1);
-        simulation.add(v2);
-        simulation.add(v3);
-        simulation.add(v4);
-        simulation.add(v5);
-		return simulation;
-	}
 
-    private static void getListOfNodeIds(Network network) {
-        Map nodesMap = network.getNodes();
-        Iterator<Integer> nodeIdIterator = nodesMap.keySet().iterator();
-        while ( nodeIdIterator.hasNext()){
-            Integer nodeId = nodeIdIterator.next();
-            listOfNodesIds.add(nodeId);
-        }
-    }
 
     private void run(Network network) {
         double time = 0;
@@ -217,13 +186,17 @@ public class Simulation {
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
-        simulation.add(new Vehicle(network, startNode, finishNode, startTime, vehicleId));
+        simulation.addVehicle(new Vehicle(network, startNode, finishNode, startTime, vehicleId));
         System.out.println("Random Vehicle " + vehicleId + " is created");
     }
 
-    private void add(Vehicle vehicle) {
+    public void addVehicle(Vehicle vehicle) {
         this.allVehicles.add(vehicle);
     }
+
+	public List<Integer> getListOfNodesIds() {
+		return this.listOfNodesIds;
+	}
     
  
     

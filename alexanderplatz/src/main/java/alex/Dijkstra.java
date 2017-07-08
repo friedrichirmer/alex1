@@ -1,10 +1,10 @@
 package alex;
 
-import networkUtils.Link;
-import networkUtils.Network;
-import networkUtils.Node;
-
 import java.util.*;
+
+import network.Link;
+import network.Network;
+import network.Node;
 
 public class Dijkstra {
 	

@@ -19,10 +19,12 @@ package alex;/* ****************************************************************
  * *********************************************************************** */
 
 
-import networkUtils.Network;
 import processing.core.PApplet;
 
 import javax.swing.*;
+
+import network.Network;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
