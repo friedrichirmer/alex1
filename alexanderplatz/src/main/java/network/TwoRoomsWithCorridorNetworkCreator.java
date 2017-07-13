@@ -13,7 +13,8 @@ public class TwoRoomsWithCorridorNetworkCreator {
 	}
 	
 	public Network createNetwork(){
-	        Node node1 = network.createNode(3.5,3.5,1);
+
+		Node node1 = network.createNode(3.5,3.5,1);
 	        Node node2 = network.createNode(13,3,2);
 	        Node node3 = network.createNode(13,6,3);
 	        Node node4 = network.createNode(13,9,4);
@@ -52,7 +53,8 @@ public class TwoRoomsWithCorridorNetworkCreator {
 	        network.createLink(node9,node8,3);
 	        network.createLink(node10,node9,3);
 	        network.createLink(node6,node10,3);
-	              
+
+	        /*
 	        network.createWall(2,2,14,2,1);
 	        network.createWall(6,2,9,5.5,1);
 	        network.createWall(14,2,14,5,1);
@@ -68,7 +70,7 @@ public class TwoRoomsWithCorridorNetworkCreator {
 	        network.createWall(30,2,30,10,3);
 	        network.createWall(30,10,18,10,3);
 	        network.createWall(18,10,18,7,3);
-	        
+	        */
 	        return this.network;
 	}
 }

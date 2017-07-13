@@ -44,9 +44,8 @@ public class Network {
    		return link;
    	}
 
-   	public Wall createWall(double x1, double y1, double x2, double y2, int room) {
-   		int id = counterW ;
-   		Wall w = new Wall(x1,y1,x2,y2,room,id);
+   	public Wall createWall(double x1, double y1, double x2, double y2) {
+   		Wall w = new Wall(x1,y1,x2,y2);
    		walls.add(w);
    		counterW++;
      	return w;

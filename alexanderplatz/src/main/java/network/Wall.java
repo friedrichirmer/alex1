@@ -6,16 +6,12 @@ public class Wall {
 	private final double x2;
 	private final double y1;
 	private final double y2;
-	private final int room;
-	private final int id;
 
-	public Wall (double x1, double y1, double x2, double y2, int room, int id) {
+	public Wall (double x1, double y1, double x2, double y2) {
 		this.x1 = x1;
 		this.y1 = y1;
 		this.x2 = x2;
 		this.y2 = y2;
-		this.room = room;
-		this.id = id;
 	}
 
 	public double getX1() {
@@ -34,11 +30,4 @@ public class Wall {
 		return y2;
 	}
 
-	public int getRoom() {
-		return room;
-	}
-
-	public int getId() {
-		return id;
-	}
 }
