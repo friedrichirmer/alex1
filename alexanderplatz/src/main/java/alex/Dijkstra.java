@@ -52,7 +52,7 @@ public class Dijkstra {
 
 	private static void initializeQuListOfNodes(List<Node> qu) {
 		for (int i = 1; i<= Dijkstra.network.nodes.size(); i++) {
-			Node node = Dijkstra.network.nodes.get(i);
+			Node node = Dijkstra.network.getNodes().get(i);
 			nodeWeights.put(node, Double.POSITIVE_INFINITY);
 			predecessor.put(node, null);
 			qu.add(node);
@@ -64,12 +64,12 @@ public class Dijkstra {
 			Link link =  network.links.get(i);
 			if (link.getFrom() == currentNode) {
 				
-				Node vnew = link.getTo();
-				double c;
-				c = nodeWeights.get(currentNode) + link.getWeight();
-				if(c < nodeWeights.get(vnew)) {
-					nodeWeights.put(vnew, c);
-					predecessor.put(vnew, currentNode);
+				Node newVertex = link.getTo();
+				double cost;
+				cost = nodeWeights.get(currentNode) + link.getWeight();
+				if(cost < nodeWeights.get(newVertex)) {
+					nodeWeights.put(newVertex, cost);
+					predecessor.put(newVertex, currentNode);
 				}
 			}
 		}
