@@ -13,7 +13,7 @@ import java.util.List;
 public class AlexanderplatzNetworkCreator {
 
 	private Network network;
-	private List<Node> entryExitNodes = new ArrayList<Node>();
+
 	
 	
 	public AlexanderplatzNetworkCreator(){
@@ -206,28 +206,23 @@ public class AlexanderplatzNetworkCreator {
         network.createWall(34.6,39.8,35.6,39.8);
         network.createWall(35.6,39.8,35.5,41.2);
        
-		entryExitNodes.add(uSaturn);
-		entryExitNodes.add(uPrimark);
-		entryExitNodes.add(uMediaM);
-		entryExitNodes.add(uTchibo);
-		entryExitNodes.add(uKFC);
-		entryExitNodes.add(uZentral);
-		entryExitNodes.add(sBahn1);
-		entryExitNodes.add(sBahn2);
-		entryExitNodes.add(sBahn3);
-		entryExitNodes.add(primark);
-		entryExitNodes.add(saturn);
-		entryExitNodes.add(ampelLinks);
-		entryExitNodes.add(ampelOben);
-		entryExitNodes.add(ampelRechts);
-		entryExitNodes.add(ampelMediaM);
+		network.entryExitNodes.add(uSaturn);
+		network.entryExitNodes.add(uPrimark);
+		network.entryExitNodes.add(uMediaM);
+		network.entryExitNodes.add(uTchibo);
+		network.entryExitNodes.add(uKFC);
+		network.entryExitNodes.add(uZentral);
+		network.entryExitNodes.add(sBahn1);
+		network.entryExitNodes.add(sBahn2);
+		network.entryExitNodes.add(sBahn3);
+		network.entryExitNodes.add(primark);
+		network.entryExitNodes.add(saturn);
+		network.entryExitNodes.add(ampelLinks);
+		network.entryExitNodes.add(ampelOben);
+		network.entryExitNodes.add(ampelRechts);
+		network.entryExitNodes.add(ampelMediaM);
 				
         return network;
 	}
-	
-	public List<Node> getEntryExitNodes(){
-		return this.entryExitNodes;
-	}
-	
-	
+
 }

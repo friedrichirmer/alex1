@@ -57,7 +57,6 @@ public class VehicleInfo {
         this.forceTarget = forceTarget;
         this.forceVehicles = forceVehicles;
         this.forceWalls = forceWalls;
-
     }
     
 
@@ -79,10 +78,10 @@ public class VehicleInfo {
             p.ellipse(radius / 4, 0, radius, radius);
             p.ellipse(radius / 4, 0, 7, 7);
             p.popMatrix();
-            
+
             /**
              * Pfeile k�nnen die Richtungen und St�rken von Kr�ften anzeigen (bei Bedarf aktivieren)
-             * 
+             *
              * Roter Pfeil zeigt die Kraft in Richtung des aktuellen Ziels an (nur bei Richtungs�nderungen)
              */
 

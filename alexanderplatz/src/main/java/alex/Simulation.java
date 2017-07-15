@@ -196,8 +196,9 @@ public class Simulation {
         
         int nrRoutesNull = 0;
         for (int i = 0; i < numberOfRandomVehicles; i++){
-            Integer startNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
-            Integer finishNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
+
+            Integer startNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
+            Integer finishNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
             if (!startNodeId.equals(finishNodeId)){
             	List<Link> route = router.calculateRoute(network.getNodes().get(startNodeId), network.getNodes().get(finishNodeId));
                 if (!(route == null)) {

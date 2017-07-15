@@ -18,8 +18,13 @@ public class Network {
    	private final List<LinkInfo> linkInfos = new ArrayList<>();
    	private int counterOfLinks = 1;
 	private int counterW = 1;
+	public List<Node> entryExitNodes = new ArrayList<Node>();
 
-   	public Node createNode(double x, double y, int id) {
+	public List<Node> getEntryExitNodes() {
+		return entryExitNodes;
+	}
+
+	public Node createNode(double x, double y, int id) {
    		Node n = new Node(x,y,id);
    		this.nodes.put(id,n);
    		return n;
