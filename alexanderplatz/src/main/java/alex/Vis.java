@@ -55,14 +55,14 @@ public class Vis extends PApplet implements MouseListener {
 	private int densityWindowX2;
 	private int densityWindowY2;
 
-	private Voronoi voronoi;
+	private be.humphreys.simplevoronoi.Voronoi voronoi;
     private double xOffset;
     private double yOffset;
     private double scale;
 
     public Vis(Network net) {
         this.net = net;
-		this.voronoi = new Voronoi();
+		this.voronoi = new be.humphreys.simplevoronoi.Voronoi(0.1);
         JFrame fr = new JFrame();
         fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         fr.setSize(WIDTH, HEIGHT);
@@ -102,16 +102,21 @@ public class Vis extends PApplet implements MouseListener {
     public void mousePressed( MouseEvent e ) {
     	
     	if (e.getButton() == 1) {
-    		voronoi.reset(); // Bei einem Mausklick wird die Messung automatisch zur�ckgesetzt
+    		// Bei einem Mausklick wird die Messung automatisch zur�ckgesetzt
     		//System.out.println("gepresst: [" + e.getX() + "] [" + e.getY() + "]");
-    		voronoi.corner1(e.getX() , e.getY());
+    		densityWindowX1 = e.getX() ;
+    		densityWindowY1 = e.getY();
     	}
 	}
     
     public void mouseReleased( MouseEvent e ) {
     	if (e.getButton() == 1) {
     		//System.out.println("losgelassen: [" + e.getX() + "] [" + e.getY() + "]");
-    		voronoi.corner2(e.getX(), e.getY());
+    		densityWindowX2 = e.getX();
+    		densityWindowY2 = e.getY();
+    		double[] testpunkte = {100,200,300,400,500,600};
+    		  		
+    		voronoi.generateVoronoi(testpunkte, testpunkte, densityWindowX1, densityWindowX2, densityWindowY1, densityWindowY2);
     	}
 
 	}
