@@ -41,8 +41,6 @@ public class DijkstraV2 {
 		} else return null;
 	}
 
-
-
 	    private void expandDijkstraNode(DijkstraNode current) {
 	    	for(Link link : current.getNode().getOutLinks()){
 	    		double weight = link.getWeight();

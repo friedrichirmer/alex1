@@ -39,11 +39,14 @@ import network.TwoRoomsWithCorridorNetworkCreator;
  */
 public class Simulation {
 
-    public static final double SCALE = 10;
+    public static final double SCALE = 80;
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 100;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 1000;
+    public double visualRangeX = 5;
+    public double visualRangeY = 5;
+    public int nrOfNeighboursToConsider = 10;
 
     private final Vis vis;
     private List<Vehicle> allVehicles = new ArrayList<>();
@@ -91,9 +94,7 @@ public class Simulation {
         double time = 0;
 
         KDTree kdTree = new KDTree(this.vehiclesInSimulation);
-        double visualRangeX = 5;
-        double visualRangeY = 5;
-        int nrOfNeighboursToConsider = 10;
+
         
         int oldNrOfVehInSim = vehiclesInSimulation.size();
         
