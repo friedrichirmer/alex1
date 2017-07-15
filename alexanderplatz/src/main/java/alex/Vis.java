@@ -23,6 +23,11 @@ import processing.core.PApplet;
 
 import javax.swing.*;
 
+import be.humphreys.simplevoronoi.GraphEdge;
+import kn.uni.voronoitreemap.datastructure.OpenList;
+import kn.uni.voronoitreemap.diagram.PowerDiagram;
+import kn.uni.voronoitreemap.j2d.PolygonSimple;
+import kn.uni.voronoitreemap.j2d.Site;
 import network.Network;
 
 import java.awt.*;
@@ -30,7 +35,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by laemmel on 17/04/16.
@@ -59,6 +68,23 @@ public class Vis extends PApplet implements MouseListener {
     private double xOffset;
     private double yOffset;
     private double scale;
+    
+    
+    OpenList sites = new OpenList();
+	Random rand = new Random(100);
+
+
+	private int originX;
+	private int originY;
+
+	private int rootWidth;
+	private int rootHeight;
+
+	private double densityInRoot =  0;
+	private double numberInRoot = 0;
+	private double areasInRoot = 0;
+
+	private Set<PolygonSimple> polygonsInRoot =  new HashSet<PolygonSimple>();
 
     public Vis(Network net) {
         this.net = net;
@@ -75,7 +101,7 @@ public class Vis extends PApplet implements MouseListener {
         panel.setEnabled(true);
         panel.setVisible(true);
        
-        
+       
         
         this.init();
         frameRate(90);
@@ -106,6 +132,11 @@ public class Vis extends PApplet implements MouseListener {
     		//System.out.println("gepresst: [" + e.getX() + "] [" + e.getY() + "]");
     		densityWindowX1 = e.getX() ;
     		densityWindowY1 = e.getY();
+    		
+    		densityInRoot =  0;
+    		numberInRoot = 0;
+    		areasInRoot = 0;
+    		
     	}
 	}
     
@@ -114,13 +145,101 @@ public class Vis extends PApplet implements MouseListener {
     		//System.out.println("losgelassen: [" + e.getX() + "] [" + e.getY() + "]");
     		densityWindowX2 = e.getX();
     		densityWindowY2 = e.getY();
-    		double[] testpunkte = {100,200,300,400,500,600};
-    		  		
-    		voronoi.generateVoronoi(testpunkte, testpunkte, densityWindowX1, densityWindowX2, densityWindowY1, densityWindowY2);
+    		
+    		PolygonSimple rootPolygon = new PolygonSimple();
+    		PolygonSimple outerPolygon = new PolygonSimple();
+    		PowerDiagram diagram = new PowerDiagram();
+    		
+    		polygonsInRoot.clear();
+    		
+    		rootPolygon.add(densityWindowX1, densityWindowY1);
+    		rootPolygon.add(densityWindowX1, densityWindowY2);
+    		rootPolygon.add(densityWindowX2, densityWindowY2);
+    		rootPolygon.add(densityWindowX2, densityWindowY1);
+    		
+    		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
+    			outerPolygon.add(densityWindowX1 - 100, densityWindowY1 - 100);
+    			outerPolygon.add(densityWindowX2 + 100, densityWindowY1 - 100);
+    			outerPolygon.add(densityWindowX2 + 100, densityWindowY2 + 100);
+    			outerPolygon.add(densityWindowX1 - 100, densityWindowY2 + 100);
+    			originX = densityWindowX1;
+    			originY = densityWindowY1;
+    			rootWidth = densityWindowX2 - densityWindowX1;
+    			rootHeight = densityWindowY2 - densityWindowY1;
+    		}
+    		
+    		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
+    			outerPolygon.add(densityWindowX2 - 100, densityWindowY1 - 100);
+    			outerPolygon.add(densityWindowX1 + 100, densityWindowY1 - 100);
+    			outerPolygon.add(densityWindowX1 + 100, densityWindowY2 + 100);
+    			outerPolygon.add(densityWindowX2 - 100, densityWindowY2 + 100);
+    			originX = densityWindowX2;
+    			originY = densityWindowY1;
+    			rootWidth = densityWindowX1 - densityWindowX2;
+    			rootHeight = densityWindowY2 - densityWindowY1;
+    		}
+    		
+    		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
+    			outerPolygon.add(densityWindowX1 - 100, densityWindowY2 - 100);
+    			outerPolygon.add(densityWindowX2 + 100, densityWindowY2 - 100);
+    			outerPolygon.add(densityWindowX2 + 100, densityWindowY1 + 100);
+    			outerPolygon.add(densityWindowX1 - 100, densityWindowY1 + 100);
+    			originX = densityWindowX1;
+    			originY = densityWindowY2;
+    			rootWidth = densityWindowX2 - densityWindowX1;
+    			rootHeight = densityWindowY1 - densityWindowY2;
+    		}
+    		
+    		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
+    			outerPolygon.add(densityWindowX2 - 100, densityWindowY2 - 100);
+    			outerPolygon.add(densityWindowX1 + 100, densityWindowY2 - 100);
+    			outerPolygon.add(densityWindowX1 + 100, densityWindowY1 + 100);
+    			outerPolygon.add(densityWindowX2 - 100, densityWindowY1 + 100);
+    			originX = densityWindowX2;
+    			originY = densityWindowY2;
+    			rootWidth = densityWindowX1 - densityWindowX2;
+    			rootHeight = densityWindowY1 - densityWindowY2;
+    			
+    		}
+    		
+    		
+    		
+    		 
+    		//double[] testpunkte = {100,200,300,400,500,600};	  		
+    		//edges = voronoi.generateVoronoi(testpunkte, testpunkte, densityWindowX1, densityWindowX2, densityWindowY1, densityWindowY2);
+    		
+    		for (int i = 0; i < 100; i++) {
+			 	Site site = new Site(rand.nextInt(1000), rand.nextInt(1000));
+			 	// we could also set a different weighting to some sites
+			 	// site.setWeight(30)
+			 	sites.add(site);
+			 	}
+    		
+    		diagram.setSites(sites);
+    		diagram.setClipPoly(outerPolygon);
+    		diagram.computeDiagram();
+    		
+    		for (Site s : sites) {
+    			if (rootPolygon.contains(s.x, s.y) && (s.getPolygon() != null)) {
+    				polygonsInRoot.add(s.getPolygon());
+    				System.out.println("xxxxxxxxxxxxxx");
+    				numberInRoot++;
+    				areasInRoot += s.getPolygon().getArea();
+    			}		
+    		}
+    		
+			System.out.println(numberInRoot +  " und " + areasInRoot);
+    		if (areasInRoot > 0) densityInRoot = (numberInRoot / areasInRoot);
+    		System.out.println(" New Density " + (numberInRoot / areasInRoot));
     	}
 
 	}
-    
+
+
+ 
+
+
+ 
 
     @Override
     public void draw() {
@@ -152,16 +271,60 @@ public class Vis extends PApplet implements MouseListener {
                     xOffset += 15;
                 }
             }
+            
+            
 */
+        
+        
             net.draw(this);
+            
+            for (Site s : sites) {
+            	 this.point((float) s.x, (float) s.y);
+            	 PolygonSimple polygon = s.getPolygon();
+            	 if(polygonsInRoot.contains(polygon)){
+            		 double[] polyx = polygon.getXPoints();
+            		 double[] polyy = polygon.getYPoints();
+           		 
+           		 for (int i=0;i<(polygon.getNumPoints()-1);i++) {
+            			 this.line( (float) polyx[i], (float) polyy[i], (float) polyx [i+1], (float) polyy[i+1]);
+            		 }
+            		 this.line( (float) polyx[polygon.getNumPoints()-1], (float) polyy[polygon.getNumPoints()-1], (float) polyx [0], (float) polyy[0]);
+ 
+            	 }
+            	 
+            }
+            
+            this.noFill();
+            this.rect(originX, originY, rootWidth, rootHeight, 3);
+            this.fill(0);
+    		this.textSize(15);
+    		this.fill(0);
+    		this.text("Voronoi-Dichte: " + densityInRoot + " [Anzahl Personen / m^2]", 500, 500);
+    		
+    		
+    		
+    		
 
             synchronized (this.vehs) {
                 for (VehicleInfo v : this.vehs) {
                     v.draw(this);
                 }
             }
+            
+            /*
+             * alt 
+             * 
+            if (!edges.isEmpty()){
+            	for (GraphEdge e : edges) {
+                 e.draw(this);
+            	}
+            }
+         
+            voronoi.draw(this);	
 
-            voronoi.draw(this);
+            */
+            
+            
         //}
        // popMatrix();
     

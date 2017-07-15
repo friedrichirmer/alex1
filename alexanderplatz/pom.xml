@@ -19,6 +19,13 @@
             </plugin>
         </plugins>
     </build>
+    
+    <repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
     <dependencies>
         <dependency>
@@ -26,16 +33,27 @@
             <artifactId>core</artifactId>
             <version>2.2.1</version>
         </dependency>
+        
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>pdf</artifactId>
             <version>2.2.1</version>
         </dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
         </dependency>
+        
+        	<dependency>
+	    <groupId>com.github.ArlindNocaj</groupId>
+	    <artifactId>power-voronoi-diagram</artifactId>
+	    <version>-SNAPSHOT</version>
+	</dependency>
+        
+
+        
     </dependencies>
     <name>Social systems simulation</name>
 </project>
