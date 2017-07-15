@@ -56,7 +56,10 @@ public class Vis extends PApplet implements MouseListener {
 	private int densityWindowY2;
 
 	private Voronoi voronoi;
-	
+    private double xOffset;
+    private double yOffset;
+    private double scale;
+
     public Vis(Network net) {
         this.net = net;
 		this.voronoi = new Voronoi();
@@ -93,13 +96,13 @@ public class Vis extends PApplet implements MouseListener {
     }
     
     /**
-     * Mit der rechten(!) Maustaste kann ein Fenster für die Dichtemessung aufgezogen werden.
+     * Mit der rechten(!) Maustaste kann ein Fenster fï¿½r die Dichtemessung aufgezogen werden.
      */
     
     public void mousePressed( MouseEvent e ) {
     	
     	if (e.getButton() == 1) {
-    		voronoi.reset(); // Bei einem Mausklick wird die Messung automatisch zurückgesetzt
+    		voronoi.reset(); // Bei einem Mausklick wird die Messung automatisch zurï¿½ckgesetzt
     		//System.out.println("gepresst: [" + e.getX() + "] [" + e.getY() + "]");
     		voronoi.corner1(e.getX() , e.getY());
     	}
@@ -118,15 +121,43 @@ public class Vis extends PApplet implements MouseListener {
     public void draw() {
         background(255); // eraser
 
-        net.draw(this);
+        pushMatrix();
+        translate((float) xOffset, (float) yOffset);
 
-        synchronized (this.vehs) {
-            for (VehicleInfo v : this.vehs) {
-                v.draw(this);
+        if (keyPressed) {
+            if (key == CODED) {
+                if (keyCode == UP) {
+                    yOffset += 5;
+                } else if (keyCode == DOWN) {
+                    yOffset -= 5;
+                }
+                if (keyCode == RIGHT) {
+                    xOffset -= 5;
+                } else if (keyCode == LEFT) {
+                    xOffset += 5;
+                }
+            } else {
+                if (key == '+') {
+                    scale += 0.1;
+                    yOffset -= 15;
+                    xOffset -= 15;
+                } else if (key == '-') {
+                    scale -= 0.1;
+                    yOffset += 15;
+                    xOffset += 15;
+                }
             }
-        } 
-        
-        voronoi.draw(this);
+
+            net.draw(this);
+
+            synchronized (this.vehs) {
+                for (VehicleInfo v : this.vehs) {
+                    v.draw(this);
+                }
+            }
+
+            voronoi.draw(this);
+        }
     
     } 
 
