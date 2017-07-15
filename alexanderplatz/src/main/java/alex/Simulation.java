@@ -39,7 +39,7 @@ import network.TwoRoomsWithCorridorNetworkCreator;
  */
 public class Simulation {
 
-    public static final double SCALE = 25;
+    public static final double SCALE = 10;
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();

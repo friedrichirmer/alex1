@@ -50,7 +50,7 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node13,node14,1);
         network.createLink(node14,node15,1);
         network.createLink(node15,node16,1);
-        network.createLink(node16, node17, 1);
+        network.createLink(node16,node17,1);
         network.createLink(node17,node18,1);
         network.createLink(node18,node19,1);
         network.createLink(node19,node11,1);
@@ -63,7 +63,25 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node23,node19,1);
         network.createLink(node15,node21,1);
         network.createLink(node20,node22,1);
-
+        
+        network.createLink(node12,node11,1);
+        network.createLink(node13,node12,1);
+        network.createLink(node14,node13,1);
+        network.createLink(node15,node14,1);
+        network.createLink(node16,node15,1);
+        network.createLink(node17,node16,1);
+        network.createLink(node18,node17,1);
+        network.createLink(node19,node18,1);
+        network.createLink(node11,node19,1);
+        network.createLink(node18,node20,1);
+        network.createLink(node16,node20,1);
+        network.createLink(node12,node18,1);
+        network.createLink(node14,node17,1);
+        network.createLink(node22,node21,1);
+        network.createLink(node23,node22,1);
+        network.createLink(node19,node23,1);
+        network.createLink(node21,node15,1);
+        network.createLink(node22,node20,1);
         //Abgrenzung
         network.createWall(0,23.8,23.7,0);
         network.createWall(23.7,0,67.7,33.2);
@@ -138,7 +156,7 @@ public class AlexanderplatzNetworkCreator {
         network.createWall(39.2,50.1,39.8,49.9);
         network.createWall(39.8,49.9,40,51.7);
         //U-Bahn KFC
-        network.createWall(30.1,56.3,29.4,55.6);
+        network.createWall(30,56.3,29.4,55.6);
         network.createWall(29.4,55.6,29.8,55.4);
         network.createWall(29.8,55.4,30.4,56.2);
         //U-Bahn Zentral

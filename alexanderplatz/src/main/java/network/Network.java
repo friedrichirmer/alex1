@@ -54,6 +54,7 @@ public class Network {
 	public void draw(PApplet p) {
 		drawLinks(p);
 		drawWalls(p);
+		drawNodes(p);
 	}
 
 	private void drawWalls(PApplet p) {
@@ -71,8 +72,15 @@ public class Network {
 
 	private void drawLinks(PApplet p) {
 		for (LinkInfo linkInfo : this.linkInfos) {
+			p.fill(0);
             p.line(linkInfo.x0,linkInfo.y0,linkInfo.x1,linkInfo.y1);
      	}
+	}
+	
+	private void drawNodes(PApplet p) {
+		for(Integer n: this.nodes.keySet()){
+			p.text(n, (float) (nodes.get(n).getX()*Simulation.SCALE), (float) (nodes.get(n).getY()*Simulation.SCALE));
+			}
 	}
 
 	public Node findNearestNode(double x, double y) {
