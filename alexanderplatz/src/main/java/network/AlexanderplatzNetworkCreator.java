@@ -3,6 +3,9 @@
  */
 package network;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Work
  *
@@ -10,6 +13,8 @@ package network;
 public class AlexanderplatzNetworkCreator {
 
 	private Network network;
+	private List<Node> entryExitNodes = new ArrayList<Node>();
+	
 	
 	public AlexanderplatzNetworkCreator(){
 		this.network = new Network();
@@ -114,8 +119,14 @@ public class AlexanderplatzNetworkCreator {
         network.createWall(29.3,34.1,28.6,33.2);
         network.createWall(28.6,33.2,28.4,32.3);
         
+		entryExitNodes.add(node1);
         
         return network;
 	}
+	
+	public List<Node> getEntryExitNodes(){
+		return this.entryExitNodes;
+	}
+	
 	
 }
