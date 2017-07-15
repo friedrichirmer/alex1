@@ -56,9 +56,9 @@ public class Vis extends PApplet implements MouseListener {
 	private int densityWindowY2;
 
 	private Voronoi voronoi;
-    private double xOffset;
-    private double yOffset;
-    private double scale;
+    public static double xOffset = 0;
+    public static double yOffset = 0;
+    public static double scale = 20;
 
     public Vis(Network net) {
         this.net = net;
@@ -120,46 +120,50 @@ public class Vis extends PApplet implements MouseListener {
     @Override
     public void draw() {
         background(255); // eraser
-/*
+
         pushMatrix();
-        translate((float) xOffset, (float) yOffset);
 
         if (keyPressed) {
             if (key == CODED) {
                 if (keyCode == UP) {
-                    yOffset += 5;
+                    yOffset += 10;
                 } else if (keyCode == DOWN) {
-                    yOffset -= 5;
+                    yOffset -= 10;
                 }
                 if (keyCode == RIGHT) {
-                    xOffset -= 5;
+                    xOffset -= 10;
                 } else if (keyCode == LEFT) {
-                    xOffset += 5;
+                    xOffset += 10;
                 }
-            } else {
+            }
+
+
+            else {
+
                 if (key == '+') {
-                    scale += 0.1;
+                    scale += 0.5;
                     yOffset -= 15;
                     xOffset -= 15;
                 } else if (key == '-') {
-                    scale -= 0.1;
+                    scale -= 0.5;
                     yOffset += 15;
                     xOffset += 15;
                 }
             }
-*/
-            net.draw(this);
 
-            synchronized (this.vehs) {
-                for (VehicleInfo v : this.vehs) {
-                    v.draw(this);
-                }
+        }
+
+        translate((float) xOffset, (float) yOffset);
+        net.draw(this);
+
+        synchronized (this.vehs) {
+            for (VehicleInfo v : this.vehs) {
+                v.draw(this);
             }
+        }
 
-            voronoi.draw(this);
-        //}
-       // popMatrix();
-    
+        voronoi.draw(this);
+        popMatrix();
     } 
 
 

@@ -1,6 +1,7 @@
 package network;
 
 import alex.Simulation;
+import alex.Vis;
 import processing.core.PApplet;
 import java.util.*;
 import static java.lang.Math.sqrt;
@@ -35,10 +36,10 @@ public class Network {
    		fromNode.addOutLink(link);
    		toNode.addInLink(link);
         LinkInfo linkInfo = new LinkInfo();
-        linkInfo.x0 = (float)(fromNode.getX()* Simulation.SCALE);
-        linkInfo.y0 = (float)(fromNode.getY()* Simulation.SCALE);
-        linkInfo.x1 = (float)(toNode.getX()* Simulation.SCALE);
-        linkInfo.y1 = (float)(toNode.getY()* Simulation.SCALE);
+        linkInfo.x0 = (float)(fromNode.getX());
+        linkInfo.y0 = (float)(fromNode.getY());
+        linkInfo.x1 = (float)(toNode.getX());
+        linkInfo.y1 = (float)(toNode.getY());
         linkInfos.add(linkInfo);
         counterOfLinks++;
    		return link;
@@ -55,15 +56,16 @@ public class Network {
 		drawLinks(p);
 		drawWalls(p);
 		drawNodes(p);
+
 	}
 
 	private void drawWalls(PApplet p) {
 		for (int i = 0; i<walls.size(); i++) {
    	    	Wall wa = walls.get(i);
-   	    	float wx1 = (float)(wa.getX1()* Simulation.SCALE) ;
-   	    	float wy1 = (float)(wa.getY1()* Simulation.SCALE) ;
-   	    	float wx2 = (float)(wa.getX2()* Simulation.SCALE) ;
-   	    	float wy2 = (float)(wa.getY2()* Simulation.SCALE) ;
+   	    	float wx1 = (float)(wa.getX1()* Vis.scale) ;
+   	    	float wy1 = (float)(wa.getY1()* Vis.scale) ;
+   	    	float wx2 = (float)(wa.getX2()* Vis.scale) ;
+   	    	float wy2 = (float)(wa.getY2()* Vis.scale) ;
    	    	p.strokeWeight(2);
    	    	p.line(wx1,wy1,wx2,wy2);
    	    	p.strokeWeight(1);
@@ -73,13 +75,16 @@ public class Network {
 	private void drawLinks(PApplet p) {
 		for (LinkInfo linkInfo : this.linkInfos) {
 			p.fill(0);
-            p.line(linkInfo.x0,linkInfo.y0,linkInfo.x1,linkInfo.y1);
+            p.line((float) (linkInfo.x0 * Vis.scale),
+					(float) (linkInfo.y0 * Vis.scale),
+					(float) (linkInfo.x1 * Vis.scale),
+					(float) (linkInfo.y1 * Vis.scale));
      	}
 	}
 	
 	private void drawNodes(PApplet p) {
 		for(Integer n: this.nodes.keySet()){
-			p.text(n, (float) (nodes.get(n).getX()*Simulation.SCALE), (float) (nodes.get(n).getY()*Simulation.SCALE));
+			p.text(n, (float) (nodes.get(n).getX()*Vis.scale), (float) (nodes.get(n).getY()*Vis.scale));
 			}
 	}
 
