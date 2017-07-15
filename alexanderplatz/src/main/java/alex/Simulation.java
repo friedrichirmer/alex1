@@ -183,24 +183,30 @@ public class Simulation {
 
     private static void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles) {
         System.out.println("Creating " + numberOfRandomVehicles + " random vehicles");
+        
+        /*this here is experimental*/DijkstraV2 router = new DijkstraV2(network);
+        
         for (int i = 0; i < numberOfRandomVehicles; i++){
             Integer startNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
             Integer finishNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
             System.out.println("trying to create the route from the node " + startNodeId + " to the node " + finishNodeId);
             if (!startNodeId.equals(finishNodeId)){
-                createRandomDeparture(network, sim, startNodeId, finishNodeId);
+            	/*this here is experimental*/List<Link> route = router.calculateRoute(network.getNodes().get(startNodeId), network.getNodes().get(finishNodeId));
+                createRandomDeparture(network, sim, startNodeId, finishNodeId, route);
             }
 
 
         }
     }
 
-    private static void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId) {
+    private static void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
+    	
+    	
         double startTime = (Math.random() * (0.9*MAX_TIME));
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
-        simulation.addVehicle(new Vehicle(network, startNode, finishNode, startTime, vehicleId));
+        simulation.addVehicle(new Vehicle(network, startNode, finishNode, startTime, vehicleId, route));
         System.out.println("Random Vehicle " + vehicleId + " is created");
     }
 

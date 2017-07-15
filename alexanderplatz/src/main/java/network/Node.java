@@ -39,4 +39,8 @@ public class Node {
 	public int getId() {
 		return id;
 	}
+	
+	public List<Link> getOutLinks(){
+		return this.outLinks;
+	}
 }

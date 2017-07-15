@@ -86,6 +86,7 @@ public class Vehicle {
         this.y = startNode.getY() + random.nextDouble() * 1;
         this.network = network;
         this.route = Dijkstra.returnRoute(network, startNode, destinationNode);
+        
     	System.out.println("route: " + route.toString());
         this.rad = 0.25 + random.nextDouble()*0.1;
         this.colourR = (float) (255*Math.random());
@@ -101,6 +102,26 @@ public class Vehicle {
         this.destinationNode = destinationNode;
     }
 
+	public Vehicle(Network network, Node startNode, Node destinationNode, double startTime, String id, List<Link> route){
+		this.x = startNode.getX() + random.nextDouble() * 1;
+        this.y = startNode.getY() + random.nextDouble() * 1;
+        this.network = network;
+        this.route = route;
+    	System.out.println("route: " + route.toString());
+        this.rad = 0.25 + random.nextDouble()*0.1;
+        this.colourR = (float) (255*Math.random());
+        this.colourG = (float) (255*Math.random());
+        this.colourB = (float) (255*Math.random());
+        this.maxSpeed = 2;
+        this.vtx = 0;
+        this.finish = false;     
+        this.id = id;
+        this.startTime = startTime;
+        this.mass = 80;
+		this.mapOfEnterLeaveTimes.put(route.get(0).getId(), new Double[]{startTime, null});
+        this.destinationNode = destinationNode;
+	}
+	
     public boolean isInTheSimulation() {
         return isInTheSimulation;
     }
