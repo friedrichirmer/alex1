@@ -23,7 +23,7 @@ import processing.core.PApplet;
 
 import javax.swing.*;
 
-import be.humphreys.simplevoronoi.GraphEdge;
+
 import kn.uni.voronoitreemap.datastructure.OpenList;
 import kn.uni.voronoitreemap.diagram.PowerDiagram;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
@@ -64,7 +64,6 @@ public class Vis extends PApplet implements MouseListener {
 	private int densityWindowX2;
 	private int densityWindowY2;
 
-	private be.humphreys.simplevoronoi.Voronoi voronoi;
     private double xOffset;
     private double yOffset;
     private double scale;
@@ -88,7 +87,7 @@ public class Vis extends PApplet implements MouseListener {
 
     public Vis(Network net) {
         this.net = net;
-		this.voronoi = new be.humphreys.simplevoronoi.Voronoi(0.1);
+
         JFrame fr = new JFrame();
         fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         fr.setSize(WIDTH, HEIGHT);
