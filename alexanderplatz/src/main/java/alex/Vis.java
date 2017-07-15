@@ -48,7 +48,8 @@ import java.util.Set;
 public class Vis extends PApplet implements MouseListener {
 
 	
-	private List<VehicleInfo> vehs = new ArrayList<>();
+	private List<VehicleInfo> vehs = new ArrayList<VehicleInfo>();
+	private List<TramInfo> trams = new ArrayList<TramInfo>();
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
@@ -57,16 +58,13 @@ public class Vis extends PApplet implements MouseListener {
     private int y = 0;
 
     private double phi = 0;
-    private final Network net;
+    private Network net;
 
     private int densityWindowX1;
 	private int densityWindowY1;
 	private int densityWindowX2;
 	private int densityWindowY2;
 
-    private double xOffset;
-    private double yOffset;
-    private double scale;
     
     
     OpenList sites = new OpenList();
@@ -84,6 +82,12 @@ public class Vis extends PApplet implements MouseListener {
 	private double areasInRoot = 0;
 
 	private Set<PolygonSimple> polygonsInRoot =  new HashSet<PolygonSimple>();
+
+
+    public static double xOffset = 0;
+    public static double yOffset = 0;
+    public static double scale = 10;
+
 
     public Vis(Network net) {
         this.net = net;
@@ -243,36 +247,36 @@ public class Vis extends PApplet implements MouseListener {
     @Override
     public void draw() {
         background(255); // eraser
-/*
+
         pushMatrix();
-        translate((float) xOffset, (float) yOffset);
 
         if (keyPressed) {
             if (key == CODED) {
                 if (keyCode == UP) {
-                    yOffset += 5;
+                    yOffset += 10;
                 } else if (keyCode == DOWN) {
-                    yOffset -= 5;
+                    yOffset -= 10;
                 }
                 if (keyCode == RIGHT) {
-                    xOffset -= 5;
+                    xOffset -= 10;
                 } else if (keyCode == LEFT) {
-                    xOffset += 5;
+                    xOffset += 10;
                 }
-            } else {
+            }
+
+
+            else {
+
                 if (key == '+') {
-                    scale += 0.1;
+                    scale += 0.5;
                     yOffset -= 15;
                     xOffset -= 15;
                 } else if (key == '-') {
-                    scale -= 0.1;
+                    scale -= 0.5;
                     yOffset += 15;
                     xOffset += 15;
                 }
             }
-            
-            
-*/
         
         
             net.draw(this);
@@ -300,39 +304,30 @@ public class Vis extends PApplet implements MouseListener {
     		this.fill(0);
     		this.text("Voronoi-Dichte: " + densityInRoot + " [Anzahl Personen / m^2]", 500, 500);
     		
-    		
-    		
-    		
 
-            synchronized (this.vehs) {
-                for (VehicleInfo v : this.vehs) {
-                    v.draw(this);
-                }
-            }
-            
-            /*
-             * alt 
-             * 
-            if (!edges.isEmpty()){
-            	for (GraphEdge e : edges) {
-                 e.draw(this);
-            	}
-            }
-         
-            voronoi.draw(this);	
 
-            */
-            
-            
-        //}
-       // popMatrix();
-    
+        }
+
+        translate((float) xOffset, (float) yOffset);
+
+
+        synchronized (this.vehs) {
+            for (VehicleInfo v : this.vehs) {
+                v.draw(this);
+            }
+        }
+        
+        popMatrix();
+        
     } 
 
 
-	public void update(double time, List<VehicleInfo> vehs) {
+	public void update(double time, List<VehicleInfo> vehs, List<TramInfo> trams) {
         synchronized (this.vehs) {
             this.vehs = new ArrayList<VehicleInfo>(vehs);
+        }
+        synchronized (this.trams) {
+            this.trams = new ArrayList<TramInfo>(trams);
         }
         
     }

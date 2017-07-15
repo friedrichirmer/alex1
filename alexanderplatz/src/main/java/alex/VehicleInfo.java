@@ -47,10 +47,10 @@ public class VehicleInfo {
     
     public VehicleInfo(double x, double y, double phi, double radius, double colourR, double colourG, double colourB,
                        PVector forceTarget, PVector forceVehicles, PVector forceWalls) {
-        this.x = (int) (Simulation.SCALE * x);
-        this.y = (int) (Simulation.SCALE * y);
+        this.x = (int) (Vis.scale * x);
+        this.y = (int) (Vis.scale * y);
         this.phi = phi;
-        this.radius = (int) (Simulation.SCALE * radius);
+        this.radius = (int) (Vis.scale * radius);
         this.colourR = (float) colourR;
         this.colourG = (float) colourG;
         this.colourB = (float) colourB;
@@ -81,9 +81,9 @@ public class VehicleInfo {
             p.popMatrix();
             
             /**
-             * Pfeile können die Richtungen und Stärken von Kräften anzeigen (bei Bedarf aktivieren)
+             * Pfeile kï¿½nnen die Richtungen und Stï¿½rken von Krï¿½ften anzeigen (bei Bedarf aktivieren)
              * 
-             * Roter Pfeil zeigt die Kraft in Richtung des aktuellen Ziels an (nur bei Richtungsänderungen)
+             * Roter Pfeil zeigt die Kraft in Richtung des aktuellen Ziels an (nur bei Richtungsï¿½nderungen)
              */
 
             //        p.strokeWeight(2);
@@ -101,7 +101,7 @@ public class VehicleInfo {
             //        p.stroke(0, 0, 0);
             
             /**
-             * Blauer Pfeil zeigt die abst0ßenden Kräfte von anderen Fahrzeugen
+             * Blauer Pfeil zeigt die abst0ï¿½enden Krï¿½fte von anderen Fahrzeugen
              */
 
 //                    p.strokeWeight(2);
@@ -119,7 +119,7 @@ public class VehicleInfo {
 //                    p.stroke(0, 0, 0);
 
             /**
-             * Grüner Pfeil zeigt die Summe der Wandkräfte auf ein Fahrzeug
+             * Grï¿½ner Pfeil zeigt die Summe der Wandkrï¿½fte auf ein Fahrzeug
              */
           
 //            p.strokeWeight(2);

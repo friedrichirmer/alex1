@@ -73,10 +73,10 @@ public class Link {
     	return id;
     }
 
-    public boolean hasVehicleReachedEndOfLink(Vehicle vehicle) {
+    public boolean hasVehicleReachedEndOfLink(double vehX, double vehY) {
 
-        double vx = vehicle.getX() - this.to.getX();
-        double vy = vehicle.getY() - this.to.getY();
+        double vx = vehX - this.to.getX();
+        double vy = vehY - this.to.getY();
 
         double cross = this.finishLineX1 * vy - this.finishLineY1 * vx;
         if (cross > 0) {

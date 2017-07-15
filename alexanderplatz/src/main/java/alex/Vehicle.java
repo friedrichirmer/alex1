@@ -21,9 +21,11 @@ package alex;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import network.Link;
 import network.Network;
@@ -87,7 +89,6 @@ public class Vehicle {
         this.network = network;
         this.route = Dijkstra.returnRoute(network, startNode, destinationNode);
         
-    	System.out.println("route: " + route.toString());
         this.rad = 0.25 + random.nextDouble()*0.1;
         this.colourR = (float) (255*Math.random());
         this.colourG = (float) (255*Math.random());
@@ -153,7 +154,7 @@ public class Vehicle {
     }
     
 
-    public void update(List<Vehicle> vehs, double time) {
+    public void update(List<Vehicle> vehs, double time, Set<Wall> wallSet) {
 
 //        if ( startTime > time) {
 //            return;
@@ -223,11 +224,17 @@ public class Vehicle {
          * Die zweite Schleife iteriert �ber alle W�nde und berechnet die absto�enden Kr�fte
          * Hier wird mit Vektoren gerechnet
          */
-        
-        for (int i = 0; i< network.walls.size(); i++ ) {
-        	Wall wall = network.walls.get(i);
-       		calcWallForce(wall);
+      
+        Iterator<Wall> it = wallSet.iterator();
+        while(it.hasNext()){
+        	Wall wall = it.next();
+        	calcWallForce(wall);
         }
+        
+//        for (int i = 0; i< network.walls.size(); i++ ) {
+//        	Wall wall = network.walls.get(i);
+//       		calcWallForce(wall);
+//        }
 
         forceWalls = new PVector((float)pushWallX, (float)pushWallY);
         
@@ -422,29 +429,37 @@ public class Vehicle {
         
         Link currentLink = this.route.get(routeIndex);
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
-        if (currentLink.hasVehicleReachedEndOfLink(this)) {
-			this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
-//			System.out.println("The new agent id " + this.getId() +
-//					" left the link " + currentLink.getId()
-//					+ ", his travel time was " + (time - timeWhenEnteredLink));
-//			System.out.println("entered at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[0]);
-//			System.out.println("left at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[1]);
-			routeIndex++;
-        	if (this.route.size() == routeIndex) {
-        	   this.finish = true;
-        	} else {
-				Link newCurrentLink = this.route.get(routeIndex);
-				this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, null});
-			}
-        } else if (time - timeWhenEnteredLink > 20){
-        	if (time % 5 ==0 && new Random().nextDouble() < 0.1){
-        		Node newStartNode = network.findNearestNode(this.x, this.y);
-        		this.route = Dijkstra.returnRoute(network, newStartNode, destinationNode);
-			}
+        if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
+			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
+			moveVehicleToNextLinkOfRoute(time);
+        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 15 && !(this.finish = true)){
+			rerouteVehicleIfStucked(time);
 		}
     }
 
-    public double getX() {
+	private void recordTravelTimeOnTheLastLink(double time, Link currentLink, Double timeWhenEnteredLink) {
+		this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
+	}
+
+	private void moveVehicleToNextLinkOfRoute(double time) {
+		routeIndex++;
+		if (this.route.size() == routeIndex) {
+           this.finish = true;
+        } else {
+            Link newCurrentLink = this.route.get(routeIndex);
+            this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, null});
+        }
+	}
+
+	private void rerouteVehicleIfStucked(double time) {
+		if (time % 5 == 0 && new Random().nextDouble() < 0.1){
+            Node newStartNode = network.findNearestNode(this.x, this.y);
+            DijkstraV2 router = new DijkstraV2(network);
+            this.route = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
+        }
+	}
+
+	public double getX() {
         return x;
     }
 

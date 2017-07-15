@@ -21,23 +21,25 @@ public class DijkstraV2 {
 	}
 
 	public List<Link> calculateRoute(Node start, Node destination) {
-
+		
+		this.correspondingNodes.clear();
+		this.remainingNodes.clear();
+		
 		initiate(start);
 
 		DijkstraNode current = this.remainingNodes.remove(0);
 
 		while (current.getNode() != destination) {
+			System.out.println("remaining nodes size = " + remainingNodes.size());
 			expandDijkstraNode(current);
 			current = this.remainingNodes.remove(0);
 		}
+		List<Link> route = getRoute(destination); 
+		if (!(route.size() == 0)) {
 
-		if (!(getRoute(destination).size() == 0)) {
-
-			return getRoute(destination);
+			return route;
 		} else return null;
 	}
-
-
 
 	    private void expandDijkstraNode(DijkstraNode current) {
 	    	for(Link link : current.getNode().getOutLinks()){
@@ -55,7 +57,7 @@ public class DijkstraV2 {
 		}
 
 		private void initiate(Node start) {
-			System.out.println("network.nodes.size = " + network.nodes.size());
+//			System.out.println("network.nodes.size = " + network.nodes.size());
 			for (Node node : network.nodes.values()){
 	            
 	    		double nodeCost;
@@ -70,7 +72,7 @@ public class DijkstraV2 {
 	            this.correspondingNodes.put(node, dijk);
 	        }
 	    	Collections.sort(this.remainingNodes);
-	    	System.out.println("remainingNodes.size = " + remainingNodes.size());
+//	    	System.out.println("remainingNodes.size = " + remainingNodes.size());
 	    }
 
 		private List<Link> getRoute(Node end){
