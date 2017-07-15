@@ -27,7 +27,7 @@ public class Tram {
 	private Wall top;
 	private Wall bottom;
 	
-	private double length = 4;
+	private double length = 5;
 	private double width = 2;
 	
 	private double x;
@@ -35,6 +35,7 @@ public class Tram {
 	private double phi;
 	
 	private int wishVelocity = 1;
+	PVector v = new PVector(0,0);
 	private double vX;
 	private double vY;
 	private final double tau = 0.5;
@@ -72,18 +73,21 @@ public class Tram {
     	double resultForceX = (dx* this.wishVelocity - vX) / this.tau;
     	double resultForceY = (dy* this.wishVelocity - vY) / this.tau;
     	
-    	
-        vX = vX + Simulation.TIME_STEP *(resultForceX);
-        vY = vY + Simulation.TIME_STEP *(resultForceY);
+   
+    	this.v.add( new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) ) ) ;
+//        vX = vX + Simulation.TIME_STEP *(resultForceX);
+//        vY = vY + Simulation.TIME_STEP *(resultForceY);
         
-        this.phi = Math.atan2(vY,vX);
+        this.phi = Math.atan(vX/vY);
 
 	}
 	
 	
 	public void move(){
-        this.x = this.x + Simulation.TIME_STEP * this.vX;
-        this.y = this.y + Simulation.TIME_STEP * this.vY;
+//        this.x = this.x + Simulation.TIME_STEP * this.vX;
+//        this.y = this.y + Simulation.TIME_STEP * this.vY;
+        this.x = this.x + Simulation.TIME_STEP * this.v.x;
+        this.y = this.y + Simulation.TIME_STEP * this.v.y;
         
         setWalls();
         
@@ -94,10 +98,53 @@ public class Tram {
 	}
 	
 	private void setWalls() {
-		this.left   = new Wall(this.x-(this.width/2), this.y - (this.length/2), this.x-(this.width/2), this.y + (this.length/2));
-		this.right  = new Wall(this.x+(this.width/2), this.y - (this.length/2), this.x+(this.width/2), this.y + (this.length/2));
-		this.top    = new Wall(this.x-(this.width/2), this.y - (this.length/2), this.x+(this.width/2), this.y - (this.length/2));
-		this.bottom = new Wall(this.x-(this.width/2), this.y + (this.length/2), this.x+(this.width/2), this.y + (this.length/2));
+		double alpha = Math.acos( this.v.y / v.mag());
+		
+		PVector middle = new PVector((float) this.x, (float) this.y);
+		
+		
+		PVector vNormalized = v.get();
+		vNormalized.normalize();
+		
+		
+		PVector vTimesLength = vNormalized.get();
+		vTimesLength.mult( (float) length/2 );
+		
+		PVector vTimesLengthToTop = vTimesLength.get();
+		vTimesLengthToTop.mult(-1);
+		
+		PVector fromBottomToRightPoint = new PVector( (float)(Math.cos(alpha)*width/2), - (float)(Math.sin(alpha)*width/2));
+		PVector fromBottomToLeftPoint = new PVector( - (float)(Math.cos(alpha)*width/2), (float)(Math.sin(alpha)*width/2));
+		
+		PVector rightBottomCorner = middle.get();
+		rightBottomCorner.add(vTimesLength);
+		rightBottomCorner.add(fromBottomToRightPoint);
+
+		
+		PVector rightTopCorner = middle.get();
+		rightTopCorner.add(vTimesLengthToTop);
+		rightTopCorner.add(fromBottomToRightPoint);
+
+		PVector leftBottomCorner = middle.get();
+		leftBottomCorner.add(vTimesLength);
+		leftBottomCorner.add(fromBottomToLeftPoint);
+
+		
+		PVector leftTopCorner = middle.get();
+		leftTopCorner.add(vTimesLengthToTop);
+		leftTopCorner.add(fromBottomToLeftPoint);
+		
+
+//		this.right  = new Wall(rightTopCorner.x,rightTopCorner.y, rightBottomCorner.x, rightBottomCorner.y);
+//		this.left   = new Wall(leftTopCorner.x,leftTopCorner.y, leftBottomCorner.x, leftBottomCorner.y);
+//		this.top    = new Wall(leftTopCorner.x,leftTopCorner.y,rightTopCorner.x,rightTopCorner.y);
+//		this.bottom = new Wall(leftBottomCorner.x,leftBottomCorner.y,rightBottomCorner.x,rightBottomCorner.y);
+		
+		
+		this.right   = new Wall(this.x + width/2, this.y -length/2, this.x + width/2, this.y + length/2);
+		this.left   = new Wall(this.x - width/2, this.y -length/2, this.x -width/2, this.y + length/2);
+		this.top    = new Wall(this.x-width/2, this.y - length/2, this.x+ width/2, this.y - length/2);
+		this.bottom = new Wall(this.x-width/2, this.y + length/2, this.x+width/2, this.y + length/2);
 		
 		/*
 		 * 		~~~~~~~~~~~WIDTH~~~~~~~~~~

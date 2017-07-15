@@ -46,7 +46,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 150;
     public double visualRangeX = 5;
     public double visualRangeY = 5;
     public int nrOfNeighboursToConsider = 100;
@@ -217,9 +217,9 @@ public class Simulation {
     
     private void createTram(Network network){
     	DijkstraV2 router = new DijkstraV2(network);
-    	Node from = network.nodes.get(10);
+    	Node from = network.nodes.get(33);
     	Node to = network.nodes.get(5);
-    	Tram tram = new Tram(from.getX(),from.getY() , router.calculateRoute(from, to));
+    	Tram tram = new Tram(from.getX()+0.5,from.getY() , router.calculateRoute(from, to));
     	this.tramsInSimulation.add(tram);
     }
 

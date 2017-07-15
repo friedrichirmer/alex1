@@ -29,7 +29,9 @@ public class TramInfo {
    	    	float wy1 = (float)(wa.getY1()* Vis.scale) ;
    	    	float wx2 = (float)(wa.getX2()* Vis.scale) ;
    	    	float wy2 = (float)(wa.getY2()* Vis.scale) ;
-   	    	p.strokeWeight(2);
+   	    	
+
+   	    	p.strokeWeight(1);
    	    	p.line(wx1,wy1,wx2,wy2);
    	    	p.strokeWeight(1);
    	    }
