@@ -68,8 +68,11 @@ public class AlexanderplatzNetworkCreator {
         network.createWall(0,23.8,23.7,0);
         network.createWall(23.7,0,67.7,33.2);
         network.createWall(67.7,33.2,49.0,60.9);
-        network.createWall(49.0,60.9,40.9,67.6);
-        network.createWall(40.9,67.6,0,23.8);
+        network.createWall(49.0,60.9,39.6,68.3);
+        network.createWall(39.6,68.3,29.9,57.9);
+        network.createWall(29.9,57.9,23.8,48.7);
+        network.createWall(23.8,48.7,6.9,30.3);
+        network.createWall(6.9,30.3,0,23.8);
         //Building links
         network.createWall(5.7,23.6,14.5,14.8);
         network.createWall(14.5,14.8,27.2,27.1);
@@ -118,8 +121,32 @@ public class AlexanderplatzNetworkCreator {
         network.createWall(30.8,34.2,29.3,34.1);
         network.createWall(29.3,34.1,28.6,33.2);
         network.createWall(28.6,33.2,28.4,32.3);
-        
-//		entryExitNodes.add(node1);
+        //U-Bahn Saturn
+        network.createWall(53.3,31.4,50.7,33.7);
+        network.createWall(50.7,33.7,51.1,34.3);
+        network.createWall(51.1,34.3,53.9,32.2);       
+        //U-Bahn Primark
+        network.createWall(35,28.6,36.9,30);
+        network.createWall(36.9,30,36.4,30.6);
+        network.createWall(36.4,30.6,34.5,29.1);
+        //U-Bahn Media Markt
+        network.createWall(51.5,53.1,52.2,54.4);
+        network.createWall(52.2,54.4,51.8,54.7);
+        network.createWall(51.8,54.7,50.9,53.5);
+        //U-Bahn Tchibo
+        network.createWall(39.5,51.8,39.2,50.1);
+        network.createWall(39.2,50.1,39.8,49.9);
+        network.createWall(39.8,49.9,40,51.7);
+        //U-Bahn KFC
+        network.createWall(30.1,56.3,29.4,55.6);
+        network.createWall(29.4,55.6,29.8,55.4);
+        network.createWall(29.8,55.4,30.4,56.2);
+        //U-Bahn Zentral
+        network.createWall(34.7,41.3,34.6,39.8);
+        network.createWall(34.6,39.8,35.6,39.8);
+        network.createWall(35.6,39.8,35.5,41.2);
+       
+		entryExitNodes.add(node11);
         
         return network;
 	}
