@@ -74,7 +74,7 @@ public class Vehicle {
     private boolean isInTheSimulation = false;
 	private double mass;
 	private final double walkParallelThreshold = 1.0;	//set to Double.MAX_Value to disable parallel walking
-	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<>();
+	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
 
 	public List<Link> getRoute() {
 		return route;

@@ -120,7 +120,7 @@ public class Vis extends PApplet implements MouseListener {
     @Override
     public void draw() {
         background(255); // eraser
-
+/*
         pushMatrix();
         translate((float) xOffset, (float) yOffset);
 
@@ -147,7 +147,7 @@ public class Vis extends PApplet implements MouseListener {
                     xOffset += 15;
                 }
             }
-
+*/
             net.draw(this);
 
             synchronized (this.vehs) {
@@ -157,8 +157,8 @@ public class Vis extends PApplet implements MouseListener {
             }
 
             voronoi.draw(this);
-        }
-        popMatrix();
+        //}
+       // popMatrix();
     
     } 
 

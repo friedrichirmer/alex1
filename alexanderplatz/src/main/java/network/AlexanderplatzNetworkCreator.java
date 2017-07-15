@@ -21,7 +21,7 @@ public class AlexanderplatzNetworkCreator {
 	}
 	
 	public Network createNetwork(){
-		  Node node1 = network.createNode(49.5,58.2,1);
+//		  Node node1 = network.createNode(49.5,58.2,1);
 //        Node node2 = network.createNode(49.7,40.8,2);
 //        Node node3 = network.createNode(43.1,33.3,3);
 //        Node node4 = network.createNode(19.4,43,4);
@@ -119,7 +119,7 @@ public class AlexanderplatzNetworkCreator {
         network.createWall(29.3,34.1,28.6,33.2);
         network.createWall(28.6,33.2,28.4,32.3);
         
-		entryExitNodes.add(node1);
+//		entryExitNodes.add(node1);
         
         return network;
 	}
