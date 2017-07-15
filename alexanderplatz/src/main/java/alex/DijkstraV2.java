@@ -21,12 +21,16 @@ public class DijkstraV2 {
 	}
 
 	public List<Link> calculateRoute(Node start, Node destination) {
-
+		
+		this.correspondingNodes.clear();
+		this.remainingNodes.clear();
+		
 		initiate(start);
 
 		DijkstraNode current = this.remainingNodes.remove(0);
 
 		while (current.getNode() != destination) {
+			System.out.println("remaining nodes size = " + remainingNodes.size());
 			expandDijkstraNode(current);
 			current = this.remainingNodes.remove(0);
 		}

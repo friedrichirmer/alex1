@@ -87,7 +87,6 @@ public class Vehicle {
         this.network = network;
         this.route = Dijkstra.returnRoute(network, startNode, destinationNode);
         
-    	System.out.println("route: " + route.toString());
         this.rad = 0.25 + random.nextDouble()*0.1;
         this.colourR = (float) (255*Math.random());
         this.colourG = (float) (255*Math.random());

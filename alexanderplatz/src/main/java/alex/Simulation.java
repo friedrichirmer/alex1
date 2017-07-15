@@ -68,7 +68,7 @@ public class Simulation {
     	
     	Simulation simulation = new Simulation(network);
     	NetworkUtils.createListOfNodeIds(network, simulation);
-    	addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
+    	simulation.addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
     
 //      Simulation simulation = makeTestScenario(network);
 
@@ -181,28 +181,32 @@ public class Simulation {
         }
     }
 
-    private static void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles) {
+    private void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles) {
         System.out.println("Creating " + numberOfRandomVehicles + " random vehicles");
         
-        /*this here is experimental*/DijkstraV2 router = new DijkstraV2(network);
+        DijkstraV2 router = new DijkstraV2(network);
         
+        int nrRoutesNull = 0;
         for (int i = 0; i < numberOfRandomVehicles; i++){
             Integer startNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
             Integer finishNodeId = listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size()));
-            System.out.println("trying to create the route from the node " + startNodeId + " to the node " + finishNodeId);
             if (!startNodeId.equals(finishNodeId)){
-            	/*this here is experimental*/List<Link> route = router.calculateRoute(network.getNodes().get(startNodeId), network.getNodes().get(finishNodeId));
+            	List<Link> route = router.calculateRoute(network.getNodes().get(startNodeId), network.getNodes().get(finishNodeId));
                 if (!(route == null)) {
-                    createRandomDeparture(network, sim, startNodeId, finishNodeId, route);
+                    this.createRandomDeparture(network, sim, startNodeId, finishNodeId, route);
+                }
+                else{
+                	nrRoutesNull ++;
                 }
             }
-
-
         }
+        
+        System.out.println("created all " + numberOfRandomVehicles + " vehicles");
+        System.out.println(" number of routes that were null = " + nrRoutesNull);
+        System.out.println(" simulation allVehicles.size() = " + this.allVehicles.size());
     }
 
-    private static void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
-    	
+    private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
     	
         double startTime = (Math.random() * (0.001*MAX_TIME));
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
