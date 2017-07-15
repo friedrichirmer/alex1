@@ -421,7 +421,7 @@ public class Vehicle {
         
         Link currentLink = this.route.get(routeIndex);
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
-        if (currentLink.hasVehicleReachedEndOfLink(this)) {
+        if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
 			moveVehicleToNextLinkOfRoute(time);
         } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 15 && !(this.finish = true)){
