@@ -51,8 +51,8 @@ public class Vis extends PApplet implements MouseListener {
 	private List<VehicleInfo> vehs = new ArrayList<VehicleInfo>();
 	private List<TramInfo> trams = new ArrayList<TramInfo>();
 
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 1200;
+    private static final int HEIGHT = 800;
 
     private int x = 0;
     private int y = 0;
@@ -277,10 +277,8 @@ public class Vis extends PApplet implements MouseListener {
                     xOffset += 15;
                 }
             }
+        }
         
-        
-            net.draw(this);
-            
             for (Site s : sites) {
             	 this.point((float) s.x, (float) s.y);
             	 PolygonSimple polygon = s.getPolygon();
@@ -304,16 +302,17 @@ public class Vis extends PApplet implements MouseListener {
     		this.fill(0);
     		this.text("Voronoi-Dichte: " + densityInRoot + " [Anzahl Personen / m^2]", 500, 500);
     		
-
-
-        }
-
         translate((float) xOffset, (float) yOffset);
-
+        net.draw(this);
 
         synchronized (this.vehs) {
             for (VehicleInfo v : this.vehs) {
                 v.draw(this);
+            }
+        }
+        synchronized (this.trams) {
+            for (TramInfo t : this.trams) {
+                t.draw(this);
             }
         }
         
