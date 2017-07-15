@@ -423,29 +423,36 @@ public class Vehicle {
         Link currentLink = this.route.get(routeIndex);
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
         if (currentLink.hasVehicleReachedEndOfLink(this)) {
-			this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
-//			System.out.println("The new agent id " + this.getId() +
-//					" left the link " + currentLink.getId()
-//					+ ", his travel time was " + (time - timeWhenEnteredLink));
-//			System.out.println("entered at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[0]);
-//			System.out.println("left at" + this.mapOfEnterLeaveTimes.get(currentLink.getId())[1]);
-			routeIndex++;
-        	if (this.route.size() == routeIndex) {
-        	   this.finish = true;
-        	} else {
-				Link newCurrentLink = this.route.get(routeIndex);
-				this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, null});
-			}
-        } else if (time - timeWhenEnteredLink > 20){
-        	if (time % 5 == 0 && new Random().nextDouble() < 0.1){
-        		Node newStartNode = network.findNearestNode(this.x, this.y);
-				DijkstraV2 router = new DijkstraV2(network);
-				this.route = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
-			}
+			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
+			moveVehicleToNextLinkOfRoute(time);
+        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 15 && !(this.finish = true)){
+			rerouteVehicleIfStucked(time);
 		}
     }
 
-    public double getX() {
+	private void recordTravelTimeOnTheLastLink(double time, Link currentLink, Double timeWhenEnteredLink) {
+		this.mapOfEnterLeaveTimes.put(currentLink.getId(), new Double[]{timeWhenEnteredLink, time});
+	}
+
+	private void moveVehicleToNextLinkOfRoute(double time) {
+		routeIndex++;
+		if (this.route.size() == routeIndex) {
+           this.finish = true;
+        } else {
+            Link newCurrentLink = this.route.get(routeIndex);
+            this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, null});
+        }
+	}
+
+	private void rerouteVehicleIfStucked(double time) {
+		if (time % 5 == 0 && new Random().nextDouble() < 0.1){
+            Node newStartNode = network.findNearestNode(this.x, this.y);
+            DijkstraV2 router = new DijkstraV2(network);
+            this.route = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
+        }
+	}
+
+	public double getX() {
         return x;
     }
 
