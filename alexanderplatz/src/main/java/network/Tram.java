@@ -9,6 +9,8 @@ package network;
  */
 public class Tram extends Wall {
 
+	private int velocity = 1;
+	
 	/**
 	 * @param x1
 	 * @param y1
@@ -20,4 +22,8 @@ public class Tram extends Wall {
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	public void update(){
+		
+	}
 }

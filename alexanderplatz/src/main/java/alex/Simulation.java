@@ -39,11 +39,13 @@ import network.TwoRoomsWithCorridorNetworkCreator;
  */
 public class Simulation {
 
-    public static final double SCALE = 80;
+    public static final double SCALE = 25;
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 1000;
+    
+    //KD-Tree variables
     public double visualRangeX = 5;
     public double visualRangeY = 5;
     public int nrOfNeighboursToConsider = 10;
@@ -93,9 +95,8 @@ public class Simulation {
     private void run(Network network) {
         double time = 0;
 
-        KDTree kdTree = new KDTree(this.vehiclesInSimulation);
+//        KDTree kdTree = new KDTree(this.vehiclesInSimulation);
 
-        
         int oldNrOfVehInSim = vehiclesInSimulation.size();
         
         while (time < MAX_TIME) {
@@ -104,22 +105,7 @@ public class Simulation {
         	time /= 100;
         	System.out.println("time = " + time);
         	
-//        	System.out.println("--check before clearing-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
-        	/* Tilmann  6.7.:
-        	 * 
-        	 * Logik:
-        	 * 
-        	 * gehe durch Liste aller Vehicles
-        	 * stelle fest wer sich in der simulation befindet
-        	 * f�ge den in entsprechende liste
-        	 * 	
-        	 * operiere anschlie�end nur noch auf dieser liste,
-        	 * wenn sie sich �ndert, dann baue auch den kdTree neu
-        	 * 
-        	 */
-        	
         	this.vehiclesInSimulation.clear();
-//        	System.out.println("--check after clearing before adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
         	boolean vehicleHasLeft = false;
             for (Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator(); vehicleIterator.hasNext();) {
             	Vehicle vehicle = vehicleIterator.next();
@@ -131,15 +117,15 @@ public class Simulation {
                 	this.vehiclesInSimulation.add(vehicle); 
                  }
             }
-//        	System.out.println("--check after adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
 
-            if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
-            	System.out.println("###build new kdTree###");
-            	List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
-            	vehInSimCopy.addAll(vehiclesInSimulation); 
-        		kdTree = new KDTree(vehInSimCopy);
-        		kdTree.buildKDTree();
-        	}
+            //update kdTree
+//            if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
+//            	System.out.println("###build new kdTree###");
+//            	List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
+//            	vehInSimCopy.addAll(vehiclesInSimulation); 
+//        		kdTree = new KDTree(vehInSimCopy);
+//        		kdTree.buildKDTree();
+//        	}
 
             if (time % 5 == 0 && time > 0){
                 recalculateWeightOfLinksBasedOnCurrentTravelTimes(network, time);
@@ -149,8 +135,14 @@ public class Simulation {
             
             for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
             	Vehicle vehicle = vehicleIterator.next();
-            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
-                vehicle.update(neighboursToConsider, time);
+            	
+            	//mit kdTree
+//            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
+//              vehicle.update(neighboursToConsider, time);
+                
+            	//ohne kdTree
+                vehicle.update(vehiclesInSimulation, time);
+                
                 vehicle.move(time);
                 VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
                 										vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls());
