@@ -140,6 +140,10 @@ public class Tram {
 		return walls;
 	}
 	
+	public boolean isFinished(){
+		return this.finish;
+	}
+	
 	public double getX(){
 		return this.x;
 	}

@@ -144,9 +144,14 @@ public class Simulation {
             	tram.update();
             	tram.move();
             	
-            	allWallsInSimulation.addAll(tram.getWalls());
-            	TramInfo tramInfo = new TramInfo(tram.getWalls(), tram.getPhi());
-            	tramInfoList.add(tramInfo);
+            	if(!tram.isFinished()){
+            		allWallsInSimulation.addAll(tram.getWalls());
+            		TramInfo tramInfo = new TramInfo(tram.getWalls(), tram.getPhi());
+            		tramInfoList.add(tramInfo);
+            	}
+            	else{
+            		tramIterator.remove();
+            	}
             }
             
             for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
