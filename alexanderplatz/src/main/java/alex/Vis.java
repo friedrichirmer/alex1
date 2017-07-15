@@ -163,6 +163,7 @@ public class Vis extends PApplet implements MouseListener {
 
             voronoi.draw(this);
         }
+        popMatrix();
     
     } 
 
