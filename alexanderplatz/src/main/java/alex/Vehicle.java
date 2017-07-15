@@ -437,9 +437,10 @@ public class Vehicle {
 				this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, null});
 			}
         } else if (time - timeWhenEnteredLink > 20){
-        	if (time % 5 ==0 && new Random().nextDouble() < 0.1){
+        	if (time % 5 == 0 && new Random().nextDouble() < 0.1){
         		Node newStartNode = network.findNearestNode(this.x, this.y);
-        		this.route = Dijkstra.returnRoute(network, newStartNode, destinationNode);
+				DijkstraV2 router = new DijkstraV2(network);
+				this.route = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
 			}
 		}
     }

@@ -43,7 +43,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 500;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 100;
 
     private final Vis vis;
     private List<Vehicle> allVehicles = new ArrayList<>();
@@ -204,7 +204,7 @@ public class Simulation {
     private static void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
     	
     	
-        double startTime = (Math.random() * (0.9*MAX_TIME));
+        double startTime = (Math.random() * (0.001*MAX_TIME));
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
