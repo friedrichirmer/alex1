@@ -21,9 +21,11 @@ package alex;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import network.Link;
 import network.Network;
@@ -152,7 +154,7 @@ public class Vehicle {
     }
     
 
-    public void update(List<Vehicle> vehs, double time) {
+    public void update(List<Vehicle> vehs, double time, Set<Wall> wallSet) {
 
 //        if ( startTime > time) {
 //            return;
@@ -222,11 +224,17 @@ public class Vehicle {
          * Die zweite Schleife iteriert �ber alle W�nde und berechnet die absto�enden Kr�fte
          * Hier wird mit Vektoren gerechnet
          */
-        
-        for (int i = 0; i< network.walls.size(); i++ ) {
-        	Wall wall = network.walls.get(i);
-       		calcWallForce(wall);
+      
+        Iterator<Wall> it = wallSet.iterator();
+        while(it.hasNext()){
+        	Wall wall = it.next();
+        	calcWallForce(wall);
         }
+        
+//        for (int i = 0; i< network.walls.size(); i++ ) {
+//        	Wall wall = network.walls.get(i);
+//       		calcWallForce(wall);
+//        }
 
         forceWalls = new PVector((float)pushWallX, (float)pushWallY);
         

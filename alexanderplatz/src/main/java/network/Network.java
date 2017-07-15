@@ -14,7 +14,7 @@ public class Network {
 	}
 
 	public final Map<Integer,Link> links = new HashMap<Integer,Link>();
-	public List<Wall> walls = new ArrayList<>();
+	public Set<Wall> walls = new HashSet<Wall>();
    	private final List<LinkInfo> linkInfos = new ArrayList<>();
    	private int counterOfLinks = 1;
 	private int counterW = 1;
@@ -56,12 +56,12 @@ public class Network {
 		drawLinks(p);
 		drawWalls(p);
 		drawNodes(p);
-
 	}
 
 	private void drawWalls(PApplet p) {
-		for (int i = 0; i<walls.size(); i++) {
-   	    	Wall wa = walls.get(i);
+		Iterator<Wall> it = walls.iterator();
+		while(it.hasNext()){
+			Wall wa = it.next();
    	    	float wx1 = (float)(wa.getX1()* Vis.scale) ;
    	    	float wy1 = (float)(wa.getY1()* Vis.scale) ;
    	    	float wx2 = (float)(wa.getX2()* Vis.scale) ;

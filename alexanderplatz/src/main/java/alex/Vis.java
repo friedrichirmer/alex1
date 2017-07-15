@@ -39,7 +39,8 @@ import java.util.List;
 public class Vis extends PApplet implements MouseListener {
 
 	
-	private List<VehicleInfo> vehs = new ArrayList<>();
+	private List<VehicleInfo> vehs = new ArrayList<VehicleInfo>();
+	private List<TramInfo> trams = new ArrayList<TramInfo>();
 
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
@@ -48,7 +49,7 @@ public class Vis extends PApplet implements MouseListener {
     private int y = 0;
 
     private double phi = 0;
-    private final Network net;
+    private Network net;
 
     private int densityWindowX1;
 	private int densityWindowY1;
@@ -56,9 +57,10 @@ public class Vis extends PApplet implements MouseListener {
 	private int densityWindowY2;
 
 	private Voronoi voronoi;
+
     public static double xOffset = 0;
     public static double yOffset = 0;
-    public static double scale = 20;
+    public static double scale = 10;
 
     public Vis(Network net) {
         this.net = net;
@@ -161,15 +163,23 @@ public class Vis extends PApplet implements MouseListener {
                 v.draw(this);
             }
         }
+        synchronized (this.trams) {
+            for (TramInfo t : this.trams) {
+                t.draw(this);
+            }
+        }
 
         voronoi.draw(this);
         popMatrix();
     } 
 
 
-	public void update(double time, List<VehicleInfo> vehs) {
+	public void update(double time, List<VehicleInfo> vehs, List<TramInfo> trams) {
         synchronized (this.vehs) {
             this.vehs = new ArrayList<VehicleInfo>(vehs);
+        }
+        synchronized (this.trams) {
+            this.trams = new ArrayList<TramInfo>(trams);
         }
         
     }

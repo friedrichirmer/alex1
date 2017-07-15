@@ -4,7 +4,9 @@
 package alex;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import network.Link;
 import network.Wall;
@@ -50,33 +52,7 @@ public class Tram {
 		this.route = route;
 		this.routeIndex = 0;
 		
-		
-		/*
-		 * 		~~~~~~~~~~~WIDTH~~~~~~~~~~
-		 * 
-		 * 		-----------TOP----------- 				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		L						 R				L
-		 *		E						 I				E
-		 *		F			X			 G				N
-		 *		T						 H				G
-		 *		'						 T				T
-		 *		'						 '				H
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 ' 				~
-		 * 		----------BOTTOM----------				~
-		 */
-		
-		this.left   = new Wall(this.x-(this.width/2), this.y - (this.length/2), this.x-(this.width/2), this.y + (this.length/2));
-		this.right  = new Wall(this.x+(this.width/2), this.y - (this.length/2), this.x+(this.width/2), this.y + (this.length/2));
-		this.top    = new Wall(this.x-(this.width/2), this.y - (this.length/2), this.x+(this.width/2), this.y - (this.length/2));
-		this.bottom = new Wall(this.x-(this.width/2), this.y + (this.length/2), this.x+(this.width/2), this.y + (this.length/2));
-		
+		setWalls();
 	}
 
 	
@@ -109,12 +85,45 @@ public class Tram {
         this.x = this.x + Simulation.TIME_STEP * this.vX;
         this.y = this.y + Simulation.TIME_STEP * this.vY;
         
+        setWalls();
+        
         Link currentLink = this.route.get(routeIndex);
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			moveVehicleToNextLinkOfRoute();
 		}
 	}
 	
+	private void setWalls() {
+		this.left   = new Wall(this.x-(this.width/2), this.y - (this.length/2), this.x-(this.width/2), this.y + (this.length/2));
+		this.right  = new Wall(this.x+(this.width/2), this.y - (this.length/2), this.x+(this.width/2), this.y + (this.length/2));
+		this.top    = new Wall(this.x-(this.width/2), this.y - (this.length/2), this.x+(this.width/2), this.y - (this.length/2));
+		this.bottom = new Wall(this.x-(this.width/2), this.y + (this.length/2), this.x+(this.width/2), this.y + (this.length/2));
+		
+		/*
+		 * 		~~~~~~~~~~~WIDTH~~~~~~~~~~
+		 * 
+		 * 		-----------TOP----------- 				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		L						 R				L
+		 *		E						 I				E
+		 *		F			X			 G				N
+		 *		T						 H				G
+		 *		'						 T				T
+		 *		'						 '				H
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 ' 				~
+		 * 		----------BOTTOM----------				~
+		 */
+		
+	
+	}
+
+
 	private void moveVehicleToNextLinkOfRoute() {
 		routeIndex++;
 		if (this.route.size() == routeIndex) {
@@ -122,8 +131,8 @@ public class Tram {
         }
 	}
 	
-	public List<Wall> getWalls(){
-		List<Wall> walls = new ArrayList();
+	public Set<Wall> getWalls(){
+		Set<Wall> walls = new HashSet<Wall>();
 		walls.add(left);
 		walls.add(right);
 		walls.add(top);
@@ -137,5 +146,9 @@ public class Tram {
 	
 	public double getY(){
 		return this.y;
+	}
+
+	public double getPhi() {
+		return this.phi;
 	}
 }
