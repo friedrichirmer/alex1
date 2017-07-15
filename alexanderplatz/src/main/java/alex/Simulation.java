@@ -192,7 +192,9 @@ public class Simulation {
             System.out.println("trying to create the route from the node " + startNodeId + " to the node " + finishNodeId);
             if (!startNodeId.equals(finishNodeId)){
             	/*this here is experimental*/List<Link> route = router.calculateRoute(network.getNodes().get(startNodeId), network.getNodes().get(finishNodeId));
-                createRandomDeparture(network, sim, startNodeId, finishNodeId, route);
+                if (!(route == null)) {
+                    createRandomDeparture(network, sim, startNodeId, finishNodeId, route);
+                }
             }
 
 

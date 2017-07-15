@@ -11,28 +11,33 @@ import network.Network;
 import network.Node;
 
 public class DijkstraV2 {
-	  private final Network network;
-	    private Map<Node,DijkstraNode> correspondingNodes = new HashMap<Node,DijkstraNode>();
-	    private List<DijkstraNode> remainingNodes = new ArrayList<DijkstraNode>();
+	private final Network network;
+	private Map<Node, DijkstraNode> correspondingNodes = new HashMap<Node, DijkstraNode>();
+	private List<DijkstraNode> remainingNodes = new ArrayList<DijkstraNode>();
 
 
-	    public DijkstraV2(Network network) {
-	        this.network = network;
-	    }
+	public DijkstraV2(Network network) {
+		this.network = network;
+	}
 
-	    public List<Link> calculateRoute (Node start, Node destination){
+	public List<Link> calculateRoute(Node start, Node destination) {
 
-	        initiate(start);
+		initiate(start);
 
-	        DijkstraNode current = this.remainingNodes.remove(0);
-	        
-	        while(current.getNode() != destination){
-	        	expandDijkstraNode(current);
-	        	current = this.remainingNodes.remove(0);
-	        }
-	    
-	        return getRoute(destination);
-	    }
+		DijkstraNode current = this.remainingNodes.remove(0);
+
+		while (current.getNode() != destination) {
+			expandDijkstraNode(current);
+			current = this.remainingNodes.remove(0);
+		}
+
+		if (!(getRoute(destination).size() == 0)) {
+
+			return getRoute(destination);
+		} else return null;
+	}
+
+
 
 	    private void expandDijkstraNode(DijkstraNode current) {
 	    	for(Link link : current.getNode().getOutLinks()){
