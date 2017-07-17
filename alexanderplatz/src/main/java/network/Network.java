@@ -19,7 +19,24 @@ public class Network {
    	private int counterOfLinks = 1;
 	private int counterW = 1;
 	public List<Node> entryExitNodes = new ArrayList<Node>();
-
+	public List<Node> tramEntryNodes = new ArrayList<Node>();
+	public List<Node> tramExitNodes = new ArrayList<Node>();
+	public List<Node>  tramExitAlexanderstraﬂe = new ArrayList<Node>();
+	public List<Node>  tramExitSBahn = new ArrayList<Node>();
+	public List<Node>  tramExitKlStr = new ArrayList<Node>();
+	
+	public Node getTramExitNode (Node node){
+		if (node.getId()==101){
+			if (Math.random()<0.5) return tramExitAlexanderstraﬂe.get(0);
+			else return tramExitAlexanderstraﬂe.get(1);
+		}
+		if (node.getId()==102){
+			return tramExitSBahn.get(0);
+		}
+		else return tramExitKlStr.get(0);
+	}
+	
+	
 	public List<Node> getEntryExitNodes() {
 		return entryExitNodes;
 	}

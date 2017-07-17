@@ -21,7 +21,7 @@ public class AlexanderplatzNetworkCreator {
 	}
 	
 	public Network createNetwork(){
-		//Nodes die Personen auswerfen			
+		//EntryExitNodes			
 		Node uSaturn = network.createNode(52,33.2,20);
         Node uPrimark = network.createNode(35.8,29.6,21);
         Node uMediaM = network.createNode(51.5,54,22);
@@ -39,7 +39,7 @@ public class AlexanderplatzNetworkCreator {
 		Node ampelMediaM = network.createNode(51.3,56.9,34);
 
 		
-		
+		//Nodes of network
         Node node1 = network.createNode(66.7,33.1,1);
         Node node2 = network.createNode(54.1,52.4,2);
         Node node3 = network.createNode(40.6,66.7,3);
