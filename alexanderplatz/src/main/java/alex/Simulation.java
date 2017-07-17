@@ -44,9 +44,10 @@ import network.Wall;
 public class Simulation {
 
     private static final double MAX_TIME = 500;
-    static final double TIME_STEP = 0.1;
+    static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 450;
+
     
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -54,7 +55,7 @@ public class Simulation {
 
     private final Vis vis;
     private List<Vehicle> allVehicles = new ArrayList<>();
-    private List<Vehicle> vehiclesInSimulation = new ArrayList<>();
+    private static List<Vehicle> vehiclesInSimulation = new ArrayList<>();
 	private List<Tram> tramsInSimulation = new ArrayList<Tram>();
 
 	public List<Vehicle> getVehicles() {
@@ -67,8 +68,8 @@ public class Simulation {
 
     public static void main(String[] args) {
 
-//  	Network network = new RectangleNetCreator().createNetwork();
-//Network network = new TwoRoomsWithCorridorNetworkCreator().createNetwork();
+    	//Network network = new RectangleNetCreator().createNetwork();
+    	//Network network = new TwoRoomsWithCorridorNetworkCreator().createNetwork();
     	Network network = new AlexanderplatzNetworkCreator().createNetwork();
         getListOfNodeIds(network);
     	Simulation simulation = new Simulation(network);
@@ -159,6 +160,8 @@ public class Simulation {
             }
             
             this.vis.update(time, vehicleInfoList,tramInfoList);
+            
+            if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi();
 
             oldNrOfVehInSim = this.vehiclesInSimulation.size();
             
@@ -201,6 +204,7 @@ public class Simulation {
                 	nrRoutesNull ++;
                 }
             }
+            
         }
         
         System.out.println("created all " + numberOfRandomVehicles + " vehicles");
@@ -210,7 +214,7 @@ public class Simulation {
     
     private void createTram(Network network){
     	DijkstraV2 router = new DijkstraV2(network);
-    	Node from = network.nodes.get(12);
+    	Node from = network.nodes.get(33);
     	Node to = network.nodes.get(5);
     	Tram tram = new Tram(from.getX()+0.5,from.getY() , router.calculateRoute(from, to));
     	this.tramsInSimulation.add(tram);
@@ -234,6 +238,8 @@ public class Simulation {
 		return this.listOfNodesIds;
 	}
     
- 
+	public static List<Vehicle> getVehiclesInSimulation() {
+		return vehiclesInSimulation;
+	}
     
 }

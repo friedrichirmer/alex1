@@ -60,34 +60,37 @@ public class Vis extends PApplet implements MouseListener {
     private double phi = 0;
     private Network net;
 
-    private int densityWindowX1;
-	private int densityWindowY1;
-	private int densityWindowX2;
-	private int densityWindowY2;
+    private float densityWindowX1;
+	private float densityWindowY1;
+	private float densityWindowX2;
+	private float densityWindowY2;
+	
+	PolygonSimple rootPolygon = new PolygonSimple();
+	PolygonSimple outerPolygon = new PolygonSimple();
 
-    
+    PowerDiagram diagram = new PowerDiagram();
     
     OpenList sites = new OpenList();
 	Random rand = new Random(100);
 
 
-	private int originX;
-	private int originY;
+	private float originX;
+	private float originY;
 
-	private int rootWidth;
-	private int rootHeight;
+	private float rootWidth;
+	private float rootHeight;
 
 	private double densityInRoot =  0;
 	private double numberInRoot = 0;
 	private double areasInRoot = 0;
 
+	private List<Vehicle> vehiclesInSimulation;
+	
 	private Set<PolygonSimple> polygonsInRoot =  new HashSet<PolygonSimple>();
-
 
     public static double xOffset = 0;
     public static double yOffset = 0;
-    public static float scale = 10;
-
+    public static float scale = 3;
 
     public Vis(Network net) {
         this.net = net;
@@ -118,23 +121,25 @@ public class Vis extends PApplet implements MouseListener {
         //panel.addMouseListener(new MouseClick());
 
         size(WIDTH, HEIGHT);
-        background(255);
+        //background(255);
         
         
 
     }
     
     /**
-     * Mit der rechten(!) Maustaste kann ein Fenster fï¿½r die Dichtemessung aufgezogen werden.
+     * Mit der linken (!) Maustaste kann ein Fenster fï¿½r die Dichtemessung aufgezogen werden.
      */
     
     public void mousePressed( MouseEvent e ) {
     	
     	if (e.getButton() == 1) {
+    		
     		// Bei einem Mausklick wird die Messung automatisch zurï¿½ckgesetzt
     		//System.out.println("gepresst: [" + e.getX() + "] [" + e.getY() + "]");
-    		densityWindowX1 = e.getX() ;
-    		densityWindowY1 = e.getY();
+    		
+    		densityWindowX1 = e.getX()/scale;
+    		densityWindowY1 = e.getY()/scale;
     		
     		densityInRoot =  0;
     		numberInRoot = 0;
@@ -146,94 +151,11 @@ public class Vis extends PApplet implements MouseListener {
     public void mouseReleased( MouseEvent e ) {
     	if (e.getButton() == 1) {
     		//System.out.println("losgelassen: [" + e.getX() + "] [" + e.getY() + "]");
-    		densityWindowX2 = e.getX();
-    		densityWindowY2 = e.getY();
+    		densityWindowX2 = e.getX()/scale;
+    		densityWindowY2 = e.getY()/scale;
     		
-    		PolygonSimple rootPolygon = new PolygonSimple();
-    		PolygonSimple outerPolygon = new PolygonSimple();
-    		PowerDiagram diagram = new PowerDiagram();
+
     		
-    		polygonsInRoot.clear();
-    		
-    		rootPolygon.add(densityWindowX1, densityWindowY1);
-    		rootPolygon.add(densityWindowX1, densityWindowY2);
-    		rootPolygon.add(densityWindowX2, densityWindowY2);
-    		rootPolygon.add(densityWindowX2, densityWindowY1);
-    		
-    		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
-    			outerPolygon.add(densityWindowX1 - 100, densityWindowY1 - 100);
-    			outerPolygon.add(densityWindowX2 + 100, densityWindowY1 - 100);
-    			outerPolygon.add(densityWindowX2 + 100, densityWindowY2 + 100);
-    			outerPolygon.add(densityWindowX1 - 100, densityWindowY2 + 100);
-    			originX = densityWindowX1;
-    			originY = densityWindowY1;
-    			rootWidth = densityWindowX2 - densityWindowX1;
-    			rootHeight = densityWindowY2 - densityWindowY1;
-    		}
-    		
-    		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
-    			outerPolygon.add(densityWindowX2 - 100, densityWindowY1 - 100);
-    			outerPolygon.add(densityWindowX1 + 100, densityWindowY1 - 100);
-    			outerPolygon.add(densityWindowX1 + 100, densityWindowY2 + 100);
-    			outerPolygon.add(densityWindowX2 - 100, densityWindowY2 + 100);
-    			originX = densityWindowX2;
-    			originY = densityWindowY1;
-    			rootWidth = densityWindowX1 - densityWindowX2;
-    			rootHeight = densityWindowY2 - densityWindowY1;
-    		}
-    		
-    		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
-    			outerPolygon.add(densityWindowX1 - 100, densityWindowY2 - 100);
-    			outerPolygon.add(densityWindowX2 + 100, densityWindowY2 - 100);
-    			outerPolygon.add(densityWindowX2 + 100, densityWindowY1 + 100);
-    			outerPolygon.add(densityWindowX1 - 100, densityWindowY1 + 100);
-    			originX = densityWindowX1;
-    			originY = densityWindowY2;
-    			rootWidth = densityWindowX2 - densityWindowX1;
-    			rootHeight = densityWindowY1 - densityWindowY2;
-    		}
-    		
-    		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
-    			outerPolygon.add(densityWindowX2 - 100, densityWindowY2 - 100);
-    			outerPolygon.add(densityWindowX1 + 100, densityWindowY2 - 100);
-    			outerPolygon.add(densityWindowX1 + 100, densityWindowY1 + 100);
-    			outerPolygon.add(densityWindowX2 - 100, densityWindowY1 + 100);
-    			originX = densityWindowX2;
-    			originY = densityWindowY2;
-    			rootWidth = densityWindowX1 - densityWindowX2;
-    			rootHeight = densityWindowY1 - densityWindowY2;
-    			
-    		}
-    		
-    		
-    		
-    		 
-    		//double[] testpunkte = {100,200,300,400,500,600};	  		
-    		//edges = voronoi.generateVoronoi(testpunkte, testpunkte, densityWindowX1, densityWindowX2, densityWindowY1, densityWindowY2);
-    		
-    		for (int i = 0; i < 100; i++) {
-			 	Site site = new Site(rand.nextInt(1000), rand.nextInt(1000));
-			 	// we could also set a different weighting to some sites
-			 	// site.setWeight(30)
-			 	sites.add(site);
-			 	}
-    		
-    		diagram.setSites(sites);
-    		diagram.setClipPoly(outerPolygon);
-    		diagram.computeDiagram();
-    		
-    		for (Site s : sites) {
-    			if (rootPolygon.contains(s.x, s.y) && (s.getPolygon() != null)) {
-    				polygonsInRoot.add(s.getPolygon());
-    				System.out.println("xxxxxxxxxxxxxx");
-    				numberInRoot++;
-    				areasInRoot += s.getPolygon().getArea();
-    			}		
-    		}
-    		
-			System.out.println(numberInRoot +  " und " + areasInRoot);
-    		if (areasInRoot > 0) densityInRoot = (numberInRoot / areasInRoot);
-    		System.out.println(" New Density " + (numberInRoot / areasInRoot));
     	}
 
 	}
@@ -266,42 +188,54 @@ public class Vis extends PApplet implements MouseListener {
 
 
             else {
-
+            	
+            	double oldscale = scale;
+            	
                 if (key == '+') {
-                    scale += 0.5;
+                	
+                    scale += 0.2;
                     yOffset -= 15;
                     xOffset -= 15;
                 } else if (key == '-') {
-                    scale -= 0.5;
+                    scale -= 0.2;
                     yOffset += 15;
                     xOffset += 15;
                 }
+                
+                double scaleAdjust = scale / oldscale;
+                
+                densityWindowX1 *= scaleAdjust;
+                densityWindowX2 *= scaleAdjust;
+                densityWindowY1 *= scaleAdjust;
+                densityWindowY2 *= scaleAdjust;
+                
             }
         }
         
-            for (Site s : sites) {
-            	 this.point((float) s.x, (float) s.y);
-            	 PolygonSimple polygon = s.getPolygon();
-            	 if(polygonsInRoot.contains(polygon)){
-            		 double[] polyx = polygon.getXPoints();
-            		 double[] polyy = polygon.getYPoints();
-           		 
-           		 for (int i=0;i<(polygon.getNumPoints()-1);i++) {
-            			 this.line( (float) polyx[i], (float) polyy[i], (float) polyx [i+1], (float) polyy[i+1]);
-            		 }
-            		 this.line( (float) polyx[polygon.getNumPoints()-1], (float) polyy[polygon.getNumPoints()-1], (float) polyx [0], (float) polyy[0]);
- 
-            	 }
-            	 
-            }
-            
-            this.noFill();
-            this.rect(originX, originY, rootWidth, rootHeight, 3);
-            this.fill(0);
-    		this.textSize(15);
-    		this.fill(0);
-    		this.text("Voronoi-Dichte: " + densityInRoot + " [Anzahl Personen / m^2]", 500, 500);
-    		
+        updateDensityWindow();
+        
+        for (PolygonSimple p :  polygonsInRoot){
+   		double[] polyx = p.getXPoints();
+   		double[] polyy = p.getYPoints();
+   		          		 
+  		for (int i=0;i<(p.getNumPoints()-1);i++) {
+   			 this.line( (float) (polyx[i]*scale), (float) (polyy[i]*scale), (float) (polyx [i+1]*scale), (float) (polyy[i+1]*scale));
+   		}
+   		 	this.line( (float) (polyx[p.getNumPoints()-1]*scale), (float) (polyy[p.getNumPoints()-1]*scale), (float) (polyx [0]*scale), (float) (polyy[0]*scale));
+        }
+        
+        System.out.println("Anzahl: " + numberInRoot +  " und Fläche: " + areasInRoot + " m^2");
+		if (areasInRoot > 0) densityInRoot = (numberInRoot / areasInRoot);
+		System.out.println(" New Density " + (numberInRoot / areasInRoot));
+        	
+		 this.noFill();
+	     this.rect(originX*scale, originY*scale, rootWidth*scale, rootHeight*scale, 3);
+	     this.fill(0);
+	     this.textSize(15);
+	     this.fill(0);
+	     this.text("Voronoi-Dichte: " + densityInRoot + " [Anzahl Personen / m^2]", 500, 500);
+    	
+    	        
         translate((float) xOffset, (float) yOffset);
         net.draw(this);
 
@@ -318,11 +252,13 @@ public class Vis extends PApplet implements MouseListener {
         }
         
         popMatrix();
+		
         
     } 
 
 
 	public void update(double time, List<VehicleInfo> vehs, List<TramInfo> trams) {
+					
         synchronized (this.vehs) {
             this.vehs = new ArrayList<VehicleInfo>(vehs);
         }
@@ -331,5 +267,110 @@ public class Vis extends PApplet implements MouseListener {
         }
         
     }
+	
+	public void updateDensityWindow(){
+		rootPolygon = new PolygonSimple();
+		outerPolygon = new PolygonSimple();
+	    
+		
+		
+		
+		rootPolygon.add(densityWindowX1, densityWindowY1);
+		rootPolygon.add(densityWindowX1, densityWindowY2);
+		rootPolygon.add(densityWindowX2, densityWindowY2);
+		rootPolygon.add(densityWindowX2, densityWindowY1);
+		
+		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
+			outerPolygon.add(densityWindowX1 - 3, densityWindowY1 - 3);
+			outerPolygon.add(densityWindowX2 + 3, densityWindowY1 - 3);
+			outerPolygon.add(densityWindowX2 + 3, densityWindowY2 + 3);
+			outerPolygon.add(densityWindowX1 - 3, densityWindowY2 + 3);
+			originX = densityWindowX1;
+			originY = densityWindowY1;
+			rootWidth = densityWindowX2 - densityWindowX1;
+			rootHeight = densityWindowY2 - densityWindowY1;
+		}
+		
+		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
+			outerPolygon.add(densityWindowX2 - 3, densityWindowY1 - 3);
+			outerPolygon.add(densityWindowX1 + 3, densityWindowY1 - 3);
+			outerPolygon.add(densityWindowX1 + 3, densityWindowY2 + 3);
+			outerPolygon.add(densityWindowX2 - 3, densityWindowY2 + 3);
+			originX = densityWindowX2;
+			originY = densityWindowY1;
+			rootWidth = densityWindowX1 - densityWindowX2;
+			rootHeight = densityWindowY2 - densityWindowY1;
+		}
+		
+		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
+			outerPolygon.add(densityWindowX1 - 3, densityWindowY2 - 3);
+			outerPolygon.add(densityWindowX2 + 3, densityWindowY2 - 3);
+			outerPolygon.add(densityWindowX2 + 3, densityWindowY1 + 3);
+			outerPolygon.add(densityWindowX1 - 3, densityWindowY1 + 3);
+			originX = densityWindowX1;
+			originY = densityWindowY2;
+			rootWidth = densityWindowX2 - densityWindowX1;
+			rootHeight = densityWindowY1 - densityWindowY2;
+		}
+		
+		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
+			outerPolygon.add(densityWindowX2 - 3, densityWindowY2 - 3);
+			outerPolygon.add(densityWindowX1 + 3, densityWindowY2 - 3);
+			outerPolygon.add(densityWindowX1 + 3, densityWindowY1 + 3);
+			outerPolygon.add(densityWindowX2 - 3, densityWindowY1 + 3);
+			originX = densityWindowX2;
+			originY = densityWindowY2;
+			rootWidth = densityWindowX1 - densityWindowX2;
+			rootHeight = densityWindowY1 - densityWindowY2;
+			
+		}
+		
+	diagram.setClipPoly(outerPolygon);
+		
+	}
+	
+	public void updateVoronoi(){
+				
+		vehiclesInSimulation = Simulation.getVehiclesInSimulation();
+		
+        sites.clear();
+        polygonsInRoot.clear();
+        
+		for (Vehicle v : vehiclesInSimulation) {
+		 	Site site = new Site(v.getX(), v.getY());
+		 	sites.add(site);
+		 }
+		
+		diagram.setSites(sites);
+
+		diagram.computeDiagram();
+
+		numberInRoot = 0;
+		areasInRoot = 0;
+		
+		for (Site s : sites) {
+			if (rootPolygon.contains(s.x, s.y) && (s.getPolygon() != null)) {
+				polygonsInRoot.add(s.getPolygon());
+				numberInRoot++;
+				areasInRoot += s.getPolygon().getArea();
+			}		
+	
+            PolygonSimple polygon = s.getPolygon();
+            	 if(polygonsInRoot.contains(polygon)){
+            		 double[] polyx = polygon.getXPoints();
+            		 double[] polyy = polygon.getYPoints();
+            		          		 
+           		 for (int i=0;i<(polygon.getNumPoints()-1);i++) {
+            			 this.line( (float) (polyx[i]*scale), (float) (polyy[i]*scale), (float) (polyx [i+1]*scale), (float) (polyy[i+1]*scale));
+            		 }
+            		 this.line( (float) (polyx[polygon.getNumPoints()-1]*scale), (float) (polyy[polygon.getNumPoints()-1]*scale), (float) (polyx [0]*scale), (float) (polyy[0]*scale));
+ 
+            	 
+            	 
+            }
+		}
+		
+       
+	}
 
 }

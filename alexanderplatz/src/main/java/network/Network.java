@@ -35,14 +35,14 @@ public class Network {
 		}
 		else return tramExitKlStr.get(0);
 	}
-	
-	
+
+	private double proportion = 6.051;
 	public List<Node> getEntryExitNodes() {
 		return entryExitNodes;
 	}
 
 	public Node createNode(double x, double y, int id) {
-   		Node n = new Node(x,y,id);
+   		Node n = new Node(x*proportion,y*proportion,id);
    		this.nodes.put(id,n);
    		return n;
    	}
@@ -68,7 +68,7 @@ public class Network {
    	}
 
    	public Wall createWall(double x1, double y1, double x2, double y2) {
-   		Wall w = new Wall(x1,y1,x2,y2);
+   		Wall w = new Wall(x1*proportion,y1*proportion,x2*proportion,y2*proportion);
    		walls.add(w);
    		counterW++;
      	return w;
