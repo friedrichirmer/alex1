@@ -27,8 +27,8 @@ public class Tram {
 	private Wall top;
 	private Wall bottom;
 	
-	private double length = 5;
-	private double width = 2;
+	private double half_length = 2;
+	private double half_width = 1;
 	
 	private double x;
 	private double y;
@@ -98,41 +98,43 @@ public class Tram {
 	}
 	
 	private void setWalls() {
+		
 		double alpha = Math.acos( this.v.y / v.mag());
 		
-		PVector middle = new PVector((float) this.x, (float) this.y);
 		
-		
-		PVector vNormalized = v.get();
-		vNormalized.normalize();
-		
-		
-		PVector vTimesLength = vNormalized.get();
-		vTimesLength.mult( (float) length/2 );
-		
-		PVector vTimesLengthToTop = vTimesLength.get();
-		vTimesLengthToTop.mult(-1);
-		
-		PVector fromBottomToRightPoint = new PVector( (float)(Math.cos(alpha)*width/2), - (float)(Math.sin(alpha)*width/2));
-		PVector fromBottomToLeftPoint = new PVector( - (float)(Math.cos(alpha)*width/2), (float)(Math.sin(alpha)*width/2));
-		
-		PVector rightBottomCorner = middle.get();
-		rightBottomCorner.add(vTimesLength);
-		rightBottomCorner.add(fromBottomToRightPoint);
-
-		
-		PVector rightTopCorner = middle.get();
-		rightTopCorner.add(vTimesLengthToTop);
-		rightTopCorner.add(fromBottomToRightPoint);
-
-		PVector leftBottomCorner = middle.get();
-		leftBottomCorner.add(vTimesLength);
-		leftBottomCorner.add(fromBottomToLeftPoint);
-
-		
-		PVector leftTopCorner = middle.get();
-		leftTopCorner.add(vTimesLengthToTop);
-		leftTopCorner.add(fromBottomToLeftPoint);
+//		PVector middle = new PVector((float) this.x, (float) this.y);
+//		
+//		
+//		PVector vNormalized = v.get();
+//		vNormalized.normalize();
+//		
+//		
+//		PVector vTimesLength = vNormalized.get();
+//		vTimesLength.mult( (float) length/2 );
+//		
+//		PVector vTimesLengthToTop = vTimesLength.get();
+//		vTimesLengthToTop.mult(-1);
+//		
+//		PVector fromBottomToRightPoint = new PVector( (float)(Math.cos(alpha)*width/2), - (float)(Math.sin(alpha)*width/2));
+//		PVector fromBottomToLeftPoint = new PVector( - (float)(Math.cos(alpha)*width/2), (float)(Math.sin(alpha)*width/2));
+//		
+//		PVector rightBottomCorner = middle.get();
+//		rightBottomCorner.add(vTimesLength);
+//		rightBottomCorner.add(fromBottomToRightPoint);
+//
+//		
+//		PVector rightTopCorner = middle.get();
+//		rightTopCorner.add(vTimesLengthToTop);
+//		rightTopCorner.add(fromBottomToRightPoint);
+//
+//		PVector leftBottomCorner = middle.get();
+//		leftBottomCorner.add(vTimesLength);
+//		leftBottomCorner.add(fromBottomToLeftPoint);
+//
+//		
+//		PVector leftTopCorner = middle.get();
+//		leftTopCorner.add(vTimesLengthToTop);
+//		leftTopCorner.add(fromBottomToLeftPoint);
 		
 
 //		this.right  = new Wall(rightTopCorner.x,rightTopCorner.y, rightBottomCorner.x, rightBottomCorner.y);
@@ -140,11 +142,28 @@ public class Tram {
 //		this.top    = new Wall(leftTopCorner.x,leftTopCorner.y,rightTopCorner.x,rightTopCorner.y);
 //		this.bottom = new Wall(leftBottomCorner.x,leftBottomCorner.y,rightBottomCorner.x,rightBottomCorner.y);
 		
+		double rightBottomX = this.x + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
+		double rightBottomY = this.y + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
 		
-		this.right   = new Wall(this.x + width/2, this.y -length/2, this.x + width/2, this.y + length/2);
-		this.left   = new Wall(this.x - width/2, this.y -length/2, this.x -width/2, this.y + length/2);
-		this.top    = new Wall(this.x-width/2, this.y - length/2, this.x+ width/2, this.y - length/2);
-		this.bottom = new Wall(this.x-width/2, this.y + length/2, this.x+width/2, this.y + length/2);
+		double rightTopX = this.x + (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
+		double rightTopY = this.y + (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
+		
+		double leftBottomX = this.x - (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
+		double leftBottomY = this.y - (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
+		
+		double leftTopX = this.x - (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
+		double leftTopY = this.y - (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
+		
+		this.right   = new Wall(rightTopX, rightTopY, rightBottomX, rightBottomY);
+		this.left   = new Wall(leftTopX, leftTopY, leftBottomX, leftBottomY);
+		this.top    = new Wall(leftTopX, leftTopY, rightTopX, rightTopY);
+		this.bottom = new Wall(leftBottomX, leftBottomY, rightBottomX, rightBottomY);
+		
+		
+//		this.right   = new Wall(this.x + half_width/2, this.y -half_length/2, this.x + half_width/2, this.y + half_length/2);
+//		this.left   = new Wall(this.x - half_width/2, this.y -half_length/2, this.x -half_width/2, this.y + half_length/2);
+//		this.top    = new Wall(this.x-half_width/2, this.y - half_length/2, this.x+ half_width/2, this.y - half_length/2);
+//		this.bottom = new Wall(this.x-half_width/2, this.y + half_length/2, this.x+half_width/2, this.y + half_length/2);
 		
 		/*
 		 * 		~~~~~~~~~~~WIDTH~~~~~~~~~~
