@@ -47,6 +47,7 @@ public class Simulation {
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 150;
+    
     public double visualRangeX = 5;
     public double visualRangeY = 5;
     public int nrOfNeighboursToConsider = 100;
@@ -95,7 +96,7 @@ public class Simulation {
     private void run(Network network) {
         double time = 0;
 
-        KDTree kdTree = new KDTree(this.vehiclesInSimulation);
+//        KDTree kdTree = new KDTree(this.vehiclesInSimulation);
 
         createTram(network);
         
@@ -110,6 +111,7 @@ public class Simulation {
         	this.vehiclesInSimulation.clear();
 //        	System.out.println("--check after clearing before adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
         	boolean vehicleHasLeft = false;
+        	
             for (Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator(); vehicleIterator.hasNext();) {
             	Vehicle vehicle = vehicleIterator.next();
             	if (vehicle.getFinish() == true) {
@@ -122,13 +124,13 @@ public class Simulation {
             }
 //        	System.out.println("--check after adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
 
-            if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
-            	System.out.println("###build new kdTree###");
-            	List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
-            	vehInSimCopy.addAll(vehiclesInSimulation); 
-        		kdTree = new KDTree(vehInSimCopy);
-        		kdTree.buildKDTree();
-        	}
+//            if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
+//            	System.out.println("###build new kdTree###");
+//            	List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
+//            	vehInSimCopy.addAll(vehiclesInSimulation); 
+//        		kdTree = new KDTree(vehInSimCopy);
+//        		kdTree.buildKDTree();
+//        	}
 
             if (time % 5 == 0 && time > 0){
                 recalculateWeightOfLinksBasedOnCurrentTravelTimes(network, time);
@@ -141,12 +143,12 @@ public class Simulation {
             
             for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
             	Tram tram = tramIterator.next();
-            	tram.update();
+            	tram.update(vehiclesInSimulation);
             	tram.move();
             	
             	if(!tram.isFinished()){
             		allWallsInSimulation.addAll(tram.getWalls());
-            		TramInfo tramInfo = new TramInfo(tram.getWalls(), tram.getPhi());
+            		TramInfo tramInfo = new TramInfo(tram);
             		tramInfoList.add(tramInfo);
             	}
             	else{
@@ -156,8 +158,14 @@ public class Simulation {
             
             for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
             	Vehicle vehicle = vehicleIterator.next();
-            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
-                vehicle.update(neighboursToConsider, time, allWallsInSimulation);
+            	
+            	//mit kdTree
+//            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
+//                vehicle.update(neighboursToConsider, time, allWallsInSimulation);
+            	
+            	//ohne kdTree
+            	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
+            	
                 vehicle.move(time);
                 VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
                 										vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls());

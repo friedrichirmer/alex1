@@ -89,8 +89,18 @@ public class Network {
 	
 	private void drawNodes(PApplet p) {
 		for(Integer n: this.nodes.keySet()){
-			p.text(n, (float) (nodes.get(n).getX()*Vis.scale), (float) (nodes.get(n).getY()*Vis.scale));
+			float  xx = (float) (Vis.scale * this.nodes.get(n).getX());
+			float yy = (float) (Vis.scale* this.nodes.get(n).getY());
+			if(this.entryExitNodes.contains(n)){
+				
+				p.pushMatrix();
+				p.translate(xx, yy);
+				p.fill(0,200,20);
+				p.ellipse((float)xx, (float)yy, 1, 1);
+				p.popMatrix();
 			}
+			p.text(n, xx, yy);
+		}
 	}
 
 	public Node findNearestNode(double x, double y) {

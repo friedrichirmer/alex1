@@ -305,14 +305,15 @@ public class Vis extends PApplet implements MouseListener {
         translate((float) xOffset, (float) yOffset);
         net.draw(this);
 
+        synchronized (this.trams) {
+        	for (TramInfo t : this.trams) {
+        		t.draw(this);
+        	}
+        }
+        
         synchronized (this.vehs) {
             for (VehicleInfo v : this.vehs) {
                 v.draw(this);
-            }
-        }
-        synchronized (this.trams) {
-            for (TramInfo t : this.trams) {
-                t.draw(this);
             }
         }
         

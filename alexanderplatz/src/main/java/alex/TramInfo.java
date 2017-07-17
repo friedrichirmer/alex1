@@ -11,13 +11,33 @@ public class TramInfo {
 	private Set<Wall> walls;
     
     private final double phi;
+
+	private Wall left;
+
+	private float width;
+
+	private float length;
+	
+	private float xCenter;
+	private float yCenter;
+	
     
-	public TramInfo(Set<Wall> walls, double phi) {
-		this.walls = walls;
-		this.phi = phi;
+	public TramInfo(Tram tram) {
+		this.walls = tram.getWalls();
+		this.phi = tram.getPhi();
+		this.left = tram.getLeftWall();
+		this.width = tram.getWidth();
+		this.length = tram.getLength();
+		this.xCenter = (float) tram.getX();
+		this.yCenter = (float) tram.getY();
 	}
 
 	public void draw(PApplet p){
+		p.strokeWeight(2);
+		p.fill(100, 0 , 0);
+		p.rect((float)left.getX1(), (float)left.getY1(), width, length);
+		p.fill(0,200,0);
+		p.ellipse(xCenter, yCenter, 2, 2);
 		drawWalls(p);
 	}
 	
@@ -30,11 +50,11 @@ public class TramInfo {
    	    	float wx2 = (float)(wa.getX2()* Vis.scale) ;
    	    	float wy2 = (float)(wa.getY2()* Vis.scale) ;
    	    	
-
    	    	p.strokeWeight(1);
    	    	p.line(wx1,wy1,wx2,wy2);
-   	    	p.strokeWeight(1);
    	    }
+		
+		
 	}
 	
 }

@@ -62,6 +62,7 @@ public class VehicleInfo {
 
     public void draw(PApplet p) {
             p.pushMatrix();
+            
 
             p.translate(x, y);
 
