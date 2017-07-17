@@ -48,9 +48,9 @@ public class AlexanderplatzNetworkCreator {
 		Node sparkasse = network.createNode(49.8,57,43);
         Node bruecke = network.createNode(28.4,54.6,44);
         Node ampelParkInn = network.createNode(39,11.5,45);
-        Node CundA = network.createNode(27.2,39.7,45);	
+        Node cUndA = network.createNode(27.2,39.7,46);	
         
-        
+        	
 		//Nodes of network
         Node node1 = network.createNode(66.7,33.1,1);
         Node node2 = network.createNode(54.1,52.4,2);
@@ -87,9 +87,8 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node10,node12,1);
         network.createLink(node6,node8,1);
         network.createLink(node7,node2,1);
-        network.createLink(node14,node13,1);
-        network.createLink(node14,node8,1);
-        
+        network.createLink(node14,node13,1);        network.createLink(node14,node8,1);
+         
         network.createLink(node2,node1,1);
         network.createLink(node3,node2,1);
         network.createLink(node4,node3,1);
@@ -155,8 +154,8 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(bruecke,node4,1);
         network.createLink(ampelParkInn,node9,1);
         network.createLink(ampelParkInn,node13,1);
-        network.createLink(CundA,node6,1);
-        network.createLink(CundA,node7,1);
+        network.createLink(cUndA,node6,1);
+        network.createLink(cUndA,node7,1);;
         
         
         network.createLink(node9,uSaturn,1);
@@ -200,8 +199,8 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node4,bruecke,1);
         network.createLink(node9,ampelParkInn,1);
         network.createLink(node13,ampelParkInn,1);
-        network.createLink(node6,CundA,1);
-        network.createLink(node7,CundA,1);
+        network.createLink(node6,cUndA,1);
+        network.createLink(node7,cUndA,1);
         
         //Abgrenzung
         network.createWall(0,23.8,24.7,0);
@@ -310,8 +309,8 @@ public class AlexanderplatzNetworkCreator {
 		network.entryExitNodes.add(newYorker);
 		network.entryExitNodes.add(sparkasse);
 		network.entryExitNodes.add(bruecke);
-		network.entryExitNodes.add(ampelParkInn);
-				
+		network.entryExitNodes.add(ampelParkInn);		network.entryExitNodes.add(cUndA);
+			
         return network;
 	}
 
