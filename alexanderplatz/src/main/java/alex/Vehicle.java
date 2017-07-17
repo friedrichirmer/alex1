@@ -62,7 +62,7 @@ public class Vehicle {
 
     private int routeIndex = 0;
 	private Network network;
-	private boolean finish;
+	private boolean finished;
 	private int counterV = 1;
 	private Node destinationNode;
 	private static Random random = new Random(41);
@@ -95,7 +95,7 @@ public class Vehicle {
         this.rad = 0.25 + random.nextDouble()*0.1;
         this.maxSpeed = 2;
         this.vtx = 0;
-        this.finish = false;     
+        this.finished = false;
         this.id = id;
         this.startTime = startTime;
         this.mass = 80;
@@ -112,7 +112,7 @@ public class Vehicle {
         this.rad = 0.25 + random.nextDouble()*0.1;
         this.maxSpeed = 2;
         this.vtx = 0;
-        this.finish = false;     
+        this.finished = false;
         this.id = id;
         this.startTime = startTime;
         this.mass = 60 + random.nextInt(40);
@@ -290,8 +290,8 @@ public class Vehicle {
         momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
         //	Begrenzung der Kraefte
         if (momentSpeed > maxSpeed) {
-        	vx = Math.sqrt(momentSpeed) * vx / momentSpeed;
-        	vy = Math.sqrt(momentSpeed) * vy / momentSpeed;
+			vx = (vx / momentSpeed) * maxSpeed;
+			vy = (vy / momentSpeed) * maxSpeed;
         }
         this.momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
         this.phi = Math.atan2(vy,vx);
@@ -393,12 +393,12 @@ public class Vehicle {
 		double vdify = this.vty * t.y;
 
 		pushWallX = pushWallX + 
-			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.x +
-			240000*g*radlot*vdifx*t.x;
+			(constantA * Math.exp(radlot / constantB) + constantK * g * radlot) * n.x +
+			constantKSmall * g * radlot * vdifx * t.x;
      	
 		pushWallY = pushWallY + 
-			(2000*Math.exp(radlot/0.08)+120000*g*radlot)*n.y + 
-			240000*g*radlot*vdify*t.y;
+			(constantA * Math.exp(radlot / constantB) + constantK * g * radlot) * n.y +
+			constantKSmall * g * radlot * vdify * t.y;
 	}
     
     public void move(double time) {
@@ -413,7 +413,7 @@ public class Vehicle {
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
 			moveVehicleToNextLinkOfRoute(time);
-        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 15 && !(this.finish = true)){
+        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 15 && !(this.finished = true)){
 			rerouteVehicleIfStucked(time);
 		}
     }
@@ -425,7 +425,7 @@ public class Vehicle {
 	private void moveVehicleToNextLinkOfRoute(double time) {
 		routeIndex++;
 		if (this.route.size() == routeIndex) {
-           this.finish = true;
+           this.finished = true;
         } else {
             Link newCurrentLink = this.route.get(routeIndex);
             this.mapOfEnterLeaveTimes.put(newCurrentLink.getId(), new Double[]{time, null});
@@ -464,8 +464,8 @@ public class Vehicle {
 		return rad;
 	}
 	
-	public boolean getFinish() {
-		return finish;
+	public boolean getFinished() {
+		return finished;
 	}
 
 	public PVector getForceTarget() {

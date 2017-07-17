@@ -153,12 +153,14 @@ public class Vis extends PApplet implements MouseListener {
     		//System.out.println("losgelassen: [" + e.getX() + "] [" + e.getY() + "]");
     		densityWindowX2 = e.getX()/scale;
     		densityWindowY2 = e.getY()/scale;
-    		
-
-    		
     	}
 
+    	if (e.getButton() == 2){
+    		net.createPavilion(e.getX() / scale, e.getY() /
+					scale);
+		}
 	}
+
 
 
  
@@ -224,7 +226,7 @@ public class Vis extends PApplet implements MouseListener {
    		 	this.line( (float) (polyx[p.getNumPoints()-1]*scale), (float) (polyy[p.getNumPoints()-1]*scale), (float) (polyx [0]*scale), (float) (polyy[0]*scale));
         }
         
-        System.out.println("Anzahl: " + numberInRoot +  " und Fläche: " + areasInRoot + " m^2");
+        System.out.println("Anzahl: " + numberInRoot +  " und Flï¿½che: " + areasInRoot + " m^2");
 		if (areasInRoot > 0) densityInRoot = (numberInRoot / areasInRoot);
 		System.out.println(" New Density " + (numberInRoot / areasInRoot));
         	
