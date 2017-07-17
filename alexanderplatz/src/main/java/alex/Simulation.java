@@ -71,15 +71,10 @@ public class Simulation {
 //Network network = new TwoRoomsWithCorridorNetworkCreator().createNetwork();
     	Network network = new AlexanderplatzNetworkCreator().createNetwork();
         getListOfNodeIds(network);
-
-
-    	
     	Simulation simulation = new Simulation(network);
     	NetworkUtils.createListOfNodeIds(network, simulation);
     	simulation.addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
-    
 //      Simulation simulation = makeTestScenario(network);
-
         simulation.run(network);
         
     }
@@ -122,15 +117,6 @@ public class Simulation {
                 	this.vehiclesInSimulation.add(vehicle); 
                  }
             }
-//        	System.out.println("--check after adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
-
-//            if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
-//            	System.out.println("###build new kdTree###");
-//            	List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
-//            	vehInSimCopy.addAll(vehiclesInSimulation); 
-//        		kdTree = new KDTree(vehInSimCopy);
-//        		kdTree.buildKDTree();
-//        	}
 
             if (time % 5 == 0 && time > 0){
                 recalculateWeightOfLinksBasedOnCurrentTravelTimes(network, time);
@@ -167,8 +153,8 @@ public class Simulation {
             	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
             	
                 vehicle.move(time);
-                VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(), vehicle.getColourR(), vehicle.getColourG(), vehicle.getColourB(),
-                										vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls());
+                VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(),
+                										vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.momentSpeed);
                 vehicleInfoList.add(vehicleInfo);
             }
             
@@ -193,7 +179,6 @@ public class Simulation {
         while (linkIterator.hasNext()){
             Link link= linkIterator.next();
             link.calculateRecentLinkWeights(allVehicles, time);
-//            System.out.println("The new weight of the link " + link.getId() + " was calculated");
         }
     }
 
@@ -233,7 +218,7 @@ public class Simulation {
 
     private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
     	
-        double startTime = (Math.random() * (0.001*MAX_TIME));
+        double startTime = (Math.random() * (0.01*MAX_TIME));
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);

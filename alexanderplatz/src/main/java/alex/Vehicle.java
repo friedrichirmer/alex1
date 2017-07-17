@@ -44,8 +44,8 @@ public class Vehicle {
     private double forceY = 0;
     private double length = 0.2;
     private double width = 0.2;
-    private double speed = 1;
-    private double maxSpeed = 3;
+    double desiredSpeed = 1.34;
+    private double maxSpeed;
     private double tau = 0.5;
     private double rad;
     private double x;
@@ -56,6 +56,7 @@ public class Vehicle {
     private float colourB;
     double pushX = 0;
     double pushY = 0;
+	double momentSpeed;
 
     private String id;
 
@@ -71,12 +72,15 @@ public class Vehicle {
 	private PVector forceWalls;
 	private PVector forceVehicles;
 	private PVector forceTarget;
-	double pushWallX;
-	double pushWallY;
+	double pushWallX, pushWallY;
     private boolean isInTheSimulation = false;
 	private double mass;
 	private final double walkParallelThreshold = 1.0;	//set to Double.MAX_Value to disable parallel walking
 	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
+	private double constantA = 2000;
+	private double constantB = 0.08;
+	private double constantK = 120000;
+	private double constantKSmall = 240000;
 
 	public List<Link> getRoute() {
 		return route;
@@ -88,11 +92,7 @@ public class Vehicle {
         this.y = startNode.getY() + random.nextDouble() * 1;
         this.network = network;
         this.route = Dijkstra.returnRoute(network, startNode, destinationNode);
-        
         this.rad = 0.25 + random.nextDouble()*0.1;
-        this.colourR = (float) (255*Math.random());
-        this.colourG = (float) (255*Math.random());
-        this.colourB = (float) (255*Math.random());
         this.maxSpeed = 2;
         this.vtx = 0;
         this.finish = false;     
@@ -110,15 +110,12 @@ public class Vehicle {
         this.route = route;
     	System.out.println("route: " + route.toString());
         this.rad = 0.25 + random.nextDouble()*0.1;
-        this.colourR = (float) (255*Math.random());
-        this.colourG = (float) (255*Math.random());
-        this.colourB = (float) (255*Math.random());
         this.maxSpeed = 2;
         this.vtx = 0;
         this.finish = false;     
         this.id = id;
         this.startTime = startTime;
-        this.mass = 80;
+        this.mass = 60 + random.nextInt(40);
 		this.mapOfEnterLeaveTimes.put(route.get(0).getId(), new Double[]{startTime, null});
         this.destinationNode = destinationNode;
 	}
@@ -178,27 +175,17 @@ public class Vehicle {
         for (Vehicle v : vehs) {
         	
         	if (this == v) continue;  
-        	
-        	double vehx;
-        	double vehy;
-        	double radS;
-        	double distMX;
-        	double distMY;
-        	double distM;	// Abstand der Mittelpunkte
-        	double distR;	// Abstand der Radien
-       
-        	double g;
- 
-        	vehx = v.x;
-        	vehy = v.y;
-        	
-        	radS = (rad + v.getRadius());
-        	distMX = (vehx - this.x);
-        	distMY = (vehy - this.y);
-        	distM = Math.sqrt(distMX*distMX + distMY*distMY);
-        	distR = radS - distM;
-   
-           	if (distR >= 0) g = 1;
+
+        	double vehx = v.x;
+        	double vehy = v.y;
+        	double radS = (rad + v.getRadius());
+        	double distMX = (vehx - this.x);
+        	double distMY = (vehy - this.y);
+        	double distM = Math.sqrt(distMX*distMX + distMY*distMY); // Abstand der Mittelpunkte
+        	double distR = radS - distM; // Abstand der Radien
+
+			double g;
+			if (distR >= 0) g = 1;
         	else g=0;
 
         	double dirNX = (-distMX) / distM; 		//richtungsvektor n_x
@@ -206,16 +193,13 @@ public class Vehicle {
         	double dirNY = (-distMY) / distM;		//richtungsvektor n_y
         	double dirTY = (-distMX) / distM;		//richtungsvektor t_y
         	double vDiff = (v.vtx - this.vtx) * dirTX + (v.vty - this.vty) * dirTY;
-        	
-        	
+
         	pushX = pushX + 
-        			(2000*Math.exp(distR/0.08)+120000*g*distR)*dirNX +
-        			240000*g*distR*vDiff*dirTX;
-        	
+        			(constantA * Math.exp(distR / constantB) + constantK * g * distR) * dirNX +
+        			constantKSmall*g*distR*vDiff*dirTX;
         	pushY = pushY + 
-        			(2000*Math.exp(distR/0.08)+120000*g*distR)*dirNY + 
-        			240000*g*distR*vDiff*dirTY; 
-       
+        			(constantA * Math.exp(distR / constantB) + constantK * g * distR) * dirNY +
+        			constantKSmall * g * distR * vDiff * dirTY;
         }
         
         forceVehicles = new PVector((float)pushX, (float)pushY);
@@ -292,7 +276,7 @@ public class Vehicle {
          */
 
         //Hilfsvektor zum Zeichnen der Pfeile in der Visualisierung
-        forceTarget = new PVector((float) (this.mass * (dx * this.speed - vtx) / this.tau), (float) (this.mass * (dy * this.speed - vty) / this.tau));
+        forceTarget = new PVector((float) (this.mass * (dx * this.desiredSpeed - vtx) / this.tau), (float) (this.mass * (dy * this.desiredSpeed - vty) / this.tau));
 
         
         //Berechnung der resultierenden Gesamtkraft gemae� Social-Force-Model
@@ -303,15 +287,13 @@ public class Vehicle {
                 
         vx = vtx + Simulation.TIME_STEP *(forceX/80);
         vy = vty + Simulation.TIME_STEP *(forceY/80);
-        
+        momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
         //	Begrenzung der Kraefte
-        if (Math.sqrt((vx*vx)+(vy*vy)) > maxSpeed) {
-        	double speed = Math.sqrt((vx*vx)+(vy*vy));
-        	vx = Math.sqrt(speed) * vx / speed ;
-        	vy = Math.sqrt(speed) * vy / speed ;
+        if (momentSpeed > maxSpeed) {
+        	vx = Math.sqrt(momentSpeed) * vx / momentSpeed;
+        	vy = Math.sqrt(momentSpeed) * vy / momentSpeed;
         }
-        
-        
+        this.momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
         this.phi = Math.atan2(vy,vx);
         
     }
@@ -396,14 +378,13 @@ public class Vehicle {
 		    n.normalize();
 		    t = n.get();
 		    
-		    }
+		}
 
 		t.rotate((float)((Math.PI)/2));
 		
 		double g;
 		if (radlot >= 0) {
 			g = 1;
-			
 		}
 		
 		else   	g=0;
@@ -481,18 +462,6 @@ public class Vehicle {
 
 	public double getRadius() {
 		return rad;
-	}
-	
-	public double getColourR() {
-		return colourR;
-	}
-	
-	public double getColourG() {
-		return colourG;
-	}
-	
-	public double getColourB() {
-		return colourB;
 	}
 	
 	public boolean getFinish() {

@@ -38,25 +38,21 @@ public class VehicleInfo {
 
 
     private final int radius;
-	private final float colourR;
-	private final float colourG;
-	private final float colourB;
 	private PVector forceTarget;
 	private PVector forceVehicles;
 	private PVector forceWalls;
-    
-    public VehicleInfo(double x, double y, double phi, double radius, double colourR, double colourG, double colourB,
-                       PVector forceTarget, PVector forceVehicles, PVector forceWalls) {
+    private double momentSpeed;
+
+    public VehicleInfo(double x, double y, double phi, double radius,
+                       PVector forceTarget, PVector forceVehicles, PVector forceWalls, double momentSpeed) {
         this.x = (int) (Vis.scale * x);
         this.y = (int) (Vis.scale * y);
         this.phi = phi;
         this.radius = (int) (Vis.scale * radius);
-        this.colourR = (float) colourR;
-        this.colourG = (float) colourG;
-        this.colourB = (float) colourB;
         this.forceTarget = forceTarget;
         this.forceVehicles = forceVehicles;
         this.forceWalls = forceWalls;
+        this.momentSpeed = momentSpeed;
     }
     
 
@@ -75,9 +71,16 @@ public class VehicleInfo {
             p.ellipse(radius / 2, -radius / 2, 2, 2);
             p.fill(255, 0, 0);
             p.ellipse(radius / 2, radius / 2, 2, 2);
-            p.fill(colourR, colourG, colourB);
+                if (momentSpeed < 0.3) {
+                    p.fill(255, 64, 64, 200);
+                } else if (momentSpeed < 0.6) {
+                    p.fill(255, 214, 3, 200);
+                } else {
+                    p.fill(64, 255, 64, 200);
+                }
             p.ellipse(radius / 4, 0, radius, radius);
             p.ellipse(radius / 4, 0, 7, 7);
+
             p.popMatrix();
 
             /**
