@@ -74,6 +74,22 @@ public class Network {
      	return w;
    	}
 
+   	public void createPavilion(double centerX, double centerY) {
+		double angle = Math.random() * Math.PI * 2;
+		Wall wall1 = new Wall(centerX - 3, centerY - 3, centerX - 3, centerY + 3);
+		Wall wall2 = new Wall(centerX + 3, centerY - 3, centerX + 3, centerY + 3);
+		Wall wall3 = new Wall(centerX + 3, centerY + 3, centerX - 3, centerY + 3);
+		Wall wall4 = new Wall(centerX + 3, centerY - 3, centerX - 3, centerY - 3);
+		walls.add(wall1);
+		counterW++;
+		walls.add(wall2);
+		counterW++;
+		walls.add(wall3);
+		counterW++;
+		walls.add(wall4);
+		counterW++;
+	}
+
 	public void draw(PApplet p) {
 		drawLinks(p);
 		drawWalls(p);

@@ -46,9 +46,8 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 450;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 45;
 
-    
     public double visualRangeX = 5;
     public double visualRangeY = 5;
     public int nrOfNeighboursToConsider = 100;
@@ -110,7 +109,7 @@ public class Simulation {
         	
             for (Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator(); vehicleIterator.hasNext();) {
             	Vehicle vehicle = vehicleIterator.next();
-            	if (vehicle.getFinish() == true) {
+            	if (vehicle.getFinished() == true) {
             		System.out.println("############Vehicle " + vehicle.getId() + " gets removed###########");
                   	vehicleIterator.remove();
                   	vehicleHasLeft = true;
