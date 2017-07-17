@@ -89,15 +89,17 @@ public class Network {
 	
 	private void drawNodes(PApplet p) {
 		for(Integer n: this.nodes.keySet()){
-			float  xx = (float) (Vis.scale * this.nodes.get(n).getX());
-			float yy = (float) (Vis.scale* this.nodes.get(n).getY());
-			if(this.entryExitNodes.contains(n)){
+			Node node = this.nodes.get(n);
+			float  xx = (float) (Vis.scale * node.getX());
+			float yy = (float) (Vis.scale* node.getY());
+			if(this.entryExitNodes.contains(node)){
 				
 				p.pushMatrix();
 				p.translate(xx, yy);
 				p.fill(0,200,20);
-				p.ellipse((float)xx, (float)yy, 1, 1);
+				p.ellipse((float)xx, (float)yy, 5, 5);
 				p.popMatrix();
+				p.fill(0);
 			}
 			p.text(n, xx, yy);
 		}

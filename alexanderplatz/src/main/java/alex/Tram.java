@@ -36,11 +36,11 @@ public class Tram {
 	private double y;
 	private double phi;
 	
-	private int wishVelocity = 1;
+	private double wishVelocity = 0.5;
 	PVector v = new PVector(0,0);
 	private double vX;
 	private double vY;
-	private final double tau = 0.5;
+	private final double tau = 1;
 	
 	/**
 	 * @param x1
@@ -113,63 +113,80 @@ public class Tram {
 		float bottomLineCenterX = (float) (projectedX - (half_length * Math.sin(alpha)));
 		float bottomLineCenterY = (float) (projectedY + (half_length * Math.cos(alpha)));
 		
-		double xMin = Double.MAX_VALUE;
-		xMin = Math.min(xMin, leftTopX);
-		xMin = Math.min(xMin, rightTopX);
-		xMin = Math.min(xMin, rightBottomX);
-		xMin = Math.min(xMin, leftBottomX);
-		
-		double xMax = Double.MIN_VALUE;
-		xMax = Math.max(xMax, leftTopX);
-		xMax = Math.max(xMax, rightTopX);
-		xMax = Math.max(xMax, rightBottomX);
-		xMax = Math.max(xMax, leftBottomX);
+		float leftLineCenterX = (float) (projectedX - (half_width * Math.cos(alpha))) ;
+		float leftLineCenterY = (float) (projectedY - (half_width * Math.sin(alpha)));
 
-		double yMin = Double.MAX_VALUE;
-		yMin = Math.min(yMin, leftTopY);
-		yMin = Math.min(yMin, rightTopY);
-		yMin = Math.min(yMin, rightBottomY);
-		yMin = Math.min(yMin, leftBottomY);
+		float rightLineCenterX = (float) (projectedX + (half_width * Math.cos(alpha))) ;
+		float rightLineCenterY = (float) (projectedY + (half_width * Math.sin(alpha))) ;
+				
 		
-		double yMax = Double.MIN_VALUE;
-		yMax = Math.max(yMax, leftTopY);
-		yMax = Math.max(yMax, rightTopY);
-		yMax = Math.max(yMax, rightBottomY);
-		yMax = Math.max(yMax, leftBottomY);
+//		double xMin = Double.MAX_VALUE;
+//		xMin = Math.min(xMin, leftTopX);
+//		xMin = Math.min(xMin, rightTopX);
+//		xMin = Math.min(xMin, rightBottomX);
+//		xMin = Math.min(xMin, leftBottomX);
+//		
+//		double xMax = Double.MIN_VALUE;
+//		xMax = Math.max(xMax, leftTopX);
+//		xMax = Math.max(xMax, rightTopX);
+//		xMax = Math.max(xMax, rightBottomX);
+//		xMax = Math.max(xMax, leftBottomX);
+//
+//		double yMin = Double.MAX_VALUE;
+//		yMin = Math.min(yMin, leftTopY);
+//		yMin = Math.min(yMin, rightTopY);
+//		yMin = Math.min(yMin, rightBottomY);
+//		yMin = Math.min(yMin, leftBottomY);
+//		
+//		double yMax = Double.MIN_VALUE;
+//		yMax = Math.max(yMax, leftTopY);
+//		yMax = Math.max(yMax, rightTopY);
+//		yMax = Math.max(yMax, rightBottomY);
+//		yMax = Math.max(yMax, leftBottomY);
 
 		float fractionToSubFromVector = Float.MAX_VALUE;
 		double closestDistance = Double.MAX_VALUE;
 		
 		for (Vehicle v: vehicles){
-			if(v.getX() >= xMin && v.getX() <= xMax && v.getY() >= yMin && v.getY() <= yMax){
+			
+			//calculate if vehicles is within future width range
+				PVector leftLineCenter = new PVector(leftLineCenterX, leftLineCenterY); 
 				
-				PVector topLineCenter = new PVector(topLineCenterX, topLineCenterY); 
-				
-				PVector lineThroughTram = new PVector(bottomLineCenterX, bottomLineCenterY);
-				lineThroughTram.sub( topLineCenter );
+				PVector lineThroughTramHorizontal = new PVector(rightLineCenterX, rightLineCenterY);
+				lineThroughTramHorizontal.sub( leftLineCenter );
 				
 				PVector vehicle = new PVector ((float) v.getX(), (float) v.getY());
 				
-				PVector topLineToVehicle = vehicle.get();
-				topLineToVehicle.sub(topLineCenter);
+				PVector leftLineToVehicle = vehicle.get();
+				leftLineToVehicle.sub(leftLineCenter);
 				
-				float c1 = PVector.dot(topLineToVehicle, lineThroughTram);
-				float c2 = PVector.dot(lineThroughTram, lineThroughTram);
+				float cH1 = PVector.dot(leftLineToVehicle, lineThroughTramHorizontal);
+				float cH2 = PVector.dot(lineThroughTramHorizontal, lineThroughTramHorizontal);
 				
-				if(c1 < 0) System.out.println("this should currently not happen ------------------------------------------");
-				
-				else if(c2 < c1) System.out.println("this should currently not happen ------------------------------------------");
-				
-				else{
-					double distance = PVector.dist(vehicle, topLineCenter);
-					if(distance < closestDistance){
-						fractionToSubFromVector = (1-c1/c2);
-					}
-					else if(distance == closestDistance && (1-(c1/c2)) > fractionToSubFromVector){
-						fractionToSubFromVector = (1-c1/c2);
+				if(cH1 >= 0 && cH2 >= cH1){	//vehicle is in future width range
+//				if(v.getX() >= xMin && v.getX() <= xMax && v.getY() >= yMin && v.getY() <= yMax){
+					
+					PVector topLineCenter = new PVector(topLineCenterX, topLineCenterY); 
+					
+					PVector lineThroughTram = new PVector(bottomLineCenterX, bottomLineCenterY);
+					lineThroughTram.sub( topLineCenter );
+					
+					PVector topLineToVehicle = vehicle.get();
+					topLineToVehicle.sub(topLineCenter);
+					
+					float c1 = PVector.dot(topLineToVehicle, lineThroughTram);
+					float c2 = PVector.dot(lineThroughTram, lineThroughTram);
+					
+					if(c1 >= 0 && c2 >= c1){
+						double distance = PVector.dist(vehicle, topLineCenter);
+						if(distance < closestDistance){
+							fractionToSubFromVector = (1-c1/c2);
+						}
+						else if(distance == closestDistance && (1-(c1/c2)) > fractionToSubFromVector){
+							fractionToSubFromVector = (1-c1/c2);
+						}
 					}
 				}
-			}
 		}
 		if(fractionToSubFromVector != Float.MAX_VALUE){
 			this.v.mult(fractionToSubFromVector);
@@ -286,5 +303,10 @@ public class Tram {
 	public float getWidth() {
 		// TODO Auto-generated method stub
 		return (float) (this.half_width *2);
+	}
+
+
+	public Wall getBottomWall() {
+		return this.bottom;
 	}
 }

@@ -12,7 +12,7 @@ public class TramInfo {
     
     private final double phi;
 
-	private Wall left;
+	private Wall bottom;
 
 	private float width;
 
@@ -25,7 +25,7 @@ public class TramInfo {
 	public TramInfo(Tram tram) {
 		this.walls = tram.getWalls();
 		this.phi = tram.getPhi();
-		this.left = tram.getLeftWall();
+		this.bottom = tram.getBottomWall();
 		this.width = tram.getWidth();
 		this.length = tram.getLength();
 		this.xCenter = (float) tram.getX();
@@ -35,9 +35,9 @@ public class TramInfo {
 	public void draw(PApplet p){
 		p.strokeWeight(2);
 		p.fill(100, 0 , 0);
-		p.rect((float)left.getX1(), (float)left.getY1(), width, length);
+//		p.rect((float)left.getX1(), (float)left.getY1(), width, length);
 		p.fill(0,200,0);
-		p.ellipse(xCenter, yCenter, 2, 2);
+		p.ellipse(xCenter, yCenter, 5, 5);
 		drawWalls(p);
 	}
 	
@@ -50,8 +50,13 @@ public class TramInfo {
    	    	float wx2 = (float)(wa.getX2()* Vis.scale) ;
    	    	float wy2 = (float)(wa.getY2()* Vis.scale) ;
    	    	
-   	    	p.strokeWeight(1);
+   	    	if(wa.equals(bottom)){
+   	    		p.strokeWeight(2);
+   	    		p.stroke(255,0,0);
+   	    	}
    	    	p.line(wx1,wy1,wx2,wy2);
+   	    	p.strokeWeight(1);
+   	    	p.stroke(0);
    	    }
 		
 		
