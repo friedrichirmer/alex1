@@ -129,7 +129,7 @@ public class Network {
 				
 				p.pushMatrix();
 				p.translate(xx, yy);
-				p.fill(0,200,20);
+				p.fill(0,50,200);
 				p.ellipse((float)xx, (float)yy, 5, 5);
 				p.popMatrix();
 				p.fill(0);
