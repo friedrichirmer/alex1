@@ -36,11 +36,13 @@ public class Tram {
 	private double centerY;
 	private double phi;
 	
-	private double wishVelocity = 1;
+	private double wishVelocity = 10;
 	PVector v = new PVector(0,0);
 	private double vX;
 	private double vY;
 	private final double tau = 1;
+	private double bottomCenterX;
+	private double bottomCenterY;
 	
 	/**
 	 * @param x1
@@ -63,17 +65,10 @@ public class Tram {
 		
 		Link currentLink = this.route.get(routeIndex);
 		
-    // Berechnung der Wunschrichtung von der Mitte der Fahrzeugfront aus
-//		double bottomCenterX = (this.left.getX2() + this.right.getX2()) / 2;
-//		double bottomCenterY = (this.left.getY2() + this.right.getY2()) / 2;
-		
-//		double alpha = Math.acos( this.v.y / v.mag());
-//		double bottomCenterX = this.centerX - (half_length * Math.sin(alpha));
-//		double bottomCenterY = this.centerY + (half_length * Math.cos(alpha));
-		
 		double dx = currentLink.getTo().getX() - this.centerX;
     	double dy = currentLink.getTo().getY() - this.centerY;
-    	
+
+		// Berechnung der Wunschrichtung von der Mitte der Fahrzeugfront aus
 //        double dx = currentLink.getTo().getX() - bottomCenterX;
 //    	double dy = currentLink.getTo().getY() - bottomCenterY;
     	
@@ -88,7 +83,10 @@ public class Tram {
     	double resultForceY = (dy* this.wishVelocity);
     	
    
-    	this.v.add( new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) ) ) ;
+//    	this.v.add( new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) ) ) ;
+
+    	this.v = new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) )  ;
+    	
 //        vX = vX + Simulation.TIME_STEP *(resultForceX);
 //        vY = vY + Simulation.TIME_STEP *(resultForceY);
         
@@ -176,7 +174,7 @@ public class Tram {
 				float cH2 = PVector.dot(lineThroughTramHorizontal, lineThroughTramHorizontal);
 				
 				
-//				if(cH1 >= 0 && cH2 >= cH1){	//vehicle is in future width range
+				if(cH1 >= 0 && cH2 >= cH1){	//vehicle is in future width range
 //					PVector horizontalLot = lineThroughTramHorizontal.get();
 //					horizontalLot.mult(cH1/cH2);
 //					horizontalLot.add(leftLineCenter);
@@ -184,7 +182,7 @@ public class Tram {
 //					if(horizontalLot.mag() <= this.half_length * 2){
 //						System.out.println("vehicle is in future width Range and closer than the length");
 						if(v.getX() >= xMin && v.getX() <= xMax && v.getY() >= yMin && v.getY() <= yMax){
-//							System.out.println("vehicle is in future width range AND in EXPANDED FUTURE RANGE");
+							System.out.println("vehicle is in future width range AND in EXPANDED FUTURE RANGE");
 							PVector topLineCenter = new PVector(topLineCenterX, topLineCenterY); 
 							
 							PVector lineThroughTram = new PVector(bottomLineCenterX, bottomLineCenterY);
@@ -207,7 +205,7 @@ public class Tram {
 								}
 							}
 						}
-//					}
+					}
 //				}
 			}
 			if(fractionToSubFromVector != Float.MAX_VALUE){
@@ -252,6 +250,9 @@ public class Tram {
 		this.top    = new Wall(leftTopX, leftTopY, rightTopX, rightTopY);
 		this.bottom = new Wall(leftBottomX, leftBottomY, rightBottomX, rightBottomY);
 		
+		bottomCenterX = this.centerX - (half_length * Math.sin(alpha));
+		bottomCenterY = this.centerY + (half_length * Math.cos(alpha));
+		
 		/*
 		 * 		~~~~~~~~~~~WIDTH~~~~~~~~~~
 		 * 
@@ -262,8 +263,8 @@ public class Tram {
 		 *		'						 '				~
 		 *		'						 '				~
 		 *		L						 R				L
-		 *		E						 I				E
-		 *		F			X			 G				N
+		 *		E			C			 I				E
+		 *		F						 G				N
 		 *		T						 H				G
 		 *		'						 T				T
 		 *		'						 '				H
@@ -330,5 +331,13 @@ public class Tram {
 		return (float) (this.half_width *2);
 	}
 
+
+	public float getBottomY() {
+		return (float)(this.bottomCenterY);
+	}
+
+	public float getBottomX() {
+		return (float)(this.bottomCenterX);
+	}
 
 }

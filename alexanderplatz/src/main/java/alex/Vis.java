@@ -86,7 +86,7 @@ public class Vis extends PApplet implements MouseListener {
 
     public static double xOffset = 0;
     public static double yOffset = 0;
-    public static double scale = 10;
+    public static float scale = 10;
 
 
     public Vis(Network net) {
