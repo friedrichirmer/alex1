@@ -35,8 +35,8 @@ public class TramNetworkCreator {
         Node stop = network.createNode(24.9,47,107);
         
         network.tramExitSBahn.add(alexanderstr2);
-        network.tramExitAlexanderstraﬂe.add(klStr2);
-        network.tramExitAlexanderstraﬂe.add(sBahn2);
+        network.tramExitAlexanderstr.add(klStr2);
+        network.tramExitAlexanderstr.add(sBahn2);
         network.tramExitKlStr.add(stop);
 		
 		//Nodes of network

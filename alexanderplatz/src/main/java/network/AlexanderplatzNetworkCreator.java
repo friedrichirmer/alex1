@@ -27,10 +27,10 @@ public class AlexanderplatzNetworkCreator {
         Node uMediaM = network.createNode(51.5,54,22);
         Node uTchibo = network.createNode(39.6,50.8,23);
         Node uKFC = network.createNode(29.8,55.8,24);
-        Node uZentral = network.createNode(35.1,44.2,25);
-        Node sBahn1 = network.createNode(20.6,45.2,26);
-        Node sBahn2 = network.createNode(14.6,38.8,27);
-        Node sBahn3 = network.createNode(8.5,32,28);
+        Node uZentral = network.createNode(35.1,41.2,25);
+        Node sBahn1 = network.createNode(20.8,45,26);
+        Node sBahn2 = network.createNode(14.8,38.8,27);
+        Node sBahn3 = network.createNode(8.9,32,28);
         Node primark = network.createNode(31.9,24.5,29);
 		Node saturn = network.createNode(49.8,40.7,30);
 		Node ampelLinks = network.createNode(0.9,23.4,31);
@@ -72,6 +72,7 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node13,node9,1);
         network.createLink(node5,node11,1);
         network.createLink(node10,node12,1);
+        network.createLink(node6,node8,1);
         
         network.createLink(node2,node1,1);
         network.createLink(node3,node2,1);
@@ -91,7 +92,9 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node9,node13,1);
         network.createLink(node11,node5,1);
         network.createLink(node12,node10,1);
-        //links von Nodes die Personen auswerfen ins Netz
+        network.createLink(node8,node6,1);
+        
+        //links von entryExitNodes ins Netz
         network.createLink(uSaturn,node9,1);
         network.createLink(uPrimark,node10,1);
         network.createLink(uMediaM,node8,1);
