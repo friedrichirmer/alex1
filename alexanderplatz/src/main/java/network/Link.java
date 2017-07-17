@@ -57,7 +57,7 @@ public class Link {
     }
         if (!(numberOfPassesThroughLinkInThePeriod == 0)){
             this.weight = sumOfTravelTimes / numberOfPassesThroughLinkInThePeriod;
-            System.out.println("the new weight of the Link " + this.getId() + " is " + weight);
+//            System.out.println("the new weight of the Link " + this.getId() + " is " + weight);
         }
     }
 

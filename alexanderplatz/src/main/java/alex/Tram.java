@@ -32,11 +32,11 @@ public class Tram {
 	private double half_length = 2;
 	private double half_width = 0.5;
 	
-	private double x;
-	private double y;
+	private double centerX;
+	private double centerY;
 	private double phi;
 	
-	private double wishVelocity = 0.5;
+	private double wishVelocity = 1;
 	PVector v = new PVector(0,0);
 	private double vX;
 	private double vY;
@@ -50,8 +50,8 @@ public class Tram {
 	 */
 	
 	public Tram(double x, double y, List<Link> route) {
-		this.x = x;
-		this.y = y;
+		this.centerX = x;
+		this.centerY = y;
 		this.route = route;
 		this.routeIndex = 0;
 		
@@ -63,17 +63,29 @@ public class Tram {
 		
 		Link currentLink = this.route.get(routeIndex);
 		
-    // Berechnung der Wunschrichtung
+    // Berechnung der Wunschrichtung von der Mitte der Fahrzeugfront aus
+//		double bottomCenterX = (this.left.getX2() + this.right.getX2()) / 2;
+//		double bottomCenterY = (this.left.getY2() + this.right.getY2()) / 2;
+		
+//		double alpha = Math.acos( this.v.y / v.mag());
+//		double bottomCenterX = this.centerX - (half_length * Math.sin(alpha));
+//		double bottomCenterY = this.centerY + (half_length * Math.cos(alpha));
+		
+		double dx = currentLink.getTo().getX() - this.centerX;
+    	double dy = currentLink.getTo().getY() - this.centerY;
     	
-        double dx = currentLink.getTo().getX() - this.x;
-    	double dy = currentLink.getTo().getY() - this.y;
+//        double dx = currentLink.getTo().getX() - bottomCenterX;
+//    	double dy = currentLink.getTo().getY() - bottomCenterY;
     	
     	double dist = Math.sqrt(dx*dx+dy*dy);
     	dx /= dist;
     	dy /= dist;
 		
-    	double resultForceX = (dx* this.wishVelocity - vX) / this.tau;
-    	double resultForceY = (dy* this.wishVelocity - vY) / this.tau;
+//    	double resultForceX = (dx* this.wishVelocity - vX) / this.tau;
+//    	double resultForceY = (dy* this.wishVelocity - vY) / this.tau;
+    	
+    	double resultForceX = (dx* this.wishVelocity);
+    	double resultForceY = (dy* this.wishVelocity);
     	
    
     	this.v.add( new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) ) ) ;
@@ -90,9 +102,9 @@ public class Tram {
 	private void isSomethingInTheWay(List<Vehicle> vehicles, List<Tram> cars){
 		
 //		where is the center going to be
-		double projectedX =  this.x + Simulation.TIME_STEP * this.v.x;
-		double projectedY =  this.y + Simulation.TIME_STEP * this.v.y;
-		
+		double projectedX =  this.centerX + Simulation.TIME_STEP * this.v.x;
+		double projectedY =  this.centerY + Simulation.TIME_STEP * this.v.y;
+		//rotation angle
 		double alpha = Math.acos( this.v.y / v.mag());
 		
 		double leftTopX = projectedX - (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
@@ -120,36 +132,36 @@ public class Tram {
 		float rightLineCenterY = (float) (projectedY + (half_width * Math.sin(alpha))) ;
 				
 		
-//		double xMin = Double.MAX_VALUE;
-//		xMin = Math.min(xMin, leftTopX);
-//		xMin = Math.min(xMin, rightTopX);
-//		xMin = Math.min(xMin, rightBottomX);
-//		xMin = Math.min(xMin, leftBottomX);
-//		
-//		double xMax = Double.MIN_VALUE;
-//		xMax = Math.max(xMax, leftTopX);
-//		xMax = Math.max(xMax, rightTopX);
-//		xMax = Math.max(xMax, rightBottomX);
-//		xMax = Math.max(xMax, leftBottomX);
-//
-//		double yMin = Double.MAX_VALUE;
-//		yMin = Math.min(yMin, leftTopY);
-//		yMin = Math.min(yMin, rightTopY);
-//		yMin = Math.min(yMin, rightBottomY);
-//		yMin = Math.min(yMin, leftBottomY);
-//		
-//		double yMax = Double.MIN_VALUE;
-//		yMax = Math.max(yMax, leftTopY);
-//		yMax = Math.max(yMax, rightTopY);
-//		yMax = Math.max(yMax, rightBottomY);
-//		yMax = Math.max(yMax, leftBottomY);
+		double xMin = Double.MAX_VALUE;
+		xMin = Math.min(xMin, leftTopX);
+		xMin = Math.min(xMin, rightTopX);
+		xMin = Math.min(xMin, rightBottomX);
+		xMin = Math.min(xMin, leftBottomX);
+		
+		double xMax = Double.MIN_VALUE;
+		xMax = Math.max(xMax, leftTopX);
+		xMax = Math.max(xMax, rightTopX);
+		xMax = Math.max(xMax, rightBottomX);
+		xMax = Math.max(xMax, leftBottomX);
+
+		double yMin = Double.MAX_VALUE;
+		yMin = Math.min(yMin, leftTopY);
+		yMin = Math.min(yMin, rightTopY);
+		yMin = Math.min(yMin, rightBottomY);
+		yMin = Math.min(yMin, leftBottomY);
+		
+		double yMax = Double.MIN_VALUE;
+		yMax = Math.max(yMax, leftTopY);
+		yMax = Math.max(yMax, rightTopY);
+		yMax = Math.max(yMax, rightBottomY);
+		yMax = Math.max(yMax, leftBottomY);
 
 		float fractionToSubFromVector = Float.MAX_VALUE;
 		double closestDistance = Double.MAX_VALUE;
 		
 		for (Vehicle v: vehicles){
 			
-			//calculate if vehicles is within future width range
+				//calculate if vehicles is within future width range
 				PVector leftLineCenter = new PVector(leftLineCenterX, leftLineCenterY); 
 				
 				PVector lineThroughTramHorizontal = new PVector(rightLineCenterX, rightLineCenterY);
@@ -163,48 +175,58 @@ public class Tram {
 				float cH1 = PVector.dot(leftLineToVehicle, lineThroughTramHorizontal);
 				float cH2 = PVector.dot(lineThroughTramHorizontal, lineThroughTramHorizontal);
 				
-				if(cH1 >= 0 && cH2 >= cH1){	//vehicle is in future width range
-//				if(v.getX() >= xMin && v.getX() <= xMax && v.getY() >= yMin && v.getY() <= yMax){
-					
-					PVector topLineCenter = new PVector(topLineCenterX, topLineCenterY); 
-					
-					PVector lineThroughTram = new PVector(bottomLineCenterX, bottomLineCenterY);
-					lineThroughTram.sub( topLineCenter );
-					
-					PVector topLineToVehicle = vehicle.get();
-					topLineToVehicle.sub(topLineCenter);
-					
-					float c1 = PVector.dot(topLineToVehicle, lineThroughTram);
-					float c2 = PVector.dot(lineThroughTram, lineThroughTram);
-					
-					if(c1 >= 0 && c2 >= c1){
-						double distance = PVector.dist(vehicle, topLineCenter);
-						if(distance < closestDistance){
-							fractionToSubFromVector = (1-c1/c2);
+				
+//				if(cH1 >= 0 && cH2 >= cH1){	//vehicle is in future width range
+//					PVector horizontalLot = lineThroughTramHorizontal.get();
+//					horizontalLot.mult(cH1/cH2);
+//					horizontalLot.add(leftLineCenter);
+//					System.out.println("vehicle is in future width range");
+//					if(horizontalLot.mag() <= this.half_length * 2){
+//						System.out.println("vehicle is in future width Range and closer than the length");
+						if(v.getX() >= xMin && v.getX() <= xMax && v.getY() >= yMin && v.getY() <= yMax){
+//							System.out.println("vehicle is in future width range AND in EXPANDED FUTURE RANGE");
+							PVector topLineCenter = new PVector(topLineCenterX, topLineCenterY); 
+							
+							PVector lineThroughTram = new PVector(bottomLineCenterX, bottomLineCenterY);
+							lineThroughTram.sub( topLineCenter );
+							
+							PVector topLineToVehicle = vehicle.get();
+							topLineToVehicle.sub(topLineCenter);
+							
+							float c1 = PVector.dot(topLineToVehicle, lineThroughTram);
+							float c2 = PVector.dot(lineThroughTram, lineThroughTram);
+							
+							if(c1 >= 0 && c2 >= c1){
+								System.out.println("A vehicle is in the way of a tram");
+								double distance = PVector.dist(vehicle, topLineCenter);
+								if(distance < closestDistance){
+									fractionToSubFromVector = (1-c1/c2);
+								}
+								else if(distance == closestDistance && (1-(c1/c2)) > fractionToSubFromVector){
+									fractionToSubFromVector = (1-c1/c2);
+								}
+							}
 						}
-						else if(distance == closestDistance && (1-(c1/c2)) > fractionToSubFromVector){
-							fractionToSubFromVector = (1-c1/c2);
-						}
-					}
-				}
-		}
-		if(fractionToSubFromVector != Float.MAX_VALUE){
-			this.v.mult(fractionToSubFromVector);
-			System.out.println("A vehicle is in the way of a tram");
-		}
+//					}
+//				}
+			}
+			if(fractionToSubFromVector != Float.MAX_VALUE){
+				this.v.mult(fractionToSubFromVector);
+				System.out.println("v angepasst");
+			}
 	}
 	
 	
 	public void move(){
 //        this.x = this.x + Simulation.TIME_STEP * this.vX;
 //        this.y = this.y + Simulation.TIME_STEP * this.vY;
-        this.x = this.x + Simulation.TIME_STEP * this.v.x;
-        this.y = this.y + Simulation.TIME_STEP * this.v.y;
+        this.centerX = this.centerX + Simulation.TIME_STEP * this.v.x;
+        this.centerY = this.centerY + Simulation.TIME_STEP * this.v.y;
         
         setWalls();
         
         Link currentLink = this.route.get(routeIndex);
-        if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
+        if (currentLink.hasVehicleReachedEndOfLink(this.centerX, this.centerY)) {
 			moveVehicleToNextLinkOfRoute();
 		}
 	}
@@ -213,17 +235,17 @@ public class Tram {
 		
 		double alpha = Math.acos( this.v.y / v.mag());
 		
-		double rightBottomX = this.x + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
-		double rightBottomY = this.y + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
+		double rightBottomX = this.centerX + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
+		double rightBottomY = this.centerY + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
 		
-		double rightTopX = this.x + (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
-		double rightTopY = this.y + (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
+		double rightTopX = this.centerX + (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
+		double rightTopY = this.centerY + (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
 		
-		double leftBottomX = this.x - (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
-		double leftBottomY = this.y - (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
+		double leftBottomX = this.centerX - (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
+		double leftBottomY = this.centerY - (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
 		
-		double leftTopX = this.x - (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
-		double leftTopY = this.y - (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
+		double leftTopX = this.centerX - (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
+		double leftTopY = this.centerY - (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
 		
 		this.right   = new Wall(rightTopX, rightTopY, rightBottomX, rightBottomY);
 		this.left   = new Wall(leftTopX, leftTopY, leftBottomX, leftBottomY);
@@ -271,6 +293,9 @@ public class Tram {
 		return walls;
 	}
 	
+	public Wall getBottomWall() {
+		return this.bottom;
+	}
 	public Wall getRightWall(){
 		return this.right;
 	}
@@ -284,11 +309,11 @@ public class Tram {
 	}
 	
 	public double getX(){
-		return this.x;
+		return this.centerX;
 	}
 	
 	public double getY(){
-		return this.y;
+		return this.centerY;
 	}
 
 	public double getPhi() {
@@ -306,7 +331,4 @@ public class Tram {
 	}
 
 
-	public Wall getBottomWall() {
-		return this.bottom;
-	}
 }

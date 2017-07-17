@@ -30,7 +30,7 @@ public class DijkstraV2 {
 		DijkstraNode current = this.remainingNodes.remove(0);
 
 		while (current.getNode() != destination) {
-			System.out.println("remaining nodes size = " + remainingNodes.size());
+//			System.out.println("remaining nodes size = " + remainingNodes.size());
 			expandDijkstraNode(current);
 			current = this.remainingNodes.remove(0);
 		}

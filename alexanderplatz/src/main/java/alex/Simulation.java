@@ -46,7 +46,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 50;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 450;
     
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -193,7 +193,7 @@ public class Simulation {
         while (linkIterator.hasNext()){
             Link link= linkIterator.next();
             link.calculateRecentLinkWeights(allVehicles, time);
-            System.out.println("The new weight of the link " + link.getId() + " was calculated");
+//            System.out.println("The new weight of the link " + link.getId() + " was calculated");
         }
     }
 
