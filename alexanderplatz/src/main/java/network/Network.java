@@ -36,7 +36,7 @@ public class Network {
 		else return tramExitKlStr.get(0);
 	}
 
-	private double proportion = 6.051;
+	private double proportion = 3.051;
 	public List<Node> getEntryExitNodes() {
 		return entryExitNodes;
 	}

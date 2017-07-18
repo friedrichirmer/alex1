@@ -159,77 +159,21 @@ public class Vehicle {
 //        isInTheSimulation = true;
     	
     	Link currentLink = this.route.get(routeIndex);
-    	
-    	//System.out.println("x: " + this.x + "   y: " + this.y);
         	
         pushX = 0;
         pushY = 0;
         pushWallX = 0;
     	pushWallY = 0;
         
-    	/*
-    	 * Die erste Schleife iteriert �ber alle per Parameter vehs �bergebenen Fahrzeuge und summiert die absto�enden Kr�fte.
-    	 * Hier haben Kr�fte und Vektoren haben je eine x- und eine y-Komponente.
-    	 */
-    	   	
-        for (Vehicle v : vehs) {
-        	
-        	if (this == v) continue;  
-
-        	double vehx = v.x;
-        	double vehy = v.y;
-        	double radS = (rad + v.getRadius());
-        	double distMX = (vehx - this.x);
-        	double distMY = (vehy - this.y);
-        	double distM = Math.sqrt(distMX*distMX + distMY*distMY); // Abstand der Mittelpunkte
-        	double distR = radS - distM; // Abstand der Radien
-
-			double g;
-			if (distR >= 0) g = 1;
-        	else g=0;
-
-        	double dirNX = (-distMX) / distM; 		//richtungsvektor n_x
-        	double dirTX = (distMY) / distM;		//richtungsvektor t_x
-        	double dirNY = (-distMY) / distM;		//richtungsvektor n_y
-        	double dirTY = (-distMX) / distM;		//richtungsvektor t_y
-        	double vDiff = (v.vtx - this.vtx) * dirTX + (v.vty - this.vty) * dirTY;
-
-        	pushX = pushX + 
-        			(constantA * Math.exp(distR / constantB) + constantK * g * distR) * dirNX +
-        			constantKSmall*g*distR*vDiff*dirTX;
-        	pushY = pushY + 
-        			(constantA * Math.exp(distR / constantB) + constantK * g * distR) * dirNY +
-        			constantKSmall * g * distR * vDiff * dirTY;
-        }
-        
-        forceVehicles = new PVector((float)pushX, (float)pushY);
-               
-        /*
-         * Die zweite Schleife iteriert �ber alle W�nde und berechnet die absto�enden Kr�fte
-         * Hier wird mit Vektoren gerechnet
-         */
-      
-        Iterator<Wall> it = wallSet.iterator();
-        while(it.hasNext()){
-        	Wall wall = it.next();
-        	calcWallForce(wall);
-        }
-        
-//        for (int i = 0; i< network.walls.size(); i++ ) {
-//        	Wall wall = network.walls.get(i);
-//       		calcWallForce(wall);
-//        }
-
-        forceWalls = new PVector((float)pushWallX, (float)pushWallY);
+		calculateAndDrawForcesFromOtherVehicles(vehs);
+		calculateAndDrawWallForces(wallSet);
         
         // Berechnung der Wunschrichtung
-    	
-        double dx = currentLink.getTo().getX() - this.x;
-    	double dy = currentLink.getTo().getY() - this.y;
-    	
-    	double dist = Math.sqrt(dx*dx+dy*dy);
-    	dx /= dist;
-    	dy /= dist;
+        double distanceLeftToEndOfLinkX = currentLink.getTo().getX() - this.x;
+    	double distanceLeftToEndOfLinkY = currentLink.getTo().getY() - this.y;
+    	double distanceToEndOfLink = Math.sqrt(distanceLeftToEndOfLinkX*distanceLeftToEndOfLinkX+distanceLeftToEndOfLinkY*distanceLeftToEndOfLinkY);
+    	double dx = distanceLeftToEndOfLinkX / distanceToEndOfLink;
+    	double dy = distanceLeftToEndOfLinkY / distanceToEndOfLink;
         
         if(this.walkParallelThreshold  < Double.MAX_VALUE){
         	// wir muessen hier das Lot vom Vehicle auf den aktuellen Link faellen
@@ -239,7 +183,6 @@ public class Vehicle {
         	PVector vToNode = new PVector((float) currentLink.getTo().getX(), (float) currentLink.getTo().getY());
     		PVector vVehicle = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
 
-        	
         	PVector vLink = vToNode.get();
         	vLink.sub(vFromNode);
         	
@@ -282,23 +225,70 @@ public class Vehicle {
         //Berechnung der resultierenden Gesamtkraft gemae� Social-Force-Model
         forceX = forceTarget.x + pushX + pushWallX ;
         forceY = forceTarget.y + + pushY + pushWallY ;
-        
-        
-                
-        vx = vtx + Simulation.TIME_STEP *(forceX/80);
-        vy = vty + Simulation.TIME_STEP *(forceY/80);
-        momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
-        //	Begrenzung der Kraefte
-        if (momentSpeed > maxSpeed) {
-			vx = (vx / momentSpeed) * maxSpeed;
-			vy = (vy / momentSpeed) * maxSpeed;
-        }
-        this.momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
+
+		calculateAndLimitCurrentSpeed();
         this.phi = Math.atan2(vy,vx);
         
     }
 
-    public boolean placeVehicleSomwhereOnCurrentLink(){
+	private void calculateAndLimitCurrentSpeed() {
+		vx = vtx + Simulation.TIME_STEP *(forceX/80);
+		vy = vty + Simulation.TIME_STEP *(forceY/80);
+		momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
+		//	Begrenzung der Kraefte
+		if (momentSpeed > maxSpeed) {
+            vx = (vx / momentSpeed) * maxSpeed;
+            vy = (vy / momentSpeed) * maxSpeed;
+        }
+		this.momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
+	}
+
+	private void calculateAndDrawForcesFromOtherVehicles(List<Vehicle> vehs) {
+		for (Vehicle v : vehs) {
+            if (this == v) continue;
+            double vehx = v.x;
+            double vehy = v.y;
+            double radS = (rad + v.getRadius());
+            double distMX = (vehx - this.x);
+            double distMY = (vehy - this.y);
+            double distM = Math.sqrt(distMX*distMX + distMY*distMY); // Abstand der Mittelpunkte
+            double distR = radS - distM; // Abstand der Radien
+            double g;
+            if (distR >= 0) g = 1;
+            else g=0;
+            double dirNX = (-distMX) / distM; 		//richtungsvektor n_x
+            double dirTX = (distMY) / distM;		//richtungsvektor t_x
+            double dirNY = (-distMY) / distM;		//richtungsvektor n_y
+            double dirTY = (-distMX) / distM;		//richtungsvektor t_y
+            double vDiff = (v.vtx - this.vtx) * dirTX + (v.vty - this.vty) * dirTY;
+
+            pushX = pushX +
+                    (constantA * Math.exp(distR / constantB) + constantK * g * distR) * dirNX +
+                    constantKSmall*g*distR*vDiff*dirTX;
+            pushY = pushY +
+                    (constantA * Math.exp(distR / constantB) + constantK * g * distR) * dirNY +
+                    constantKSmall * g * distR * vDiff * dirTY;
+        }
+
+		forceVehicles = new PVector((float)pushX, (float)pushY);
+	}
+
+	private void calculateAndDrawWallForces(Set<Wall> wallSet) {
+		Iterator<Wall> it = wallSet.iterator();
+		while(it.hasNext()){
+            Wall wall = it.next();
+            calcWallForce(wall);
+        }
+
+//        for (int i = 0; i< network.walls.size(); i++ ) {
+//        	Wall wall = network.walls.get(i);
+//       		calcWallForce(wall);
+//        }
+
+		forceWalls = new PVector((float)pushWallX, (float)pushWallY);
+	}
+
+	public boolean placeVehicleSomwhereOnCurrentLink(){
     	if(this.routeIndex == 0){
     		double rnd = Math.random();
     		Link l = this.route.get(routeIndex);
