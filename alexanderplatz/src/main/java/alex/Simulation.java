@@ -20,7 +20,6 @@ package alex;
  * *********************************************************************** */
 
 
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,9 +33,7 @@ import network.Network;
 import network.NetworkUtils;
 
 import network.Node;
-import network.RectangleNetCreator;
 import network.TramNetworkCreator;
-import network.TwoRoomsWithCorridorNetworkCreator;
 import network.Wall;
 
 /**
@@ -47,7 +44,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 0;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 2000;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -98,92 +95,36 @@ public class Simulation {
 
     private void run() {
         double time = 0;
-
-        KDTree kdTree = new KDTree(this.vehiclesInSimulation);
+        KDTree currentKDTree = new KDTree(this.vehiclesInSimulation);
+//        createTram(network);
         int oldNrOfVehInSim = vehiclesInSimulation.size();
 
 //        createTram(tramNetwork);
         createTestTramOnPedNetwork();
-        
+
         while (time < MAX_TIME) {
-        	time *= 100;
-        	time = Math.round(time);
-        	time /= 100;
-        	System.out.println("time = " + time);
-        	
-        	this.vehiclesInSimulation.clear();
-//        	System.out.println("--check after clearing before adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
-        	boolean vehicleHasLeft = false;
-        	
-            for (Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator(); vehicleIterator.hasNext();) {
-            	Vehicle vehicle = vehicleIterator.next();
-            	if (vehicle.getFinished() == true) {
-            		System.out.println("############Vehicle " + vehicle.getId() + " gets removed###########");
-                  	vehicleIterator.remove();
-                  	vehicleHasLeft = true;
-                 }  else if(vehicle.entersSimulation(time)){
-                	this.vehiclesInSimulation.add(vehicle); 
-                 }
-            }
-//        	System.out.println("--check after adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
+            time = roundAndPrintTime(time);
 
-          if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
-          	System.out.println("###build new kdTree###");
-          	List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
-          	vehInSimCopy.addAll(vehiclesInSimulation); 
-      		kdTree = new KDTree(vehInSimCopy);
-      		kdTree.buildKDTree();
-      	}
+            boolean vehicleHasLeft = updateListAndCheckIfVehicleHasLeft(time);
+            currentKDTree = getNewKdTree(time, currentKDTree, oldNrOfVehInSim, vehicleHasLeft);
+            updateLinkWeights(time);
 
-            if (time % 5 == 0 && time > 0){
-                recalculateWeightOfLinksBasedOnCurrentTravelTimes(this.pedestrianNetwork, time);
-            }
+            Set<Wall> allStaticWallsInSimulation = new HashSet<Wall>();
+            Set<Wall> allTramWallsInSimulation = new HashSet<Wall>();
+
+            allStaticWallsInSimulation.addAll(this.pedestrianNetwork.staticWalls);
+            List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
+            updateTramPositions(currentKDTree, allStaticWallsInSimulation, tramInfoList);
 
             List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
-            List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
-            Set<Wall> allWallsInSimulation = new HashSet<Wall>();
-            allWallsInSimulation.addAll(this.pedestrianNetwork.walls);
-            
-            boolean tramHasLeft = false;
-            for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
-            	Tram tram = tramIterator.next();
-            	tram.update(vehiclesInSimulation, kdTree);
-            	tram.move();
-            	
-            	if(!tram.isFinished()){
-            		allWallsInSimulation.addAll(tram.getWalls());
-            		TramInfo tramInfo = new TramInfo(tram);
-            		tramInfoList.add(tramInfo);
-            	}
-            	else{
-            		tramIterator.remove();
-            		tramHasLeft = true;
-            	}
-            }
-            if(tramHasLeft)createTram(tramNetwork);
-            
-            for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
-            	Vehicle vehicle = vehicleIterator.next();
-            	
-            	//mit kdTree
-            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
-                vehicle.update(neighboursToConsider, time, allWallsInSimulation);
-            	
-            	//ohne kdTree
-//            	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
-            	
-                vehicle.move(time);
-                VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(),
-                										vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.momentSpeed);
-                vehicleInfoList.add(vehicleInfo);
-            }
-            
+            updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, allTramWallsInSimulation, vehicleInfoList);
+
             this.vis.update(time, vehicleInfoList,tramInfoList);
-            
+
             if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi(vehiclesInSimulation);
 
             oldNrOfVehInSim = this.vehiclesInSimulation.size();
-            
+
             time += TIME_STEP;
 
             try {
@@ -191,9 +132,86 @@ public class Simulation {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            
+
         }
-        
+
+    }
+
+    private double roundAndPrintTime(double time) {
+        time *= 100;
+        time = Math.round(time);
+        time /= 100;
+        System.out.println("time = " + time);
+        return time;
+    }
+
+    private void updateVehiclePositions(double time, KDTree currentKDTree, Set<Wall> allStaticWallsInSimulation, Set<Wall> allTramWallsInSimulation, List<VehicleInfo> vehicleInfoList) {
+        for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
+            Vehicle vehicle = vehicleIterator.next();
+
+            //mit kdTree
+            List<Vehicle> neighboursToConsider = currentKDTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
+            vehicle.update(neighboursToConsider, time, allStaticWallsInSimulation, allTramWallsInSimulation);
+
+            //ohne kdTree
+//            	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
+            vehicle.move(time);
+            VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(),
+                                                    vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.momentSpeed);
+            vehicleInfoList.add(vehicleInfo);
+        }
+    }
+
+    private void updateTramPositions(KDTree currentKDTree, Set<Wall> allTramWallsInSimulation, List<TramInfo> tramInfoList) {
+        for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
+            Tram tram = tramIterator.next();
+            tram.update(vehiclesInSimulation, currentKDTree);
+            tram.move();
+
+            if(!tram.isFinished()){
+                allTramWallsInSimulation.addAll(tram.getWalls());
+                TramInfo tramInfo = new TramInfo(tram);
+                tramInfoList.add(tramInfo);
+            }
+            else{
+                tramIterator.remove();
+            }
+        }
+    }
+
+    private void updateLinkWeights(double time) {
+        if (time % 5 == 0 && time > 0){
+            recalculateWeightOfLinksBasedOnCurrentTravelTimes(this.pedestrianNetwork, time);
+        }
+    }
+
+    private boolean updateListAndCheckIfVehicleHasLeft(double time) {
+        this.vehiclesInSimulation.clear();
+//        	System.out.println("--check after clearing before adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
+
+        boolean vehicleHasLeft = false;
+        for (Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator(); vehicleIterator.hasNext();) {
+            Vehicle vehicle = vehicleIterator.next();
+            if (vehicle.getFinished() == true) {
+                System.out.println("############Vehicle " + vehicle.getId() + " gets removed###########");
+                  vehicleIterator.remove();
+                  vehicleHasLeft = true;
+             }  else if(vehicle.entersSimulation(time)){
+                this.vehiclesInSimulation.add(vehicle);
+             }
+        }
+        return vehicleHasLeft;
+    }
+
+    private KDTree getNewKdTree(double time, KDTree kdTree, int oldNrOfVehInSim, boolean vehicleHasLeft) {
+        if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
+            System.out.println("###build new kdTree###");
+            List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
+            vehInSimCopy.addAll(vehiclesInSimulation);
+            kdTree = new KDTree(vehInSimCopy);
+            kdTree.buildKDTree();
+        }
+        return kdTree;
     }
 
     private void recalculateWeightOfLinksBasedOnCurrentTravelTimes(Network network, double time) {
@@ -242,7 +260,7 @@ public class Simulation {
     	}
     	this.tramsInSimulation.add(tram);
     }
-    
+
     private void createTestTramOnPedNetwork(){
     	DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
     	Node from = pedestrianNetwork.getNodes().get(12);

@@ -55,21 +55,21 @@ public class TwoRoomsWithCorridorNetworkCreator {
 	        network.createLink(node6,node10,3);
 
 	        /*
-	        network.createWall(2,2,14,2,1);
-	        network.createWall(6,2,9,5.5,1);
-	        network.createWall(14,2,14,5,1);
-	        network.createWall(14,7,13,11,1);
-	        network.createWall(13,11,2,10,1);
-	        network.createWall(2,10,2,2,1);
+	        network.createStaticWall(2,2,14,2,1);
+	        network.createStaticWall(6,2,9,5.5,1);
+	        network.createStaticWall(14,2,14,5,1);
+	        network.createStaticWall(14,7,13,11,1);
+	        network.createStaticWall(13,11,2,10,1);
+	        network.createStaticWall(2,10,2,2,1);
 	        
-	        network.createWall(14,5,18,5,2);
-	        network.createWall(14,7,18,7,2);
+	        network.createStaticWall(14,5,18,5,2);
+	        network.createStaticWall(14,7,18,7,2);
 	        
-	        network.createWall(18,5,18,2,3);
-	        network.createWall(18,2,30,2,3);
-	        network.createWall(30,2,30,10,3);
-	        network.createWall(30,10,18,10,3);
-	        network.createWall(18,10,18,7,3);
+	        network.createStaticWall(18,5,18,2,3);
+	        network.createStaticWall(18,2,30,2,3);
+	        network.createStaticWall(30,2,30,10,3);
+	        network.createStaticWall(30,10,18,10,3);
+	        network.createStaticWall(18,10,18,7,3);
 	        */
 	        return this.network;
 	}

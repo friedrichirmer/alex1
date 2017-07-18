@@ -3,9 +3,6 @@
  */
 package network;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Work
  *
@@ -87,7 +84,8 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node10,node12,1);
         network.createLink(node6,node8,1);
         network.createLink(node7,node2,1);
-        network.createLink(node14,node13,1);        network.createLink(node14,node8,1);
+        network.createLink(node14,node13,1);
+        network.createLink(node14,node8,1);
          
         network.createLink(node2,node1,1);
         network.createLink(node3,node2,1);
@@ -203,86 +201,86 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node7,cUndA,1);
         
         //Abgrenzung
-        network.createWall(0,23.8,24.7,0);
-        network.createWall(24.7,0,67.7,33.2);
-        network.createWall(67.7,33.2,49.0,60.9);
-        network.createWall(49.0,60.9,39.6,68.3);
-        network.createWall(39.6,68.3,29.9,57.9);
-        network.createWall(29.9,57.9,23.8,48.7);
-        network.createWall(23.8,48.7,6.9,30.3);
-        network.createWall(6.9,30.3,0,23.8);
+        network.createStaticWall(0,23.8,24.7,0);
+        network.createStaticWall(24.7,0,67.7,33.2);
+        network.createStaticWall(67.7,33.2,49.0,60.9);
+        network.createStaticWall(49.0,60.9,39.6,68.3);
+        network.createStaticWall(39.6,68.3,29.9,57.9);
+        network.createStaticWall(29.9,57.9,23.8,48.7);
+        network.createStaticWall(23.8,48.7,6.9,30.3);
+        network.createStaticWall(6.9,30.3,0,23.8);
         //Building links
-        network.createWall(5.7,23.6,14.5,14.8);
-        network.createWall(14.5,14.8,27.2,27.1);
-        network.createWall(27.2,27.1,18.3,35.9);
-        network.createWall(18.3,35.9,5.7,23.6);
+        network.createStaticWall(5.7,23.6,14.5,14.8);
+        network.createStaticWall(14.5,14.8,27.2,27.1);
+        network.createStaticWall(27.2,27.1,18.3,35.9);
+        network.createStaticWall(18.3,35.9,5.7,23.6);
         //Building oben
-        network.createWall(19.3,15,24.5,7.7);
-        network.createWall(24.5,7.7,44.2,22.1);
-        network.createWall(44.2,22.1,39.1,29);
-        network.createWall(39.1,29,19.3,15);
+        network.createStaticWall(19.3,15,24.5,7.7);
+        network.createStaticWall(24.5,7.7,44.2,22.1);
+        network.createStaticWall(44.2,22.1,39.1,29);
+        network.createStaticWall(39.1,29,19.3,15);
         //AlexOase
-        network.createWall(39.8,29.6,45,22.9);
-        network.createWall(45,22.9,51.2,26.9);
-        network.createWall(51.2,26.9,45.4,33.9);
-        network.createWall(45.4,33.9,39.8,29.6);
+        network.createStaticWall(39.8,29.6,45,22.9);
+        network.createStaticWall(45,22.9,51.2,26.9);
+        network.createStaticWall(51.2,26.9,45.4,33.9);
+        network.createStaticWall(45.4,33.9,39.8,29.6);
         //Building rechts
-        network.createWall(49.8,39.9,61,30);
-        network.createWall(61,30,65.6,33.3);
-        network.createWall(65.6,33.3,55,49.2);
-        network.createWall(55,49.2,53.2,48.3);
-        network.createWall(53.2,48.3,49.8,39.9);
+        network.createStaticWall(49.8,39.9,61,30);
+        network.createStaticWall(61,30,65.6,33.3);
+        network.createStaticWall(65.6,33.3,55,49.2);
+        network.createStaticWall(55,49.2,53.2,48.3);
+        network.createStaticWall(53.2,48.3,49.8,39.9);
         //Building unten
-        network.createWall(32,52.6,35.3,50.4);
-        network.createWall(35.3,50.4,38,54.1);
-        network.createWall(38,54.1,48.6,52);
-        network.createWall(48.6,52,50.9,55.6);
-        network.createWall(50.9,55.6,48,57.4);
-        network.createWall(48,57.4,47.6,56.8);
-        network.createWall(47.6,56.8,42.3,60.3);
-        network.createWall(42.3,60.3,42.8,61);
-        network.createWall(42.8,61,39.4,62.8);
-        network.createWall(39.4,62.8,32,52.6);
+        network.createStaticWall(32,52.6,35.3,50.4);
+        network.createStaticWall(35.3,50.4,38,54.1);
+        network.createStaticWall(38,54.1,48.6,52);
+        network.createStaticWall(48.6,52,50.9,55.6);
+        network.createStaticWall(50.9,55.6,48,57.4);
+        network.createStaticWall(48,57.4,47.6,56.8);
+        network.createStaticWall(47.6,56.8,42.3,60.3);
+        network.createStaticWall(42.3,60.3,42.8,61);
+        network.createStaticWall(42.8,61,39.4,62.8);
+        network.createStaticWall(39.4,62.8,32,52.6);
         //Building links Mitte
-        network.createWall(20.5,38.1,23.3,36.2);
-        network.createWall(23.3,36.2,31,45.1);
-        network.createWall(31,45.1,28.3,47.5);
-        network.createWall(28.3,47.5,20.5,38.1);
+        network.createStaticWall(20.5,38.1,23.3,36.2);
+        network.createStaticWall(23.3,36.2,31,45.1);
+        network.createStaticWall(31,45.1,28.3,47.5);
+        network.createStaticWall(28.3,47.5,20.5,38.1);
         //Brunnen
-        network.createWall(28.4,32.3,28.8,31.5);
-        network.createWall(28.8,31.5,29.7,30.7);
-        network.createWall(29.7,30.7,31,30.9);
-        network.createWall(31,30.9,31.7,31.5);
-        network.createWall(31.7,31.5,32.1,32.5);
-        network.createWall(32.1,32.5,31.8,33.5);
-        network.createWall(31.8,33.5,30.8,34.2);
-        network.createWall(30.8,34.2,29.3,34.1);
-        network.createWall(29.3,34.1,28.6,33.2);
-        network.createWall(28.6,33.2,28.4,32.3);
+        network.createStaticWall(28.4,32.3,28.8,31.5);
+        network.createStaticWall(28.8,31.5,29.7,30.7);
+        network.createStaticWall(29.7,30.7,31,30.9);
+        network.createStaticWall(31,30.9,31.7,31.5);
+        network.createStaticWall(31.7,31.5,32.1,32.5);
+        network.createStaticWall(32.1,32.5,31.8,33.5);
+        network.createStaticWall(31.8,33.5,30.8,34.2);
+        network.createStaticWall(30.8,34.2,29.3,34.1);
+        network.createStaticWall(29.3,34.1,28.6,33.2);
+        network.createStaticWall(28.6,33.2,28.4,32.3);
         //U-Bahn Saturn
-        network.createWall(53.3,31.4,52,32.5);
-        network.createWall(52,32.5,52.7,33.1);
-        network.createWall(52.7,33.1,53.9,32.2);       
+        network.createStaticWall(53.3,31.4,52,32.5);
+        network.createStaticWall(52,32.5,52.7,33.1);
+        network.createStaticWall(52.7,33.1,53.9,32.2);
         //U-Bahn Primark
-        network.createWall(35,28.6,36.9,30);
-        network.createWall(36.9,30,36.4,30.6);
-        network.createWall(36.4,30.6,34.5,29.1);
+        network.createStaticWall(35,28.6,36.9,30);
+        network.createStaticWall(36.9,30,36.4,30.6);
+        network.createStaticWall(36.4,30.6,34.5,29.1);
         //U-Bahn Media Markt
-        network.createWall(51.5,53.1,52.2,54.4);
-        network.createWall(52.2,54.4,51.8,54.7);
-        network.createWall(51.8,54.7,50.9,53.5);
+        network.createStaticWall(51.5,53.1,52.2,54.4);
+        network.createStaticWall(52.2,54.4,51.8,54.7);
+        network.createStaticWall(51.8,54.7,50.9,53.5);
         //U-Bahn Tchibo
-        network.createWall(39.5,51.8,39.2,50.1);
-        network.createWall(40,51.7,39.5,51.8);
-        network.createWall(39.8,49.9,40,51.7);
+        network.createStaticWall(39.5,51.8,39.2,50.1);
+        network.createStaticWall(40,51.7,39.5,51.8);
+        network.createStaticWall(39.8,49.9,40,51.7);
         //U-Bahn KFC
-        network.createWall(30,56.3,29.4,55.6);
-        network.createWall(29.4,55.6,29.8,55.4);
-        network.createWall(29.8,55.4,30.4,56.2);
+        network.createStaticWall(30,56.3,29.4,55.6);
+        network.createStaticWall(29.4,55.6,29.8,55.4);
+        network.createStaticWall(29.8,55.4,30.4,56.2);
         //U-Bahn Zentral
-        network.createWall(34.7,41.3,34.6,39.8);
-        network.createWall(34.6,39.8,35.6,39.8);
-        network.createWall(35.6,39.8,35.5,41.2);
+        network.createStaticWall(34.7,41.3,34.6,39.8);
+        network.createStaticWall(34.6,39.8,35.6,39.8);
+        network.createStaticWall(35.6,39.8,35.5,41.2);
        
 		network.entryExitNodes.add(uSaturn);
 		network.entryExitNodes.add(uPrimark);
@@ -309,7 +307,8 @@ public class AlexanderplatzNetworkCreator {
 		network.entryExitNodes.add(newYorker);
 		network.entryExitNodes.add(sparkasse);
 		network.entryExitNodes.add(bruecke);
-		network.entryExitNodes.add(ampelParkInn);		network.entryExitNodes.add(cUndA);
+		network.entryExitNodes.add(ampelParkInn);
+		network.entryExitNodes.add(cUndA);
 			
         return network;
 	}

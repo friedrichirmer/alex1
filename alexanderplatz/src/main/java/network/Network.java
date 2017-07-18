@@ -1,6 +1,5 @@
 package network;
 
-import alex.Simulation;
 import alex.Vis;
 import processing.core.PApplet;
 import java.util.*;
@@ -14,7 +13,7 @@ public class Network {
 	}
 
 	public final Map<Integer,Link> links = new HashMap<Integer,Link>();
-	public Set<Wall> walls = new HashSet<Wall>();
+	public Set<Wall> staticWalls = new HashSet<Wall>();
    	private final List<LinkInfo> linkInfos = new ArrayList<>();
    	private int counterOfLinks = 1;
 	private int counterW = 1;
@@ -56,9 +55,9 @@ public class Network {
    		return link;
    	}
 
-   	public Wall createWall(double x1, double y1, double x2, double y2) {
+   	public Wall createStaticWall(double x1, double y1, double x2, double y2) {
    		Wall w = new Wall(x1*proportion,y1*proportion,x2*proportion,y2*proportion);
-   		walls.add(w);
+   		staticWalls.add(w);
    		counterW++;
      	return w;
    	}
@@ -69,13 +68,13 @@ public class Network {
 		Wall wall2 = new Wall(centerX + 3, centerY - 3, centerX + 3, centerY + 3);
 		Wall wall3 = new Wall(centerX + 3, centerY + 3, centerX - 3, centerY + 3);
 		Wall wall4 = new Wall(centerX + 3, centerY - 3, centerX - 3, centerY - 3);
-		walls.add(wall1);
+		staticWalls.add(wall1);
 		counterW++;
-		walls.add(wall2);
+		staticWalls.add(wall2);
 		counterW++;
-		walls.add(wall3);
+		staticWalls.add(wall3);
 		counterW++;
-		walls.add(wall4);
+		staticWalls.add(wall4);
 		counterW++;
 	}
 
@@ -86,7 +85,7 @@ public class Network {
 	}
 
 	private void drawWalls(PApplet p) {
-		Iterator<Wall> it = walls.iterator();
+		Iterator<Wall> it = staticWalls.iterator();
 		while(it.hasNext()){
 			Wall wa = it.next();
    	    	float wx1 = (float)(wa.getX1()* Vis.scale) ;
