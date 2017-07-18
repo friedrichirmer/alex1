@@ -96,7 +96,6 @@ public class Simulation {
     private void run() {
         double time = 0;
         KDTree currentKDTree = new KDTree(this.vehiclesInSimulation);
-//        createTram(network);
         int oldNrOfVehInSim = vehiclesInSimulation.size();
 
 //        createTram(tramNetwork);
@@ -163,7 +162,8 @@ public class Simulation {
     }
 
     private void updateTramPositions(KDTree currentKDTree, Set<Wall> allTramWallsInSimulation, List<TramInfo> tramInfoList) {
-        for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
+        boolean oneTramHasFinished = false;
+    	for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
             Tram tram = tramIterator.next();
             tram.update(vehiclesInSimulation, currentKDTree);
             tram.move();
@@ -175,8 +175,10 @@ public class Simulation {
             }
             else{
                 tramIterator.remove();
+                oneTramHasFinished = true;
             }
         }
+    	if(oneTramHasFinished) createTram(tramNetwork);
     }
 
     private void updateLinkWeights(double time) {
@@ -193,7 +195,6 @@ public class Simulation {
         for (Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator(); vehicleIterator.hasNext();) {
             Vehicle vehicle = vehicleIterator.next();
             if (vehicle.getFinished() == true) {
-                System.out.println("############Vehicle " + vehicle.getId() + " gets removed###########");
                   vehicleIterator.remove();
                   vehicleHasLeft = true;
              }  else if(vehicle.entersSimulation(time)){

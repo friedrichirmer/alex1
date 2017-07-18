@@ -262,13 +262,32 @@ public class Tram {
         Link currentLink = this.route.get(routeIndex);
         if (currentLink.hasVehicleReachedEndOfLink(this.centerX, this.centerY)) {
 			moveVehicleToNextLinkOfRoute();
+			System.out.println("----------------------------------MOVE TO NEXT LINK -------------------------------------------------");
 		}
 	}
 	
 	private void setWalls() {
 		
-		double alpha = Math.acos( this.v.y / v.mag());
+		double alpha;
+		if(this.v.x >= 0){
+			if(this.v.y >= 0){
+				alpha =  - Math.acos( this.v.y / v.mag() );
+			}
+			else{
+				alpha =  - Math.acos( this.v.y / v.mag() );
+			}
+		}	else{
+			if(this.v.y >= 0){
+				alpha =  + Math.acos( this.v.y / v.mag() );
+			} else{
+				alpha = Math.acos( this.v.y / v.mag() );
+			}
+		}
+		
 		System.out.println("alpha of tram: " + alpha);
+		System.out.println("vY = " + this.v.y);
+		System.out.println("vX = " + this.v.x);
+		System.out.println("magnitude= " + this.v.mag());
 		
 		double rightBottomX = this.centerX + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
 		double rightBottomY = this.centerY + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
@@ -319,6 +338,7 @@ public class Tram {
 		routeIndex++;
 		if (this.route.size() == routeIndex) {
            this.finish  = true;
+           System.out.println("----------------------FINISHED------------------------");
         }
 	}
 	
