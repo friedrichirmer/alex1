@@ -331,11 +331,9 @@ public class Vis extends PApplet implements MouseListener {
 		
 	}
 	
-	public void updateVoronoi(){
+	public void updateVoronoi(List<Vehicle> vehiclesInSimulation){
 				
-		vehiclesInSimulation = Simulation.getVehiclesInSimulation();
-		
-        sites.clear();
+	    sites.clear();
         polygonsInRoot.clear();
         
 		for (Vehicle v : vehiclesInSimulation) {

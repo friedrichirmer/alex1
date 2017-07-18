@@ -54,7 +54,7 @@ public class Simulation {
 
     private final Vis vis;
     private List<Vehicle> allVehicles = new ArrayList<>();
-    private static List<Vehicle> vehiclesInSimulation = new ArrayList<>();
+    private List<Vehicle> vehiclesInSimulation = new ArrayList<>();
 	private List<Tram> tramsInSimulation = new ArrayList<Tram>();
 
 	public List<Vehicle> getVehicles() {
@@ -169,7 +169,7 @@ public class Simulation {
             
             this.vis.update(time, vehicleInfoList,tramInfoList);
             
-            if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi();
+            if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi(vehiclesInSimulation);
 
             oldNrOfVehInSim = this.vehiclesInSimulation.size();
             
@@ -248,10 +248,6 @@ public class Simulation {
 
 	public List<Integer> getListOfNodesIds() {
 		return this.listOfNodesIds;
-	}
-    
-	public static List<Vehicle> getVehiclesInSimulation() {
-		return vehiclesInSimulation;
 	}
     
 }
