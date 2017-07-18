@@ -144,7 +144,16 @@ public class Simulation {
         System.out.println("time = " + time);
         return time;
     }
-
+/*
+    boolean overRect(int x, int y, int width, int height)  {
+        if (mouseX >= x && mouseX <= x+width &&
+                mouseY >= y && mouseY <= y+height) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+*/
     private void updateVehiclePositions(double time, KDTree currentKDTree, Set<Wall> allStaticWallsInSimulation, Set<Wall> allTramWallsInSimulation, List<VehicleInfo> vehicleInfoList) {
         for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
             Vehicle vehicle = vehicleIterator.next();

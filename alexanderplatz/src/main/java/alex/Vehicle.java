@@ -124,17 +124,6 @@ public class Vehicle {
         return isInTheSimulation;
     }
 
-    /**
-     * !! Dieser Konstruktor ist nur zum einfacheren Testen von alex.KDTree gedacht und sollte i.A. nicht benutzt werden!!
-     * @param x
-     * @param y
-     */
-    public Vehicle(double x, double y, int id){
-    	this.x = x;
-        this.y = y;
-        this.route = null;
-        this.id = String.valueOf(id);
-    }
 
     /**
      * checks whether the vehicle should enter the sim.
@@ -433,7 +422,7 @@ public class Vehicle {
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
 			moveVehicleToNextLinkOfRoute(time);
-        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 15 && !(this.finished = true)){
+        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 1 && !(this.finished = true)){
 			rerouteVehicleIfStucked(time);
 		}
     }
