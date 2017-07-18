@@ -1,19 +1,16 @@
 package network;
 
-import alex.Simulation;
 import alex.Vehicle;
-import javafx.beans.binding.ListExpression;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Link {
 
     private final double length;
     private final Node from;
     private final Node to;
-    private double weight;
+    private double currentWeight;
+    private double initialWeight;
     private double finishLineX1;
     private double finishLineY1;
 	private final int id;
@@ -25,13 +22,14 @@ public class Link {
         this.id = id;
         this.room = room;
 
-       // this.weight = Math.sqrt((from.getX()-to.getX())*(from.getX()-to.getX())+(from.getY()-to.getY())*(from.getY()-to.getY()));
+       // this.currentWeight = Math.sqrt((from.getX()-to.getX())*(from.getX()-to.getX())+(from.getY()-to.getY())*(from.getY()-to.getY()));
 
         double dx = from.getX() - to.getX();
         double dy = from.getY() - to.getY();
         
-        this.weight = Math.sqrt(dx * dx + dy * dy);
-        System.out.println("Initial weight of the link " + this.id + " is " + this.weight);
+        this.currentWeight = Math.sqrt(dx * dx + dy * dy);
+        this.initialWeight = this.currentWeight;
+        System.out.println("Initial currentWeight of the link " + this.id + " is " + this.currentWeight);
         this.length = Math.sqrt(dx * dx + dy * dy);
 
         this.finishLineX1 = -dy;
@@ -56,8 +54,8 @@ public class Link {
             }
     }
         if (!(numberOfPassesThroughLinkInThePeriod == 0)){
-            this.weight = sumOfTravelTimes / numberOfPassesThroughLinkInThePeriod;
-//            System.out.println("the new weight of the Link " + this.getId() + " is " + weight);
+            this.currentWeight = sumOfTravelTimes / numberOfPassesThroughLinkInThePeriod;
+//            System.out.println("the new currentWeight of the Link " + this.getId() + " is " + currentWeight);
         }
     }
 
@@ -90,11 +88,15 @@ public class Link {
         return length;
     }
 
-	public double getWeight() {
-		return weight;
+	public double getCurrentWeight() {
+		return currentWeight;
 	}
 
 	public int getRoom() {
 		return room;
 	}
+
+    public double getInitialWeight() {
+        return initialWeight;
+    }
 }

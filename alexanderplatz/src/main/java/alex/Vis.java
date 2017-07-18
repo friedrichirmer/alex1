@@ -150,6 +150,17 @@ public class Vis extends PApplet implements MouseListener {
     		
     	}
 	}
+
+	/*
+    boolean overRect(int x, int y, int width, int height)  {
+        if (mouseX >= x && mouseX <= x+width &&
+                mouseY >= y && mouseY <= y+height) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+*/
     
     public void mouseReleased( MouseEvent e ) {
     	if (e.getButton() == 1) {
@@ -163,12 +174,47 @@ public class Vis extends PApplet implements MouseListener {
     		pedestrianNet.createPavilion(e.getX() / scale, e.getY() /
 					scale);
 
+		if (e.getButton() == 3){
+
+
+
+
+
+
+
+/*
+			boolean overRect(int x, int y, int width, int height){
+
+
+				if (mouseX >= x && mouseX <= x + width &&
+						mouseY >= y && mouseY <= y + height) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+*/
+		}
+
 		}
 	}
+
+
+
+
 
     @Override
     public void draw() {
         background(255); // eraser
+
+		stroke(0);
+		fill(255,0,0);
+		rect(660, 60,135, 60);
+		textSize(32);
+		fill(255);
+		text("ALARM", 670, 100);
+		textSize(10);
+
 
         pushMatrix();
 

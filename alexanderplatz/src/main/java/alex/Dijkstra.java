@@ -68,7 +68,7 @@ public class Dijkstra {
 				double cost;
 				if(currentNode == null) System.out.println("currentNode ist null");
 				if(link == null) System.out.println("link ist null");
-				cost = nodeWeights.get(currentNode) + link.getWeight();
+				cost = nodeWeights.get(currentNode) + link.getCurrentWeight();
 				if(cost < nodeWeights.get(newVertex)) {
 					nodeWeights.put(newVertex, cost);
 					predecessor.put(newVertex, currentNode);

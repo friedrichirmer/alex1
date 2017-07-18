@@ -422,7 +422,7 @@ public class Vehicle {
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
 			moveVehicleToNextLinkOfRoute(time);
-        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getWeight() + 1 && !(this.finished = true)){
+        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getInitialWeight() + 1 && !(this.finished = true)){
 			rerouteVehicleIfStucked(time);
 		}
     }

@@ -43,7 +43,7 @@ public class DijkstraV2 {
 
 	    private void expandDijkstraNode(DijkstraNode current) {
 	    	for(Link link : current.getNode().getOutLinks()){
-	    		double weight = link.getWeight();
+	    		double weight = link.getCurrentWeight();
 	    		double newCost = current.getCost() + weight;
 	    		Node toNode = link.getTo();
 	    		DijkstraNode toDijk = this.correspondingNodes.get(toNode);
