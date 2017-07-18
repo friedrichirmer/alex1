@@ -99,9 +99,9 @@ public class Tram {
 	
 	private void reactToVehiclesInWay(KDTree kdtree){
 		
-//		where is the center going to be
-		double projectedX =  this.centerX + 2*Simulation.TIME_STEP * this.v.x;
-		double projectedY =  this.centerY + 2*Simulation.TIME_STEP * this.v.y;
+//		where is the center going to be in 1 second ! (not dependent on time step)
+		double projectedX =  this.centerX +  this.v.x;
+		double projectedY =  this.centerY +  this.v.y;
 
 		//rotation angle
 		double alpha;
@@ -135,6 +135,9 @@ public class Tram {
 		float bottomLineCenterX = (float) (projectedX - (half_length * Math.sin(alpha)));
 		float bottomLineCenterY = (float) (projectedY + (half_length * Math.cos(alpha)));
 		
+		float topLineCenterX = (float) (projectedX + (half_length * Math.sin(alpha)));
+		float topLineCenterY = (float) (projectedY - (half_length * Math.cos(alpha)));
+		
 		double xMin = Double.MAX_VALUE;
 		xMin = Math.min(xMin, leftTopX);
 		xMin = Math.min(xMin, rightTopX);
@@ -160,7 +163,7 @@ public class Tram {
 		yMax = Math.max(yMax, leftBottomY);
 		
 		List<Vehicle> vehiclesAboutToCrash = 
-				kdtree.getClosestNeighboursToPoint(bottomLineCenterX, bottomLineCenterY, 1, xMin, yMin, xMax, yMax);
+				kdtree.getClosestNeighboursToPoint(topLineCenterX, topLineCenterY, 1, xMin, yMin, xMax, yMax);
 		if(vehiclesAboutToCrash.size() == 0){
 			System.out.println("+++no pedestrian in the way+++");
 		}else{
@@ -177,7 +180,7 @@ public class Tram {
 //				System.out.println(" old mag = " + this.v.mag());
 				PVector vCopy = this.v.get();
 				vCopy.normalize();
-				vCopy.mult((float)(2*distanceVehicleToFront));
+				vCopy.mult((float)(distanceVehicleToFront));
 				if(vCopy.mag() > this.v.mag()){
 					this.v.mult(0.01f);
 				}

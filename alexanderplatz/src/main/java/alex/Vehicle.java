@@ -93,7 +93,7 @@ public class Vehicle {
         this.network = network;
         this.route = Dijkstra.returnRoute(network, startNode, destinationNode);
         this.rad = 0.25 + random.nextDouble()*0.1;
-        this.maxSpeed = 2;
+        this.maxSpeed = 5;
         this.vtx = 0;
         this.finished = false;
         this.id = id;
@@ -139,8 +139,7 @@ public class Vehicle {
     	return (this.startTime <= time);
     }
     
-
-    public void update(List<Vehicle> vehs, double time, Set<Wall> staticWallSet, Set<Wall> tramWallSet) {
+    public void update(List<Vehicle> vehs, double time, Set<Wall> staticWallSet, List<Tram> tramsInSim) {
 
 //        if ( startTime > time) {
 //            return;
@@ -149,9 +148,12 @@ public class Vehicle {
 		Link currentLink = getCurrentLink();
 		setToZeroPushXY();
 		calculateAndDrawForcesFromOtherVehicles(vehs);
-		calculateAndDrawWallForces(staticWallSet,1);
-		calculateAndDrawWallForces(tramWallSet,500);
-        
+		calculateAndDrawWallForces(staticWallSet);
+		for(Tram tram :tramsInSim){
+			calcTramForce(tram);
+		}
+		forceWalls = new PVector((float)pushWallX, (float)pushWallY);
+
         // Berechnung der Wunschrichtung
         double distanceLeftToEndOfLinkX = currentLink.getTo().getX() - this.x;
     	double distanceLeftToEndOfLinkY = currentLink.getTo().getY() - this.y;
@@ -267,14 +269,12 @@ public class Vehicle {
 		forceVehicles = new PVector((float)pushX, (float)pushY);
 	}
 
-	private void calculateAndDrawWallForces(Set<Wall> wallSet, double constantAMultiplier) {
+	private void calculateAndDrawWallForces(Set<Wall> wallSet) {
 		Iterator<Wall> it = wallSet.iterator();
 		while(it.hasNext()){
             Wall wall = it.next();
-            calcWallForce(wall,constantAMultiplier);
+            calcWallForce(wall,1,1,1);
         }
-
-		forceWalls = new PVector((float)pushWallX, (float)pushWallY);
 	}
 
 	public boolean placeVehicleSomwhereOnCurrentLink(){
@@ -292,10 +292,21 @@ public class Vehicle {
     	}
     }
     
+	private void calcTramForce(Tram tram){
+    	for(Wall w : tram.getWalls()){
+    		if(w.equals(tram.getBottomWall())){
+    			calcWallForce(w, 80, 500, 100);
+    		}
+    		else{
+    			calcWallForce(w, 40, 100, 20);
+    		}
+    	}
+    }
+	
 	/**
 	 * @param wall
 	 */
-	private void calcWallForce(Wall wall, double costantAMultiplier) {
+	private void calcWallForce(Wall wall, double constantAMultiplier, double constantKSmallMultiplier, double radiusMultiplier) {
 		PVector firstEndOfTheWall = new PVector ((float)wall.getX1(),(float) wall.getY1());
 		PVector secondEndOfTheWall = new PVector ((float)wall.getX2(),(float) wall.getY2());	//Ende 2 der Wand
 		PVector vehiclePosition = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
@@ -320,11 +331,10 @@ public class Vehicle {
 		
 		if ( utilityValue1 <= 0 ) {
 		    normalDistanceToWall = PVector.dist(vehiclePosition, firstEndOfTheWall);
-			radiusAndNormalDistanceDifference = this.getRadius() - normalDistanceToWall;
+			radiusAndNormalDistanceDifference = radiusMultiplier * this.getRadius() - normalDistanceToWall;
 			length = wallVectorFromFirstEndToSecondEnd.mag();
 			normalVector = vectorFromFirstEndToVehicle.get();
 			normalVector.normalize();
-			tangentialVector = normalVector.get();
 		}
 		
 		/*
@@ -334,11 +344,10 @@ public class Vehicle {
 		
 		if ( utilityValue2 <= utilityValue1 ) {
 			normalDistanceToWall = PVector.dist(vehiclePosition, secondEndOfTheWall);
-			radiusAndNormalDistanceDifference = this.getRadius() - normalDistanceToWall;
+			radiusAndNormalDistanceDifference = radiusMultiplier * this.getRadius() - normalDistanceToWall;
 			length = wallVectorFromFirstEndToSecondEnd.mag();
 			normalVector = vectorFromSecondEndToVehicle.get();
 			normalVector.normalize();
-		    tangentialVector = normalVector.get();
 		}
 		
 		/*
@@ -357,30 +366,28 @@ public class Vehicle {
 			pbV.sub(pb);
 			     				
 			normalDistanceToWall = PVector.dist(vehiclePosition, pb);
-			radiusAndNormalDistanceDifference = this.getRadius() - normalDistanceToWall;
+			radiusAndNormalDistanceDifference = radiusMultiplier * this.getRadius() - normalDistanceToWall;
 			length = wallVectorFromFirstEndToSecondEnd.mag();
 			
 			normalVector = pbV.get();
 		    normalVector.normalize();
-		    tangentialVector = normalVector.get();
-		    
 		}
-
+		
+		tangentialVector = normalVector.get();
 		tangentialVector.rotate((float)((Math.PI)/2));
 		
 
 		double g = setGtoOneIfTooCloseToWall(radiusAndNormalDistanceDifference);
-
 		double vdifx = this.vtx * tangentialVector.x;
 		double vdify = this.vty * tangentialVector.y;
 
 		pushWallX = pushWallX + 
-			(costantAMultiplier * constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.x +
-			constantKSmall * g * radiusAndNormalDistanceDifference * vdifx * tangentialVector.x;
+			(constantAMultiplier * constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.x +
+			constantKSmall * constantKSmallMultiplier * g * radiusAndNormalDistanceDifference * vdifx * tangentialVector.x;
      	
 		pushWallY = pushWallY + 
-			(costantAMultiplier * constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.y +
-			constantKSmall * g * radiusAndNormalDistanceDifference * vdify * tangentialVector.y;
+			(constantAMultiplier * constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.y +
+			constantKSmall * constantKSmallMultiplier * g * radiusAndNormalDistanceDifference * vdify * tangentialVector.y;
 	}
 
 	private double setGtoOneIfTooCloseToWall(double radiusAndNormalDistanceDifference) {

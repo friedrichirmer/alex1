@@ -44,7 +44,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 800;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -109,15 +109,13 @@ public class Simulation {
             updateLinkWeights(time);
 
             Set<Wall> allStaticWallsInSimulation = new HashSet<Wall>();
-            Set<Wall> allTramWallsInSimulation = new HashSet<Wall>();
 
             allStaticWallsInSimulation.addAll(this.pedestrianNetwork.staticWalls);
             List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
-            updateTramPositions(currentKDTree, allTramWallsInSimulation, tramInfoList);
+            updateTramPositions(currentKDTree, tramInfoList);
 
-            System.out.println("tramWalls.size() = " + allTramWallsInSimulation.size());
             List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
-            updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, allTramWallsInSimulation, vehicleInfoList);
+            updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, vehicleInfoList);
 
             this.vis.update(time, vehicleInfoList,tramInfoList);
 
@@ -145,13 +143,13 @@ public class Simulation {
         return time;
     }
 
-    private void updateVehiclePositions(double time, KDTree currentKDTree, Set<Wall> allStaticWallsInSimulation, Set<Wall> allTramWallsInSimulation, List<VehicleInfo> vehicleInfoList) {
+    private void updateVehiclePositions(double time, KDTree currentKDTree, Set<Wall> allStaticWallsInSimulation, List<VehicleInfo> vehicleInfoList) {
         for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
             Vehicle vehicle = vehicleIterator.next();
 
             //mit kdTree
             List<Vehicle> neighboursToConsider = currentKDTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
-            vehicle.update(neighboursToConsider, time, allStaticWallsInSimulation, allTramWallsInSimulation);
+            vehicle.update(neighboursToConsider, time, allStaticWallsInSimulation, tramsInSimulation);
 
             //ohne kdTree
 //            	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
@@ -162,7 +160,7 @@ public class Simulation {
         }
     }
 
-    private void updateTramPositions(KDTree currentKDTree, Set<Wall> allTramWallsInSimulation, List<TramInfo> tramInfoList) {
+    private void updateTramPositions(KDTree currentKDTree, List<TramInfo> tramInfoList) {
         boolean oneTramHasFinished = false;
     	for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
             Tram tram = tramIterator.next();
@@ -170,7 +168,6 @@ public class Simulation {
             tram.move();
 
             if(!tram.isFinished()){
-                allTramWallsInSimulation.addAll(tram.getWalls());
                 TramInfo tramInfo = new TramInfo(tram);
                 tramInfoList.add(tramInfo);
             }
