@@ -249,6 +249,7 @@ public class Simulation {
     	Node to = pedestrianNetwork.getNodes().get(39);
     	List<Link> route = router.calculateRoute(from, to);
     	Tram tram = new Tram(from.getX(),from.getY() , route);
+
     	this.tramsInSimulation.add(tram);
     }
 

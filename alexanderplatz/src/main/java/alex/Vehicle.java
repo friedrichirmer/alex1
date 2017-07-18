@@ -497,4 +497,8 @@ public class Vehicle {
 	public Map<Integer, Double[]> getMapOfEnterLeaveTimes() {
 		return mapOfEnterLeaveTimes;
 	}
+
+	public double getSpeed() {
+		return momentSpeed;
+	}
 }

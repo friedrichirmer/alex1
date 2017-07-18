@@ -28,6 +28,7 @@ import kn.uni.voronoitreemap.datastructure.OpenList;
 import kn.uni.voronoitreemap.diagram.PowerDiagram;
 import kn.uni.voronoitreemap.j2d.PolygonSimple;
 import kn.uni.voronoitreemap.j2d.Site;
+import network.AlexanderplatzNetworkCreator;
 import network.Network;
 
 import java.awt.*;
@@ -84,14 +85,19 @@ public class Vis extends PApplet implements MouseListener {
 	private double densityInRoot =  0;
 	private double numberInRoot = 0;
 	private double areasInRoot = 0;
-
-	private List<Vehicle> vehiclesInSimulation;
 	
 	private Set<PolygonSimple> polygonsInRoot =  new HashSet<PolygonSimple>();
+	private PolygonSimple testPolygon;
+	private List<Vehicle> vehiclesInRoot =  new ArrayList<Vehicle>();
+	private double avgSpeed;
+	private List<Double> speedList = new ArrayList<Double>();
 
-    public static double xOffset = 0;
-    public static double yOffset = 0;
+    public static float xOffset = 0;
+    public static float yOffset = 0;
     public static float scale = 3;
+    
+    public static double xScaleAndOffset = xOffset * scale;
+    public static double yScaleAndOffset= yOffset * scale;
 
     public Vis(Network pedestrianNet, Network tramNet) {
         this.pedestrianNet = pedestrianNet;
@@ -135,8 +141,8 @@ public class Vis extends PApplet implements MouseListener {
     		// Bei einem Mausklick wird die Messung automatisch zur�ckgesetzt
     		//System.out.println("gepresst: [" + e.getX() + "] [" + e.getY() + "]");
     		
-    		densityWindowX1 = e.getX()/scale;
-    		densityWindowY1 = e.getY()/scale;
+    		densityWindowX1 = (float) (e.getX() / scale - xOffset);
+    		densityWindowY1 = (float) (e.getY() / scale - yOffset );
     		
     		densityInRoot =  0;
     		numberInRoot = 0;
@@ -148,22 +154,17 @@ public class Vis extends PApplet implements MouseListener {
     public void mouseReleased( MouseEvent e ) {
     	if (e.getButton() == 1) {
     		//System.out.println("losgelassen: [" + e.getX() + "] [" + e.getY() + "]");
-    		densityWindowX2 = e.getX()/scale;
-    		densityWindowY2 = e.getY()/scale;
+    		densityWindowX2 = (float) (e.getX() / scale - xOffset);
+    		densityWindowY2 = (float) (e.getY() / scale - yOffset);
     	}
 
     	if (e.getButton() == 2){
+
     		pedestrianNet.createPavilion(e.getX() / scale, e.getY() /
 					scale);
+
 		}
 	}
-
-
-
- 
-
-
- 
 
     @Override
     public void draw() {
@@ -185,60 +186,56 @@ public class Vis extends PApplet implements MouseListener {
                 }
             }
 
-
             else {
-            	
-            	double oldscale = scale;
             	
                 if (key == '+') {
                 	
                     scale += 0.2;
-                    yOffset -= 15;
-                    xOffset -= 15;
+                    yOffset -= 15/scale;
+                    xOffset -= 15/scale;
+                    
                 } else if (key == '-') {
+                	
                     scale -= 0.2;
-                    yOffset += 15;
-                    xOffset += 15;
+                    yOffset += 15/scale;
+                    xOffset += 15/scale;
+                    
                 }
                 
-                double scaleAdjust = scale / oldscale;
-                
-                densityWindowX1 *= scaleAdjust;
-                densityWindowX2 *= scaleAdjust;
-                densityWindowY1 *= scaleAdjust;
-                densityWindowY2 *= scaleAdjust;
-                
             }
+            
         }
+        
+        translate((float) xOffset*scale, (float) yOffset*scale);
         
         updateDensityWindow();
         
         for (PolygonSimple p :  polygonsInRoot){
-   		double[] polyx = p.getXPoints();
-   		double[] polyy = p.getYPoints();
+        	double[] polyx = p.getXPoints();
+        	double[] polyy = p.getYPoints();
    		          		 
-  		for (int i=0;i<(p.getNumPoints()-1);i++) {
-   			 this.line( (float) (polyx[i]*scale), (float) (polyy[i]*scale), (float) (polyx [i+1]*scale), (float) (polyy[i+1]*scale));
-   		}
+        	for (int i=0;i<(p.getNumPoints()-1);i++) {
+        		this.line( (float) (polyx[i]*scale), (float) (polyy[i]*scale), (float) (polyx [i+1]*scale), (float) (polyy[i+1]*scale));
+        	}
    		 	this.line( (float) (polyx[p.getNumPoints()-1]*scale), (float) (polyy[p.getNumPoints()-1]*scale), (float) (polyx [0]*scale), (float) (polyy[0]*scale));
         }
         
-//        System.out.println("Anzahl: " + numberInRoot +  " und Fl�che: " + areasInRoot + " m^2");
+
 		if (areasInRoot > 0) densityInRoot = (numberInRoot / areasInRoot);
-//		System.out.println(" New Density " + (numberInRoot / areasInRoot));
+
         	
-		 this.noFill();
-	     this.rect(originX*scale, originY*scale, rootWidth*scale, rootHeight*scale, 3);
-	     this.fill(0);
-	     this.textSize(15);
-	     this.fill(0);
-	     this.text("Voronoi-Dichte: " + densityInRoot + " [Anzahl Personen / m^2]", 500, 500);
-    	
+
     	        
         translate((float) xOffset, (float) yOffset);
         pedestrianNet.draw(this,false);
         tramNet.draw(this,true);
 
+		this.noFill();
+	    this.rect(originX*scale, originY*scale, rootWidth*scale, rootHeight*scale, 3);
+	    this.fill(0);
+	    this.textSize(15);
+	    this.fill(0);
+	    
         synchronized (this.trams) {
         	for (TramInfo t : this.trams) {
         		t.draw(this);
@@ -251,8 +248,24 @@ public class Vis extends PApplet implements MouseListener {
             }
         }
         
+
+        
         popMatrix();
+        
+		String dichte = String.format("%.4f", densityInRoot);
+		String speed = String.format("%.4f", avgSpeed);
+		String flow = String.format("%.4f", (avgSpeed * densityInRoot));
 		
+        this.fill(0);
+        this.textSize(10);
+        this.text("Voronoi-Dichte: ", 10, 15);
+        this.text("Mittlere Geschwindikkeit: ", 10, 30);
+        this.text("Mittlerer Fluss: ", 10, 45);
+        
+        this.text(dichte  + " [Anzahl Personen / m^2]", 130, 15);
+        this.text(speed + " [m/2]", 130, 30);
+        this.text(flow, 130, 45);
+
         
     } 
 
@@ -271,6 +284,7 @@ public class Vis extends PApplet implements MouseListener {
 	public void updateDensityWindow(){
 		rootPolygon = new PolygonSimple();
 		outerPolygon = new PolygonSimple();
+		testPolygon = new PolygonSimple();
 	    
 		
 		
@@ -281,10 +295,14 @@ public class Vis extends PApplet implements MouseListener {
 		rootPolygon.add(densityWindowX2, densityWindowY1);
 		
 		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
-			outerPolygon.add(densityWindowX1 - 3, densityWindowY1 - 3);
-			outerPolygon.add(densityWindowX2 + 3, densityWindowY1 - 3);
-			outerPolygon.add(densityWindowX2 + 3, densityWindowY2 + 3);
-			outerPolygon.add(densityWindowX1 - 3, densityWindowY2 + 3);
+			outerPolygon.add(densityWindowX1 - 10, densityWindowY1 - 10);
+			outerPolygon.add(densityWindowX2 + 10, densityWindowY1 - 10);
+			outerPolygon.add(densityWindowX2 + 10, densityWindowY2 + 10);
+			outerPolygon.add(densityWindowX1 - 10, densityWindowY2 + 10);
+			testPolygon.add(densityWindowX1 - 9, densityWindowY1 - 9);
+			testPolygon.add(densityWindowX2 + 9, densityWindowY1 - 9);
+			testPolygon.add(densityWindowX2 + 9, densityWindowY2 + 9);
+			testPolygon.add(densityWindowX1 - 9, densityWindowY2 + 9);
 			originX = densityWindowX1;
 			originY = densityWindowY1;
 			rootWidth = densityWindowX2 - densityWindowX1;
@@ -292,10 +310,14 @@ public class Vis extends PApplet implements MouseListener {
 		}
 		
 		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 < densityWindowY2)) {
-			outerPolygon.add(densityWindowX2 - 3, densityWindowY1 - 3);
-			outerPolygon.add(densityWindowX1 + 3, densityWindowY1 - 3);
-			outerPolygon.add(densityWindowX1 + 3, densityWindowY2 + 3);
-			outerPolygon.add(densityWindowX2 - 3, densityWindowY2 + 3);
+			outerPolygon.add(densityWindowX2 - 10, densityWindowY1 - 10);
+			outerPolygon.add(densityWindowX1 + 10, densityWindowY1 - 10);
+			outerPolygon.add(densityWindowX1 + 10, densityWindowY2 + 10);
+			outerPolygon.add(densityWindowX2 - 10, densityWindowY2 + 10);
+			testPolygon.add(densityWindowX2 - 9, densityWindowY1 - 9);
+			testPolygon.add(densityWindowX1 + 9, densityWindowY1 - 9);
+			testPolygon.add(densityWindowX1 + 9, densityWindowY2 + 9);
+			testPolygon.add(densityWindowX2 - 9, densityWindowY2 + 9);
 			originX = densityWindowX2;
 			originY = densityWindowY1;
 			rootWidth = densityWindowX1 - densityWindowX2;
@@ -303,10 +325,14 @@ public class Vis extends PApplet implements MouseListener {
 		}
 		
 		if ((densityWindowX1 < densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
-			outerPolygon.add(densityWindowX1 - 3, densityWindowY2 - 3);
-			outerPolygon.add(densityWindowX2 + 3, densityWindowY2 - 3);
-			outerPolygon.add(densityWindowX2 + 3, densityWindowY1 + 3);
-			outerPolygon.add(densityWindowX1 - 3, densityWindowY1 + 3);
+			outerPolygon.add(densityWindowX1 - 10, densityWindowY2 - 10);
+			outerPolygon.add(densityWindowX2 + 10, densityWindowY2 - 10);
+			outerPolygon.add(densityWindowX2 + 10, densityWindowY1 + 10);
+			outerPolygon.add(densityWindowX1 - 10, densityWindowY1 + 10);
+			testPolygon.add(densityWindowX1 - 9, densityWindowY2 - 9);
+			testPolygon.add(densityWindowX2 + 9, densityWindowY2 - 9);
+			testPolygon.add(densityWindowX2 + 9, densityWindowY1 + 9);
+			testPolygon.add(densityWindowX1 - 9, densityWindowY1 + 9);
 			originX = densityWindowX1;
 			originY = densityWindowY2;
 			rootWidth = densityWindowX2 - densityWindowX1;
@@ -314,10 +340,14 @@ public class Vis extends PApplet implements MouseListener {
 		}
 		
 		if ((densityWindowX1 >= densityWindowX2) && (densityWindowY1 >= densityWindowY2)) {
-			outerPolygon.add(densityWindowX2 - 3, densityWindowY2 - 3);
-			outerPolygon.add(densityWindowX1 + 3, densityWindowY2 - 3);
-			outerPolygon.add(densityWindowX1 + 3, densityWindowY1 + 3);
-			outerPolygon.add(densityWindowX2 - 3, densityWindowY1 + 3);
+			outerPolygon.add(densityWindowX2 - 10, densityWindowY2 - 10);
+			outerPolygon.add(densityWindowX1 + 10, densityWindowY2 - 10);
+			outerPolygon.add(densityWindowX1 + 10, densityWindowY1 + 10);
+			outerPolygon.add(densityWindowX2 - 10, densityWindowY1 + 10);
+			testPolygon.add(densityWindowX2 - 9, densityWindowY2 - 9);
+			testPolygon.add(densityWindowX1 + 9, densityWindowY2 - 9);
+			testPolygon.add(densityWindowX1 + 9, densityWindowY1 + 9);
+			testPolygon.add(densityWindowX2 - 9, densityWindowY1 + 9);
 			originX = densityWindowX2;
 			originY = densityWindowY2;
 			rootWidth = densityWindowX1 - densityWindowX2;
@@ -326,19 +356,27 @@ public class Vis extends PApplet implements MouseListener {
 		}
 		
 	diagram.setClipPoly(outerPolygon);
-		
+	
 	}
 	
 	public void updateVoronoi(List<Vehicle> vehiclesInSimulation){
 				
 	    sites.clear();
         polygonsInRoot.clear();
+        vehiclesInRoot.clear();
+        avgSpeed = 0;
         
 		for (Vehicle v : vehiclesInSimulation) {
 		 	Site site = new Site(v.getX(), v.getY());
 		 	sites.add(site);
+		 	if (rootPolygon.contains(site.x, site.y)) {
+		 		vehiclesInRoot.add(v);
+
+		 	}
 		 }
 		
+		
+
 		diagram.setSites(sites);
 
 		diagram.computeDiagram();
@@ -348,27 +386,31 @@ public class Vis extends PApplet implements MouseListener {
 		
 		for (Site s : sites) {
 			if (rootPolygon.contains(s.x, s.y) && (s.getPolygon() != null)) {
-				polygonsInRoot.add(s.getPolygon());
-				numberInRoot++;
-				areasInRoot += s.getPolygon().getArea();
+				PolygonSimple sPoly = s.getPolygon();
+				
+				if (testPolygon.contains(sPoly.getBounds2D())){
+					polygonsInRoot.add(s.getPolygon());
+					numberInRoot++;
+					areasInRoot += s.getPolygon().getArea();
+					
+					for (Vehicle v : vehiclesInRoot) {
+						if (v.getX() == s.x && v.getY() == s.y) {
+							System.out.println("Speed: " + v.getSpeed());
+							speedList.add(v.getSpeed());
+						}
+					}
+				}		 		
+				
 			}		
-	
-            PolygonSimple polygon = s.getPolygon();
-            	 if(polygonsInRoot.contains(polygon)){
-            		 double[] polyx = polygon.getXPoints();
-            		 double[] polyy = polygon.getYPoints();
-            		          		 
-           		 for (int i=0;i<(polygon.getNumPoints()-1);i++) {
-            			 this.line( (float) (polyx[i]*scale), (float) (polyy[i]*scale), (float) (polyx [i+1]*scale), (float) (polyy[i+1]*scale));
-            		 }
-            		 this.line( (float) (polyx[polygon.getNumPoints()-1]*scale), (float) (polyy[polygon.getNumPoints()-1]*scale), (float) (polyx [0]*scale), (float) (polyy[0]*scale));
- 
-            	 
-            	 
-            }
-		}
+	 
+        }
 		
-       
+		for (int i=0; i<speedList.size(); i++ ) {
+			Double s = speedList.get(i);
+			avgSpeed = ((avgSpeed * i) + s ) / (i+1);
+		}
 	}
-
+		   
 }
+
+
