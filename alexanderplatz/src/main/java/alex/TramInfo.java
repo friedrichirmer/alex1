@@ -10,8 +10,6 @@ public class TramInfo {
 
 	private Set<Wall> walls;
     
-    private final double phi;
-
 	private Wall bottom;
 
 	private float width;
@@ -25,7 +23,6 @@ public class TramInfo {
     
 	public TramInfo(Tram tram) {
 		this.walls = tram.getWalls();
-		this.phi = tram.getPhi();
 		this.bottom = tram.getBottomWall();
 		this.width = tram.getWidth();
 		this.length = tram.getLength();

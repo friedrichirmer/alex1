@@ -34,13 +34,10 @@ public class Tram {
 	
 	private double centerX;
 	private double centerY;
-	private double phi;
 	
 	private double wishVelocity = 1000;
 	PVector v = new PVector(0,0);
 	PVector vFront = new PVector(0,0);
-	private double vX;
-	private double vY;
 	private final double tau = 1;
 	private double bottomCenterX;
 	private double bottomCenterY;
@@ -57,12 +54,19 @@ public class Tram {
 		this.centerY = y;
 		this.route = route;
 		this.routeIndex = 0;
+		calcVelocityVector();
 		setWalls();
 	}
 
 	
 	public void update(List<Vehicle> vehicles, KDTree kdTree){
 		
+		calcVelocityVector();
+    	isSomethingInTheWay(vehicles, kdTree);
+
+	}
+	
+	private void calcVelocityVector(){
 		Link currentLink = this.route.get(routeIndex);
 		
 		// Berechnung der Wunschrichtung vom Fahrzeugmittelpunkt aus
@@ -80,29 +84,17 @@ public class Tram {
     	double dist = Math.sqrt(dx*dx+dy*dy);
     	dx /= dist;
     	dy /= dist;
-		
-//    	double resultForceX = (dx* this.wishVelocity - vX) / this.tau;
-//    	double resultForceY = (dy* this.wishVelocity - vY) / this.tau;
     	
     	double resultForceX = (dx* this.wishVelocity);
     	double resultForceY = (dy* this.wishVelocity);
-    	
-   
 //    	this.v.add( new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) ) ) ;
 
+    	
     	//von der Mitte aus
     	this.v = new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) )  ;
     	
     	//von der Front aus
 //    	this.v = vFront.get();
-    	
-//        vX = vX + Simulation.TIME_STEP *(resultForceX);
-//        vY = vY + Simulation.TIME_STEP *(resultForceY);
-        
-    	isSomethingInTheWay(vehicles, kdTree);
-    	
-        this.phi = Math.atan(vX/vY);
-
 	}
 	
 	private void isSomethingInTheWayV2(KDTree kdtree){
@@ -276,6 +268,7 @@ public class Tram {
 	private void setWalls() {
 		
 		double alpha = Math.acos( this.v.y / v.mag());
+		System.out.println("alpha of tram: " + alpha);
 		
 		double rightBottomX = this.centerX + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
 		double rightBottomY = this.centerY + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
@@ -359,10 +352,6 @@ public class Tram {
 	
 	public double getY(){
 		return this.centerY;
-	}
-
-	public double getPhi() {
-		return this.phi;
 	}
 
 	public float getLength() {

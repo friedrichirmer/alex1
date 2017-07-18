@@ -24,17 +24,6 @@ public class Network {
 	public List<Node>  tramExitAlexanderstr = new ArrayList<Node>();
 	public List<Node>  tramExitSBahn = new ArrayList<Node>();
 	public List<Node>  tramExitKlStr = new ArrayList<Node>();
-	
-	public Node getTramExitNode (Node node){
-		if (node.getId()==101){
-			if (Math.random()<0.5) return tramExitAlexanderstr.get(0);
-			else return tramExitAlexanderstr.get(1);
-		}
-		if (node.getId()==102){
-			return tramExitSBahn.get(0);
-		}
-		else return tramExitKlStr.get(0);
-	}
 
 	private double proportion = 3.051;
 	public List<Node> getEntryExitNodes() {
@@ -118,6 +107,7 @@ public class Network {
 			} else {
 				p.fill(0);
 				p.stroke(0);
+				p.strokeWeight(0.2f);
 			}
 			
             p.line((float) (linkInfo.x0 * Vis.scale),
@@ -127,6 +117,7 @@ public class Network {
      	}
 		p.fill(0);
 		p.stroke(0);
+		p.strokeWeight(1);
 	}
 	
 	private void drawNodes(PApplet p) {
