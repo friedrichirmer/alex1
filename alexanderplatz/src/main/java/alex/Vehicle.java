@@ -298,6 +298,21 @@ public class Vehicle {
         
     }
 
+    public boolean placeVehicleSomwhereOnCurrentLink(){
+    	if(this.routeIndex == 0){
+    		double rnd = Math.random();
+    		Link l = this.route.get(routeIndex);
+    		double dx = l.getTo().getX()-l.getFrom().getX();
+    		double dy = l.getTo().getY()-l.getFrom().getY();
+    		this.x += dx*rnd;
+    		this.y += dy*rnd;
+    		return true;
+    	}
+    	else{
+    		return false;
+    	}
+    }
+    
 	/**
 	 * @param wall
 	 */

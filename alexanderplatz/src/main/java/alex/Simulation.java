@@ -46,7 +46,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 2000;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -91,9 +91,9 @@ public class Simulation {
     private void run(Network network) {
         double time = 0;
 
-//        KDTree kdTree = new KDTree(this.vehiclesInSimulation);
+        KDTree kdTree = new KDTree(this.vehiclesInSimulation);
 
-        createTram(network);
+//        createTram(network);
         
         int oldNrOfVehInSim = vehiclesInSimulation.size();
         
@@ -117,6 +117,15 @@ public class Simulation {
                 	this.vehiclesInSimulation.add(vehicle); 
                  }
             }
+//        	System.out.println("--check after adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
+
+          if(time % 1 == 0 || vehicleHasLeft || vehiclesInSimulation.size() != oldNrOfVehInSim){
+          	System.out.println("###build new kdTree###");
+          	List<Vehicle> vehInSimCopy = new ArrayList<Vehicle>();
+          	vehInSimCopy.addAll(vehiclesInSimulation); 
+      		kdTree = new KDTree(vehInSimCopy);
+      		kdTree.buildKDTree();
+      	}
 
             if (time % 5 == 0 && time > 0){
                 recalculateWeightOfLinksBasedOnCurrentTravelTimes(network, time);
@@ -146,11 +155,11 @@ public class Simulation {
             	Vehicle vehicle = vehicleIterator.next();
             	
             	//mit kdTree
-//            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
-//                vehicle.update(neighboursToConsider, time, allWallsInSimulation);
+            	List<Vehicle> neighboursToConsider = kdTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
+                vehicle.update(neighboursToConsider, time, allWallsInSimulation);
             	
             	//ohne kdTree
-            	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
+//            	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
             	
                 vehicle.move(time);
                 VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(),
@@ -213,20 +222,24 @@ public class Simulation {
     
     private void createTram(Network network){
     	DijkstraV2 router = new DijkstraV2(network);
-    	Node from = network.nodes.get(33);
-    	Node to = network.nodes.get(5);
+    	Node from = network.nodes.get(13);
+    	Node to = network.nodes.get(8);
     	Tram tram = new Tram(from.getX()+0.5,from.getY() , router.calculateRoute(from, to));
     	this.tramsInSimulation.add(tram);
     }
 
     private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
     	
-        double startTime = (Math.random() * (0.01*MAX_TIME));
+        double startTime = (Math.random() * (0.1*MAX_TIME));
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
-        simulation.addVehicle(new Vehicle(network, startNode, finishNode, startTime, vehicleId, route));
+        Vehicle v = new Vehicle(network, startNode, finishNode, startTime, vehicleId, route);
+        simulation.addVehicle(v);
         System.out.println("Random Vehicle " + vehicleId + " is created");
+        if(v.placeVehicleSomwhereOnCurrentLink()){
+        	System.out.println("could place it somewhere on the first link");
+        }
     }
 
     public void addVehicle(Vehicle vehicle) {

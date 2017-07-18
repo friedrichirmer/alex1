@@ -159,7 +159,7 @@ public class KDTree {
 			}
 		}
 		else{
-			if(isFullyContainedInRange(xMin, yMin, xMax, yMax)) report = this.origin;
+			if(isFullyContainedInRange(xMin, yMin, xMax, yMax)) report.addAll(this.origin);
 		}
 		return report;
 	}
@@ -173,7 +173,10 @@ public class KDTree {
 		if(this.xMin <= left && this.yMin <= bottom && this.xMax >= right && this.yMax >= top)	return true;
 		
 		if( (left <= this.xMax && this.xMax <= right) || (left <= this.xMin && this.xMin <= right) )
-			return( (this.yMin >= bottom && this.yMin <= top) || (this.yMax <= top && this.yMax >= bottom));
+			if( (this.yMin >= bottom && this.yMin <= top) || (this.yMax <= top && this.yMax >= bottom) || (this.yMin <= bottom && this.yMax >= top) ) return true;
+
+		//case 2b: die x-Ausdehnung der Partition ist größer als die der Range UND entweder obere oder untere Kante liegt in y-Ausdehnung der Range
+		if( (this.xMin <= left && this.xMax >= right) && ( (bottom <= this.yMin && this.yMin <= top) || (bottom <= this.yMax && this.yMax <= top) ) ) return true;
 		
 		return false;
 	}

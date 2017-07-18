@@ -29,15 +29,16 @@ public class Tram {
 	private Wall top;
 	private Wall bottom;
 	
-	private double half_length = 2;
-	private double half_width = 0.5;
+	private double half_length = 4;
+	private double half_width = 2;
 	
 	private double centerX;
 	private double centerY;
 	private double phi;
 	
-	private double wishVelocity = 10;
+	private double wishVelocity = 1000;
 	PVector v = new PVector(0,0);
+	PVector vFront = new PVector(0,0);
 	private double vX;
 	private double vY;
 	private final double tau = 1;
@@ -56,7 +57,6 @@ public class Tram {
 		this.centerY = y;
 		this.route = route;
 		this.routeIndex = 0;
-		
 		setWalls();
 	}
 
@@ -65,9 +65,13 @@ public class Tram {
 		
 		Link currentLink = this.route.get(routeIndex);
 		
+		// Berechnung der Wunschrichtung vom Fahrzeugmittelpunkt aus
 		double dx = currentLink.getTo().getX() - this.centerX;
     	double dy = currentLink.getTo().getY() - this.centerY;
 
+    	vFront = new PVector((float) (currentLink.getTo().getX()- this.bottomCenterX) , (float) (currentLink.getTo().getY() - this.bottomCenterY) );
+    	vFront.normalize();
+    	vFront.mult((float) wishVelocity);
 		// Berechnung der Wunschrichtung von der Mitte der Fahrzeugfront aus
 //        double dx = currentLink.getTo().getX() - bottomCenterX;
 //    	double dy = currentLink.getTo().getY() - bottomCenterY;
@@ -85,7 +89,11 @@ public class Tram {
    
 //    	this.v.add( new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) ) ) ;
 
+    	//von der Mitte aus
     	this.v = new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) )  ;
+    	
+    	//von der Front aus
+//    	this.v = vFront.get();
     	
 //        vX = vX + Simulation.TIME_STEP *(resultForceX);
 //        vY = vY + Simulation.TIME_STEP *(resultForceY);
