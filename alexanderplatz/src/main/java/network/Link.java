@@ -38,7 +38,7 @@ public class Link {
 
     }
 
-    public void calculateRecentLinkWeights(List<Vehicle> vehicleList, Double time) {
+    public void calculateCurrentLinkWeights(List<Vehicle> vehicleList, Double time) {
         int numberOfPassesThroughLinkInThePeriod = 0;
         Double sumOfTravelTimes = 0D;
         for (Vehicle vehicle : vehicleList) {

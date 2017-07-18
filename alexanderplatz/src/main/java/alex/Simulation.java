@@ -217,7 +217,7 @@ public class Simulation {
         Iterator<Link> linkIterator = network.getLinks().values().iterator();
         while (linkIterator.hasNext()){
             Link link= linkIterator.next();
-            link.calculateRecentLinkWeights(allVehicles, time);
+            link.calculateCurrentLinkWeights(allVehicles, time);
         }
     }
 

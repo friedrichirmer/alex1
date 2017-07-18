@@ -52,8 +52,8 @@ public class Vis extends PApplet implements MouseListener {
 	private List<VehicleInfo> vehs = new ArrayList<VehicleInfo>();
 	private List<TramInfo> trams = new ArrayList<TramInfo>();
 
-    private static final int WIDTH = 1200;
-    private static final int HEIGHT = 800;
+    private static final int WIDTH = 840;
+    private static final int HEIGHT = 840;
 
     private int x = 0;
     private int y = 0;
@@ -98,8 +98,14 @@ public class Vis extends PApplet implements MouseListener {
     
     public static double xScaleAndOffset = xOffset * scale;
     public static double yScaleAndOffset= yOffset * scale;
+	private boolean alarmActivated = false;
 
-    public Vis(Network pedestrianNet, Network tramNet) {
+	int buttonX = 660;
+	int buttonY = 60;
+	int buttonWidth = 135;
+	int buttonHeight = 60;
+
+	public Vis(Network pedestrianNet, Network tramNet) {
         this.pedestrianNet = pedestrianNet;
         this.tramNet = tramNet;
 
@@ -150,17 +156,6 @@ public class Vis extends PApplet implements MouseListener {
     		
     	}
 	}
-
-	/*
-    boolean overRect(int x, int y, int width, int height)  {
-        if (mouseX >= x && mouseX <= x+width &&
-                mouseY >= y && mouseY <= y+height) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-*/
     
     public void mouseReleased( MouseEvent e ) {
     	if (e.getButton() == 1) {
@@ -170,51 +165,30 @@ public class Vis extends PApplet implements MouseListener {
     	}
 
     	if (e.getButton() == 2){
-
-    		pedestrianNet.createPavilion(e.getX() / scale, e.getY() /
-					scale);
-
-		if (e.getButton() == 3){
-
-
-
-
-
-
-
-/*
-			boolean overRect(int x, int y, int width, int height){
-
-
-				if (mouseX >= x && mouseX <= x + width &&
-						mouseY >= y && mouseY <= y + height) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-*/
+    		pedestrianNet.createPavilion(e.getX() / scale, e.getY() / scale);
 		}
 
+		if (e.getButton() == 3){
+			boolean overButton = checkIfOverButton(e);
+			if (overButton){
+				alarmActivated = true;
+			}
 		}
 	}
 
+	private boolean checkIfOverButton(MouseEvent e) {
+		if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
+				mouseY >= buttonY && mouseY <= buttonY + buttonHeight){
+    		return true;
+		} else return false;
+	}
 
 
-
-
-    @Override
+	@Override
     public void draw() {
         background(255); // eraser
 
-		stroke(0);
-		fill(255,0,0);
-		rect(660, 60,135, 60);
-		textSize(32);
-		fill(255);
-		text("ALARM", 670, 100);
-		textSize(10);
-
+		drawAlarmButton();
 
         pushMatrix();
 
@@ -269,9 +243,6 @@ public class Vis extends PApplet implements MouseListener {
 
 		if (areasInRoot > 0) densityInRoot = (numberInRoot / areasInRoot);
 
-        	
-
-    	        
         translate((float) xOffset, (float) yOffset);
         pedestrianNet.draw(this,false);
         tramNet.draw(this,true);
@@ -313,7 +284,27 @@ public class Vis extends PApplet implements MouseListener {
         this.text(flow, 130, 45);
 
         
-    } 
+    }
+
+	private void drawAlarmButton() {
+		if (!alarmActivated){
+			stroke(0);
+			fill(0);
+			rect(buttonX, buttonY, buttonWidth, buttonHeight);
+			textSize(32);
+			fill(255);
+			text("ALARM", 670, 100);
+		} else {
+			stroke(0);
+			fill(255,0,0);
+			rect(buttonX, buttonY, buttonWidth, buttonHeight);
+			textSize(24);
+			fill(255);
+			text("  ALARM  ", 670, 80);
+			text("activated", 670, 110);
+		}
+		textSize(10);
+	}
 
 
 	public void update(double time, List<VehicleInfo> vehs, List<TramInfo> trams) {
@@ -331,10 +322,7 @@ public class Vis extends PApplet implements MouseListener {
 		rootPolygon = new PolygonSimple();
 		outerPolygon = new PolygonSimple();
 		testPolygon = new PolygonSimple();
-	    
-		
-		
-		
+
 		rootPolygon.add(densityWindowX1, densityWindowY1);
 		rootPolygon.add(densityWindowX1, densityWindowY2);
 		rootPolygon.add(densityWindowX2, densityWindowY2);
