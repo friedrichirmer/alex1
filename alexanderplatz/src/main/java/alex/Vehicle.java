@@ -149,8 +149,8 @@ public class Vehicle {
 		Link currentLink = getCurrentLink();
 		setToZeroPushXY();
 		calculateAndDrawForcesFromOtherVehicles(vehs);
-		calculateAndDrawWallForces(staticWallSet);
-		calculateAndDrawWallForces(tramWallSet);
+		calculateAndDrawWallForces(staticWallSet,1);
+		calculateAndDrawWallForces(tramWallSet,500);
         
         // Berechnung der Wunschrichtung
         double distanceLeftToEndOfLinkX = currentLink.getTo().getX() - this.x;
@@ -267,11 +267,11 @@ public class Vehicle {
 		forceVehicles = new PVector((float)pushX, (float)pushY);
 	}
 
-	private void calculateAndDrawWallForces(Set<Wall> wallSet) {
+	private void calculateAndDrawWallForces(Set<Wall> wallSet, double constantAMultiplier) {
 		Iterator<Wall> it = wallSet.iterator();
 		while(it.hasNext()){
             Wall wall = it.next();
-            calcWallForce(wall);
+            calcWallForce(wall,constantAMultiplier);
         }
 
 		forceWalls = new PVector((float)pushWallX, (float)pushWallY);
@@ -295,7 +295,7 @@ public class Vehicle {
 	/**
 	 * @param wall
 	 */
-	private void calcWallForce(Wall wall) {
+	private void calcWallForce(Wall wall, double costantAMultiplier) {
 		PVector firstEndOfTheWall = new PVector ((float)wall.getX1(),(float) wall.getY1());
 		PVector secondEndOfTheWall = new PVector ((float)wall.getX2(),(float) wall.getY2());	//Ende 2 der Wand
 		PVector vehiclePosition = new PVector ((float)this.x,(float) this.y); 		//Position des Fahrzeugs
@@ -375,11 +375,11 @@ public class Vehicle {
 		double vdify = this.vty * tangentialVector.y;
 
 		pushWallX = pushWallX + 
-			(constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.x +
+			(costantAMultiplier * constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.x +
 			constantKSmall * g * radiusAndNormalDistanceDifference * vdifx * tangentialVector.x;
      	
 		pushWallY = pushWallY + 
-			(constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.y +
+			(costantAMultiplier * constantA * Math.exp(radiusAndNormalDistanceDifference / constantB) + constantK * g * radiusAndNormalDistanceDifference) * normalVector.y +
 			constantKSmall * g * radiusAndNormalDistanceDifference * vdify * tangentialVector.y;
 	}
 

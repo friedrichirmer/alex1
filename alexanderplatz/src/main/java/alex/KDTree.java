@@ -79,7 +79,7 @@ public class KDTree {
 				rightChild = new KDTree(r, this);
 			}
 			else{
-				//achtung bei ser subList-Methode ist die Obergrenze exklusiv!!
+				//achtung bei der subList-Methode ist die Obergrenze exklusiv!!
 				leftChild = new KDTree(this.origin.subList(0, midIndex), this );
 				rightChild = new KDTree(this.origin.subList(midIndex, this.origin.size()), this);
 			}
@@ -117,15 +117,18 @@ public class KDTree {
 	public List<Vehicle> getClosestNeighboursOfVehicle(Vehicle veh, int nrOfNeighbours, double visualRangeX, double visualRangeY){
 		final double vX = veh.getX();
 		final double vY = veh.getY();
-		
-		List<Vehicle> allNeighbours = this.searchKDTree(vX-visualRangeX, vY-visualRangeY, vX+visualRangeX, vY+visualRangeY);
+		return getClosestNeighboursToPoint(vX, vY, nrOfNeighbours, vX-visualRangeX, vY-visualRangeY, vX+visualRangeX, vY+visualRangeY);
+	}
+	
+	List<Vehicle> getClosestNeighboursToPoint(final double x, final double y, int nrOfNeighbours, double rangeMinX,  double rangeMinY, double rangeMaxX, double rangeMaxY){
+		List<Vehicle> allNeighbours = this.searchKDTree(rangeMinX, rangeMinY, rangeMaxX, rangeMaxY);
 		
 		PriorityQueue<Vehicle> qq = new PriorityQueue<>(new Comparator<Vehicle>(){
 
 			@Override
 			public int compare(Vehicle o1, Vehicle o2) {
-				double distO1 = Math.sqrt( (o1.getX()-vX)*(o1.getX()-vX) + (o1.getY()-vY)*(o1.getY()-vY) );
-				double distO2 = Math.sqrt( (o2.getX()-vX)*(o2.getX()-vX) + (o2.getY()-vY)*(o2.getY()-vY) );
+				double distO1 = Math.sqrt( (o1.getX()-x)*(o1.getX()-x) + (o1.getY()- y)*(o1.getY()- y) );
+				double distO2 = Math.sqrt( (o2.getX()-x)*(o2.getX()-x) + (o2.getY()- y)*(o2.getY()- y) );
 				
 				return distO1 < distO2 ? 1 : (distO1 == distO2 ? 0 : -1);
 			}
@@ -137,25 +140,30 @@ public class KDTree {
 			if(qq.size() > nrOfNeighbours) qq.poll();
 		}
 		
-		return Arrays.asList(qq.toArray(new Vehicle[qq.size()]));
+		return Arrays.asList(qq.toArray(new Vehicle[qq.size()]));		
+		
 	}
 	
 	private List<Vehicle> processSearch(double xMin, double yMin, double xMax, double yMax){
 		List<Vehicle> report = new ArrayList<Vehicle>();
 		if(this.origin.size() != 1){		
 			//linken Baum abfragen
-			if(this.leftChild.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
-				report.addAll(leftChild.origin);
-			}
-			else if(this.leftChild.intersectsRange(xMin, yMin, xMax, yMax)){
-				report.addAll(leftChild.processSearch(xMin, yMin, xMax, yMax));
+			if(this.leftChild != null){
+				if(this.leftChild.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
+					report.addAll(leftChild.origin);
+				}
+				else if(this.leftChild.intersectsRange(xMin, yMin, xMax, yMax)){
+					report.addAll(leftChild.processSearch(xMin, yMin, xMax, yMax));
+				}
 			}
 			//rechten Baum abfragen
-			if(this.rightChild.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
-				report.addAll(rightChild.origin);
-			}
-			else if(this.rightChild.intersectsRange(xMin, yMin, xMax, yMax)){
-				report.addAll(rightChild.processSearch(xMin, yMin, xMax, yMax));
+			if(this.rightChild != null){
+				if(this.rightChild.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
+					report.addAll(rightChild.origin);
+				}
+				else if(this.rightChild.intersectsRange(xMin, yMin, xMax, yMax)){
+					report.addAll(rightChild.processSearch(xMin, yMin, xMax, yMax));
+				}
 			}
 		}
 		else{

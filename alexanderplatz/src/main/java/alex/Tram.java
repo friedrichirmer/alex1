@@ -35,7 +35,7 @@ public class Tram {
 	private double centerX;
 	private double centerY;
 	
-	private double wishVelocity = 1000;
+	private double wishVelocity = 500;
 	PVector v = new PVector(0,0);
 	PVector vFront = new PVector(0,0);
 	private final double tau = 1;
@@ -62,7 +62,7 @@ public class Tram {
 	public void update(List<Vehicle> vehicles, KDTree kdTree){
 		
 		calcVelocityVector();
-    	isSomethingInTheWay(vehicles, kdTree);
+    	reactToVehiclesInWay(kdTree);
 
 	}
 	
@@ -97,13 +97,28 @@ public class Tram {
 //    	this.v = vFront.get();
 	}
 	
-	private void isSomethingInTheWayV2(KDTree kdtree){
+	private void reactToVehiclesInWay(KDTree kdtree){
 		
 //		where is the center going to be
-		double projectedX =  this.centerX + Simulation.TIME_STEP * this.v.x;
-		double projectedY =  this.centerY + Simulation.TIME_STEP * this.v.y;
+		double projectedX =  this.centerX + 2*Simulation.TIME_STEP * this.v.x;
+		double projectedY =  this.centerY + 2*Simulation.TIME_STEP * this.v.y;
+
 		//rotation angle
-		double alpha = Math.acos( this.v.y / v.mag());
+		double alpha;
+		if(this.v.x >= 0){
+			if(this.v.y >= 0){
+				alpha =  - Math.acos( this.v.y / v.mag() );
+			}
+			else{
+				alpha =  - Math.acos( this.v.y / v.mag() );
+			}
+		}	else{
+			if(this.v.y >= 0){
+				alpha =  + Math.acos( this.v.y / v.mag() );
+			} else{
+				alpha = Math.acos( this.v.y / v.mag() );
+			}
+		}
 		
 		double leftTopX = projectedX - (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
 		double leftTopY = projectedY - (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
@@ -117,54 +132,8 @@ public class Tram {
 		double leftBottomX = projectedX - (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
 		double leftBottomY = projectedY - (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
 
-		float topLineCenterX = (float) (projectedX + (half_length * Math.sin(alpha)));
-		float topLineCenterY = (float) (projectedY - (half_length * Math.cos(alpha)));
-
 		float bottomLineCenterX = (float) (projectedX - (half_length * Math.sin(alpha)));
 		float bottomLineCenterY = (float) (projectedY + (half_length * Math.cos(alpha)));
-		
-		float leftLineCenterX = (float) (projectedX - (half_width * Math.cos(alpha))) ;
-		float leftLineCenterY = (float) (projectedY - (half_width * Math.sin(alpha)));
-
-		float rightLineCenterX = (float) (projectedX + (half_width * Math.cos(alpha))) ;
-		float rightLineCenterY = (float) (projectedY + (half_width * Math.sin(alpha))) ;
-				
-		
-	}
-	
-	
-	private void isSomethingInTheWay(List<Vehicle> vehicles, KDTree kdTree){
-		
-//		where is the center going to be
-		double projectedX =  this.centerX + Simulation.TIME_STEP * this.v.x;
-		double projectedY =  this.centerY + Simulation.TIME_STEP * this.v.y;
-		//rotation angle
-		double alpha = Math.acos( this.v.y / v.mag());
-		
-		double leftTopX = projectedX - (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
-		double leftTopY = projectedY - (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
-			
-		double rightBottomX = projectedX + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
-		double rightBottomY = projectedY + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
-		
-		double rightTopX = projectedX + (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
-		double rightTopY = projectedY + (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
-		
-		double leftBottomX = projectedX - (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
-		double leftBottomY = projectedY - (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
-
-		float topLineCenterX = (float) (projectedX + (half_length * Math.sin(alpha)));
-		float topLineCenterY = (float) (projectedY - (half_length * Math.cos(alpha)));
-
-		float bottomLineCenterX = (float) (projectedX - (half_length * Math.sin(alpha)));
-		float bottomLineCenterY = (float) (projectedY + (half_length * Math.cos(alpha)));
-		
-		float leftLineCenterX = (float) (projectedX - (half_width * Math.cos(alpha))) ;
-		float leftLineCenterY = (float) (projectedY - (half_width * Math.sin(alpha)));
-
-		float rightLineCenterX = (float) (projectedX + (half_width * Math.cos(alpha))) ;
-		float rightLineCenterY = (float) (projectedY + (half_width * Math.sin(alpha))) ;
-				
 		
 		double xMin = Double.MAX_VALUE;
 		xMin = Math.min(xMin, leftTopX);
@@ -189,67 +158,36 @@ public class Tram {
 		yMax = Math.max(yMax, rightTopY);
 		yMax = Math.max(yMax, rightBottomY);
 		yMax = Math.max(yMax, leftBottomY);
-
-		float fractionToSubFromVector = Float.MAX_VALUE;
-		double closestDistance = Double.MAX_VALUE;
 		
-		for (Vehicle v: vehicles){
+		List<Vehicle> vehiclesAboutToCrash = 
+				kdtree.getClosestNeighboursToPoint(bottomLineCenterX, bottomLineCenterY, 1, xMin, yMin, xMax, yMax);
+		if(vehiclesAboutToCrash.size() == 0){
+			System.out.println("+++no pedestrian in the way+++");
+		}else{
+			Vehicle v = vehiclesAboutToCrash.get(0);
+			double distanceVehicleToFront = Math.sqrt( (Math.pow( (v.getX() - bottomLineCenterX), 2) ) + (Math.pow( (v.getY() - bottomLineCenterY), 2) ) );
 			
-				//calculate if vehicles is within future width range
-				PVector leftLineCenter = new PVector(leftLineCenterX, leftLineCenterY); 
-				
-				PVector lineThroughTramHorizontal = new PVector(rightLineCenterX, rightLineCenterY);
-				lineThroughTramHorizontal.sub( leftLineCenter );
-				
-				PVector vehicle = new PVector ((float) v.getX(), (float) v.getY());
-				
-				PVector leftLineToVehicle = vehicle.get();
-				leftLineToVehicle.sub(leftLineCenter);
-				
-				float cH1 = PVector.dot(leftLineToVehicle, lineThroughTramHorizontal);
-				float cH2 = PVector.dot(lineThroughTramHorizontal, lineThroughTramHorizontal);
-				
-				
-				if(cH1 >= 0 && cH2 >= cH1){	//vehicle is in future width range
-//					PVector horizontalLot = lineThroughTramHorizontal.get();
-//					horizontalLot.mult(cH1/cH2);
-//					horizontalLot.add(leftLineCenter);
-//					System.out.println("vehicle is in future width range");
-//					if(horizontalLot.mag() <= this.half_length * 2){
-//						System.out.println("vehicle is in future width Range and closer than the length");
-						if(v.getX() >= xMin && v.getX() <= xMax && v.getY() >= yMin && v.getY() <= yMax){
-							System.out.println("vehicle is in future width range AND in EXPANDED FUTURE RANGE");
-							PVector topLineCenter = new PVector(topLineCenterX, topLineCenterY); 
-							
-							PVector lineThroughTram = new PVector(bottomLineCenterX, bottomLineCenterY);
-							lineThroughTram.sub( topLineCenter );
-							
-							PVector topLineToVehicle = vehicle.get();
-							topLineToVehicle.sub(topLineCenter);
-							
-							float c1 = PVector.dot(topLineToVehicle, lineThroughTram);
-							float c2 = PVector.dot(lineThroughTram, lineThroughTram);
-							
-							if(c1 >= 0 && c2 >= c1){
-								System.out.println("A vehicle is in the way of a tram");
-								double distance = PVector.dist(vehicle, topLineCenter);
-								if(distance < closestDistance){
-									fractionToSubFromVector = (1-c1/c2);
-								}
-								else if(distance == closestDistance && (1-(c1/c2)) > fractionToSubFromVector){
-									fractionToSubFromVector = (1-c1/c2);
-								}
-							}
-						}
-					}
-//				}
+			float fractionOfVelocityVectorToSub = (float) (distanceVehicleToFront/this.v.mag());
+			if(fractionOfVelocityVectorToSub > 1){
+//				System.out.println("~~~~~~~~~~ verlängerung von v ~~~~~~~~~~~~+");
+//				System.out.println("distance = " + distanceVehicleToFront);
+//				System.out.println("v.mag = " + this.v.mag());
+			} else{
+//				System.out.println("---- pedestrian in the way ---- distance to front =  " + distanceVehicleToFront);
+//				System.out.println(" old mag = " + this.v.mag());
+				PVector vCopy = this.v.get();
+				vCopy.normalize();
+				vCopy.mult((float)(2*distanceVehicleToFront));
+				if(vCopy.mag() > this.v.mag()){
+					this.v.mult(0.01f);
+				}
+				else{
+					this.v.sub(vCopy);
+				}
+//				System.out.println("new v.mag = " + this.v.mag());
 			}
-			if(fractionToSubFromVector != Float.MAX_VALUE){
-				this.v.mult(fractionToSubFromVector);
-				System.out.println("v angepasst");
-			}
+		}
 	}
-	
 	
 	public void move(){
 //        this.x = this.x + Simulation.TIME_STEP * this.vX;
@@ -283,12 +221,6 @@ public class Tram {
 				alpha = Math.acos( this.v.y / v.mag() );
 			}
 		}
-		
-		System.out.println("alpha of tram: " + alpha);
-		System.out.println("vY = " + this.v.y);
-		System.out.println("vX = " + this.v.x);
-		System.out.println("magnitude= " + this.v.mag());
-		
 		double rightBottomX = this.centerX + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
 		double rightBottomY = this.centerY + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
 		

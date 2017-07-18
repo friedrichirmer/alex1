@@ -44,7 +44,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 2000;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 200;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -113,8 +113,9 @@ public class Simulation {
 
             allStaticWallsInSimulation.addAll(this.pedestrianNetwork.staticWalls);
             List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
-            updateTramPositions(currentKDTree, allStaticWallsInSimulation, tramInfoList);
+            updateTramPositions(currentKDTree, allTramWallsInSimulation, tramInfoList);
 
+            System.out.println("tramWalls.size() = " + allTramWallsInSimulation.size());
             List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
             updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, allTramWallsInSimulation, vehicleInfoList);
 
