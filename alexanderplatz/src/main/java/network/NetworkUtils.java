@@ -15,7 +15,7 @@ public class NetworkUtils {
 	 * @return
 	 */
 	public static Simulation makeTestScenario(Network network) {
-		Simulation simulation = new Simulation(network);
+		Simulation simulation = new Simulation(network,null);
         createListOfNodeIds(network, simulation);
         List<Integer> listOfNodesIds = simulation.getListOfNodesIds();
         Node startNodeId = network.nodes.get(listOfNodesIds.get((int) (Math.random() * listOfNodesIds.size())));

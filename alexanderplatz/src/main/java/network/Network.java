@@ -90,8 +90,8 @@ public class Network {
 		counterW++;
 	}
 
-	public void draw(PApplet p) {
-		drawLinks(p);
+	public void draw(PApplet p, boolean isTramNetwork) {
+		drawLinks(p, isTramNetwork);
 		drawWalls(p);
 		drawNodes(p);
 	}
@@ -110,14 +110,23 @@ public class Network {
    	    }
 	}
 
-	private void drawLinks(PApplet p) {
+	private void drawLinks(PApplet p, boolean isTramNetwork) {
 		for (LinkInfo linkInfo : this.linkInfos) {
-			p.fill(0);
+			if(isTramNetwork){
+				p.fill(0,0,255);
+				p.stroke(0,0,255);
+			} else {
+				p.fill(0);
+				p.stroke(0);
+			}
+			
             p.line((float) (linkInfo.x0 * Vis.scale),
 					(float) (linkInfo.y0 * Vis.scale),
 					(float) (linkInfo.x1 * Vis.scale),
 					(float) (linkInfo.y1 * Vis.scale));
      	}
+		p.fill(0);
+		p.stroke(0);
 	}
 	
 	private void drawNodes(PApplet p) {

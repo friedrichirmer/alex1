@@ -58,7 +58,8 @@ public class Vis extends PApplet implements MouseListener {
     private int y = 0;
 
     private double phi = 0;
-    private Network net;
+    private Network pedestrianNet;
+    private Network tramNet;
 
     private float densityWindowX1;
 	private float densityWindowY1;
@@ -92,8 +93,9 @@ public class Vis extends PApplet implements MouseListener {
     public static double yOffset = 0;
     public static float scale = 3;
 
-    public Vis(Network net) {
-        this.net = net;
+    public Vis(Network pedestrianNet, Network tramNet) {
+        this.pedestrianNet = pedestrianNet;
+        this.tramNet = tramNet;
 
         JFrame fr = new JFrame();
         fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -106,22 +108,17 @@ public class Vis extends PApplet implements MouseListener {
         panel.add(this);
         panel.setEnabled(true);
         panel.setVisible(true);
-       
-       
-        
+
         this.init();
         frameRate(90);
-
-        
         fr.setVisible(true);
         
         panel.addMouseListener(this);
         
-    
         //panel.addMouseListener(new MouseClick());
 
         size(WIDTH, HEIGHT);
-        //background(255);
+        background(255);
         
         
 
@@ -156,7 +153,7 @@ public class Vis extends PApplet implements MouseListener {
     	}
 
     	if (e.getButton() == 2){
-    		net.createPavilion(e.getX() / scale, e.getY() /
+    		pedestrianNet.createPavilion(e.getX() / scale, e.getY() /
 					scale);
 		}
 	}
@@ -239,7 +236,8 @@ public class Vis extends PApplet implements MouseListener {
     	
     	        
         translate((float) xOffset, (float) yOffset);
-        net.draw(this);
+        pedestrianNet.draw(this,false);
+        tramNet.draw(this,true);
 
         synchronized (this.trams) {
         	for (TramInfo t : this.trams) {

@@ -35,6 +35,7 @@ import network.NetworkUtils;
 
 import network.Node;
 import network.RectangleNetCreator;
+import network.TramNetworkCreator;
 import network.TwoRoomsWithCorridorNetworkCreator;
 import network.Wall;
 
@@ -56,26 +57,33 @@ public class Simulation {
     private List<Vehicle> allVehicles = new ArrayList<>();
     private List<Vehicle> vehiclesInSimulation = new ArrayList<>();
 	private List<Tram> tramsInSimulation = new ArrayList<Tram>();
+	
+	private Network pedestrianNetwork;
+	private Network tramNetwork;
 
 	public List<Vehicle> getVehicles() {
         return allVehicles;
     }
 
-    public Simulation(Network network) {
-        this.vis = new Vis(network);
+    public Simulation(Network pedNetwork, Network tramNetwork) {
+    	this.pedestrianNetwork = pedNetwork;
+    	this.tramNetwork = tramNetwork;
+        this.vis = new Vis(pedNetwork, tramNetwork);
     }
 
     public static void main(String[] args) {
 
     	//Network network = new RectangleNetCreator().createNetwork();
     	//Network network = new TwoRoomsWithCorridorNetworkCreator().createNetwork();
-    	Network network = new AlexanderplatzNetworkCreator().createNetwork();
-        getListOfNodeIds(network);
-    	Simulation simulation = new Simulation(network);
-    	NetworkUtils.createListOfNodeIds(network, simulation);
-    	simulation.addRandomVehicles(network, simulation, NUMBER_OF_RANDOM_VEHICLES);
+    	Network pedestrianNetwork = new AlexanderplatzNetworkCreator().createNetwork();
+    	Network tramNetwork = new TramNetworkCreator().createNetwork();
+        getListOfNodeIds(pedestrianNetwork);
+        
+    	Simulation simulation = new Simulation(pedestrianNetwork, tramNetwork);
+    	NetworkUtils.createListOfNodeIds(pedestrianNetwork, simulation);
+    	simulation.addRandomVehicles(pedestrianNetwork, simulation, NUMBER_OF_RANDOM_VEHICLES);
 //      Simulation simulation = makeTestScenario(network);
-        simulation.run(network);
+        simulation.run();
         
     }
 
@@ -88,7 +96,7 @@ public class Simulation {
         }
     }
 
-    private void run(Network network) {
+    private void run() {
         double time = 0;
 
         KDTree kdTree = new KDTree(this.vehiclesInSimulation);
@@ -128,17 +136,17 @@ public class Simulation {
       	}
 
             if (time % 5 == 0 && time > 0){
-                recalculateWeightOfLinksBasedOnCurrentTravelTimes(network, time);
+                recalculateWeightOfLinksBasedOnCurrentTravelTimes(this.pedestrianNetwork, time);
             }
 
             List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
             List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
             Set<Wall> allWallsInSimulation = new HashSet<Wall>();
-            allWallsInSimulation.addAll(network.walls);
+            allWallsInSimulation.addAll(this.pedestrianNetwork.walls);
             
             for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
             	Tram tram = tramIterator.next();
-            	tram.update(vehiclesInSimulation);
+            	tram.update(vehiclesInSimulation, kdTree);
             	tram.move();
             	
             	if(!tram.isFinished()){

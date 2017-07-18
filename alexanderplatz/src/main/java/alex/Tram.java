@@ -61,7 +61,7 @@ public class Tram {
 	}
 
 	
-	public void update(List<Vehicle> vehicles){
+	public void update(List<Vehicle> vehicles, KDTree kdTree){
 		
 		Link currentLink = this.route.get(routeIndex);
 		
@@ -72,6 +72,7 @@ public class Tram {
     	vFront = new PVector((float) (currentLink.getTo().getX()- this.bottomCenterX) , (float) (currentLink.getTo().getY() - this.bottomCenterY) );
     	vFront.normalize();
     	vFront.mult((float) wishVelocity);
+    	
 		// Berechnung der Wunschrichtung von der Mitte der Fahrzeugfront aus
 //        double dx = currentLink.getTo().getX() - bottomCenterX;
 //    	double dy = currentLink.getTo().getY() - bottomCenterY;
@@ -98,14 +99,49 @@ public class Tram {
 //        vX = vX + Simulation.TIME_STEP *(resultForceX);
 //        vY = vY + Simulation.TIME_STEP *(resultForceY);
         
-    	isSomethingInTheWay(vehicles, null);
+    	isSomethingInTheWay(vehicles, kdTree);
     	
         this.phi = Math.atan(vX/vY);
 
 	}
 	
+	private void isSomethingInTheWayV2(KDTree kdtree){
+		
+//		where is the center going to be
+		double projectedX =  this.centerX + Simulation.TIME_STEP * this.v.x;
+		double projectedY =  this.centerY + Simulation.TIME_STEP * this.v.y;
+		//rotation angle
+		double alpha = Math.acos( this.v.y / v.mag());
+		
+		double leftTopX = projectedX - (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
+		double leftTopY = projectedY - (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
+			
+		double rightBottomX = projectedX + (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
+		double rightBottomY = projectedY + (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
+		
+		double rightTopX = projectedX + (half_width * Math.cos(alpha)) + (half_length * Math.sin(alpha));
+		double rightTopY = projectedY + (half_width * Math.sin(alpha)) - (half_length * Math.cos(alpha));
+		
+		double leftBottomX = projectedX - (half_width * Math.cos(alpha)) - (half_length * Math.sin(alpha));
+		double leftBottomY = projectedY - (half_width * Math.sin(alpha)) + (half_length * Math.cos(alpha));
+
+		float topLineCenterX = (float) (projectedX + (half_length * Math.sin(alpha)));
+		float topLineCenterY = (float) (projectedY - (half_length * Math.cos(alpha)));
+
+		float bottomLineCenterX = (float) (projectedX - (half_length * Math.sin(alpha)));
+		float bottomLineCenterY = (float) (projectedY + (half_length * Math.cos(alpha)));
+		
+		float leftLineCenterX = (float) (projectedX - (half_width * Math.cos(alpha))) ;
+		float leftLineCenterY = (float) (projectedY - (half_width * Math.sin(alpha)));
+
+		float rightLineCenterX = (float) (projectedX + (half_width * Math.cos(alpha))) ;
+		float rightLineCenterY = (float) (projectedY + (half_width * Math.sin(alpha))) ;
+				
+		
+	}
 	
-	private void isSomethingInTheWay(List<Vehicle> vehicles, List<Tram> cars){
+	
+	private void isSomethingInTheWay(List<Vehicle> vehicles, KDTree kdTree){
 		
 //		where is the center going to be
 		double projectedX =  this.centerX + Simulation.TIME_STEP * this.v.x;
@@ -338,7 +374,6 @@ public class Tram {
 		// TODO Auto-generated method stub
 		return (float) (this.half_width *2);
 	}
-
 
 	public float getBottomY() {
 		return (float)(this.bottomCenterY);
