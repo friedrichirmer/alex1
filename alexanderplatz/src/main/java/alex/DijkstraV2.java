@@ -22,6 +22,13 @@ public class DijkstraV2 {
 
 	public List<Link> calculateRoute(Node start, Node destination) {
 		
+		if(start.equals(destination)){
+			List<Link> route = new ArrayList<Link>();
+			route.add(destination.getInLinks().get(0));
+			System.out.println("~~~~~~~~~~~~~~~destinattion equals start node~~~~~~~~~~~~~~~");
+			return route;
+		}
+		
 		this.correspondingNodes.clear();
 		this.remainingNodes.clear();
 		

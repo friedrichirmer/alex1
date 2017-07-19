@@ -39,7 +39,7 @@ public class Simulation {
 
 	private double time = 0;
     private static final double MAX_TIME = 500;
-    static final double TIME_STEP = 0.5;
+    static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 1000;
 
@@ -154,7 +154,7 @@ public class Simulation {
 		    Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator();
 		    while (vehicleIterator.hasNext()){
 		        Vehicle vehicleToEvacuate = vehicleIterator.next();
-		        if(!this.vehiclesInSimulation.contains(vehicleToEvacuate)){
+ 		        if(!this.vehiclesInSimulation.contains(vehicleToEvacuate)){
 		        	vehicleIterator.remove();
 		        }else{
 		        	
