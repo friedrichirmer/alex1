@@ -435,12 +435,14 @@ public class Vehicle {
 	private void rerouteVehicleIfStucked(double time) {
 		if (time % 5 == 0 && new Random().nextDouble() < 0.1){
             Node newStartNode = network.findNearestNode(this.x, this.y);
-            this.mapOfEnterLeaveTimes.clear();
             DijkstraV2 router = new DijkstraV2(network);
-            this.route = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
-        	this.routeIndex = 0;
-            this.mapOfEnterLeaveTimes.put(route.get(routeIndex).getId(), new Double[]{time, null});
-            System.out.println("The route for the vehicle ");
+            List<Link> newRoute = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
+            if (!(newRoute == null)){
+            	this.mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
+        		this.routeIndex = 0;
+            	this.mapOfEnterLeaveTimes.put(route.get(routeIndex).getId(), new Double[]{time, null});
+            	System.out.println("The route for the vehicle ");
+			}
 		}
 	}
 

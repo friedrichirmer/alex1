@@ -39,7 +39,7 @@ public class Simulation {
 
 	private double time = 0;
     private static final double MAX_TIME = 500;
-    static final double TIME_STEP = 0.1;
+    static final double TIME_STEP = 0.5;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 1000;
 
