@@ -19,6 +19,7 @@ package alex;/* ****************************************************************
  * *********************************************************************** */
 
 
+import network.Node;
 import processing.core.PApplet;
 
 import javax.swing.*;
@@ -223,8 +224,9 @@ public class Vis extends PApplet implements MouseListener {
 		drawAlarmButton();
 		drawPauseButton();
         pushMatrix();
+		drawEvacuationPoints();
 
-        if (keyPressed) {
+		if (keyPressed) {
             if (key == CODED) {
                 if (keyCode == UP) {
                     yOffset += 5;
@@ -326,6 +328,18 @@ public class Vis extends PApplet implements MouseListener {
         this.text("[s]",178,60);
         
     }
+
+	private void drawEvacuationPoints() {
+		if (alarmActivated){
+            for (Node node : pedestrianNet.evacuationNodes){
+                double evacuationMarkingRadius = (0.1 + (currentTime % 1)) * 20;
+                stroke(255,0,0);
+                fill(255,0,0,80);
+                ellipse((float) (node.getX() + xOffset) * scale,(float) (node.getY() + yOffset) * scale,
+                        (float) evacuationMarkingRadius,(float) evacuationMarkingRadius);
+            }
+        }
+	}
 
 	private void drawAlarmButton() {
 		if (!alarmActivated){
@@ -510,7 +524,7 @@ public class Vis extends PApplet implements MouseListener {
 		 
         currentTime = time;
 	}
-		   
+
 }
 
 

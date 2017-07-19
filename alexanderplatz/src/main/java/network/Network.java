@@ -20,10 +20,9 @@ public class Network {
 	public List<Node> entryExitNodes = new ArrayList<Node>();
 	public List<Node> tramEntryNodes = new ArrayList<Node>();
 	public List<Node> tramExitNodes = new ArrayList<Node>();
-	public List<Node>  tramExitAlexanderstr = new ArrayList<Node>();
-	public List<Node>  tramExitSBahn = new ArrayList<Node>();
-	public List<Node>  tramExitKlStr = new ArrayList<Node>();
-
+	public List<Node> tramExitAlexanderstr = new ArrayList<Node>();
+	public List<Node> tramExitSBahn = new ArrayList<Node>();
+	public List<Node> tramExitKlStr = new ArrayList<Node>();
 	private double proportion = 3.051;
 	public List<Node> evacuationNodes = new ArrayList<Node>();
 	

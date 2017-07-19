@@ -86,23 +86,6 @@ public class Vehicle {
 		return route;
 	}
 
-	public Vehicle(Network network, Node startNode, Node destinationNode, double startTime, String id) {
-    	
-    	this.x = startNode.getX() + random.nextDouble() * 1;
-        this.y = startNode.getY() + random.nextDouble() * 1;
-        this.network = network;
-        this.route = Dijkstra.returnRoute(network, startNode, destinationNode);
-        this.rad = 0.25 + random.nextDouble()*0.1;
-        this.maxSpeed = 5;
-        this.vtx = 0;
-        this.finished = false;
-        this.id = id;
-        this.startTime = startTime;
-        this.mass = 80;
-		this.mapOfEnterLeaveTimes.put(route.get(0).getId(), new Double[]{startTime, null});
-        this.destinationNode = destinationNode;
-    }
-
 	public Vehicle(Network network, Node startNode, Node destinationNode, double startTime, String id, List<Link> route){
 		this.x = startNode.getX() + random.nextDouble() * 1;
         this.y = startNode.getY() + random.nextDouble() * 1;
@@ -425,8 +408,6 @@ public class Vehicle {
         vtx = vx;
         vty = vy;
 
-		currentLink = getCurrentLink();
-		
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
 		
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
@@ -454,9 +435,12 @@ public class Vehicle {
 	private void rerouteVehicleIfStucked(double time) {
 		if (time % 5 == 0 && new Random().nextDouble() < 0.1){
             Node newStartNode = network.findNearestNode(this.x, this.y);
+            this.mapOfEnterLeaveTimes.clear();
             DijkstraV2 router = new DijkstraV2(network);
             this.route = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
-        	System.out.println("The route for the vehicle ");
+        	this.routeIndex = 0;
+            this.mapOfEnterLeaveTimes.put(route.get(routeIndex).getId(), new Double[]{time, null});
+            System.out.println("The route for the vehicle ");
 		}
 	}
 

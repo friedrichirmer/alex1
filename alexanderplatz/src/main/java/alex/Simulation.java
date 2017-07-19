@@ -40,7 +40,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 500;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 100;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -102,25 +102,25 @@ public class Simulation {
             if (Vis.alarmActivated){
                 handleAlarm(time);
             }
-            
+
             if(!Vis.simPaused){
             	boolean vehicleHasLeft = updateVehicleListAndCheckIfVehicleHasLeft(time);
             	currentKDTree = getNewKdTree(time, currentKDTree, oldNrOfVehInSim, vehicleHasLeft);
             	updateLinkWeights(time);
-            	
+
             	Set<Wall> allStaticWallsInSimulation = new HashSet<Wall>();
-            	
+
             	allStaticWallsInSimulation.addAll(this.pedestrianNetwork.staticWalls);
             	List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
             	updateTramListAndTramPositions(currentKDTree, tramInfoList, time);
-            	
+
             	List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
             	updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, vehicleInfoList);
-            	
+
             	this.vis.update(time, vehicleInfoList,tramInfoList);
-            	
+
             	if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi(vehiclesInSimulation);
-            	
+
             	oldNrOfVehInSim = this.vehiclesInSimulation.size();
             	time += TIME_STEP;
             }
@@ -150,7 +150,7 @@ public class Simulation {
 		                    vehicleToEvacuate.getY());
 		            DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
 		            Random random = new Random();
-		            Node newDestination = pedestrianNetwork.evacuationNodes.get(0);
+		            Node newDestination = pedestrianNetwork.evacuationNodes.get(random.nextInt(pedestrianNetwork.evacuationNodes.size()));
 		            vehicleToEvacuate.route = router.calculateRoute(currentStartNode, newDestination);
 		            vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
 		            vehicleToEvacuate.mapOfEnterLeaveTimes.clear();
@@ -259,8 +259,12 @@ public class Simulation {
         int nrRoutesNull = 0;
         for (int i = 0; i < numberOfRandomVehicles; i++){
 
-            Integer startNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
-            Integer finishNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
+//            Integer startNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
+//            Integer finishNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
+
+            Integer startNodeId =  network.getEntryExitNodes().get(6).getId();
+            Integer finishNodeId =  network.getEntryExitNodes().get(2).getId();
+
             if (!startNodeId.equals(finishNodeId)){
             	List<Link> route = router.calculateRoute(network.getNodes().get(startNodeId), network.getNodes().get(finishNodeId));
                 if (!(route == null)) {

@@ -1,3 +1,4 @@
+/*
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -6,14 +7,13 @@ import alex.KDTree;
 import alex.Vehicle;
 import org.junit.Test;
 
-/**
- * 
- */
+
 
 /**
  * @author tilmann
  *
  */
+/*
 public class KDTreeTest {
 	
 	Logger log = Logger.getLogger("KDTreeTest");
@@ -57,3 +57,4 @@ public class KDTreeTest {
 
 }
 
+*/

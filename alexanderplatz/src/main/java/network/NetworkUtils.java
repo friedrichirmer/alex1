@@ -13,7 +13,7 @@ public class NetworkUtils {
 	/**
 	 * @param network
 	 * @return
-	 */
+
 	public static Simulation makeTestScenario(Network network) {
 		Simulation simulation = new Simulation(network);
         createListOfNodeIds(network, simulation);
@@ -35,6 +35,7 @@ public class NetworkUtils {
         simulation.addVehicle(v5);
 		return simulation;
 	}
+*/
 
     public static void createListOfNodeIds(Network network, Simulation sim) {
         Map nodesMap = network.getNodes();
