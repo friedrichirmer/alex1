@@ -25,6 +25,8 @@ public class Network {
 	public List<Node>  tramExitKlStr = new ArrayList<Node>();
 
 	private double proportion = 3.051;
+	public List<Node> evacuationNodes = new ArrayList<Node>();
+	
 	public List<Node> getEntryExitNodes() {
 		return entryExitNodes;
 	}
@@ -62,12 +64,14 @@ public class Network {
      	return w;
    	}
 
-   	public void createPavilion(double centerX, double centerY) {
-		double angle = Math.random() * Math.PI * 2;
-		Wall wall1 = new Wall(centerX - 3, centerY - 3, centerX - 3, centerY + 3);
-		Wall wall2 = new Wall(centerX + 3, centerY - 3, centerX + 3, centerY + 3);
-		Wall wall3 = new Wall(centerX + 3, centerY + 3, centerX - 3, centerY + 3);
-		Wall wall4 = new Wall(centerX + 3, centerY - 3, centerX - 3, centerY - 3);
+   	public void createPavilion(double centerX, double centerY, double phi) {
+   		phi = phi + Math.PI/4;
+   		double sinA = Math.sin(phi) * 3;
+   		double cosA = Math.cos(phi) * 3;
+		Wall wall1 = new Wall(centerX - sinA, centerY - cosA, centerX - cosA, centerY + sinA);
+		Wall wall2 = new Wall(centerX + cosA, centerY - sinA, centerX + sinA, centerY + cosA);
+		Wall wall3 = new Wall(centerX + sinA, centerY + cosA, centerX - cosA, centerY + sinA);
+		Wall wall4 = new Wall(centerX + cosA, centerY - sinA, centerX - sinA, centerY - cosA);
 		staticWalls.add(wall1);
 		counterW++;
 		staticWalls.add(wall2);

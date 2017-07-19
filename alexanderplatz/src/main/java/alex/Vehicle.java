@@ -426,7 +426,9 @@ public class Vehicle {
         vty = vy;
 
 		currentLink = getCurrentLink();
+		
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
+		
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
 			moveVehicleToNextLinkOfRoute(time);

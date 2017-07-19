@@ -55,10 +55,6 @@ public class Vis extends PApplet implements MouseListener {
     private static final int WIDTH = 840;
     private static final int HEIGHT = 840;
 
-    private int x = 0;
-    private int y = 0;
-
-    private double phi = 0;
     private Network pedestrianNet;
     private Network tramNet;
 
@@ -104,6 +100,13 @@ public class Vis extends PApplet implements MouseListener {
 	int buttonY = 60;
 	int buttonWidth = 135;
 	int buttonHeight = 60;
+	private float pavillonCenterX;
+	private float pavillonCenterY;
+	private float pavillonAngleY;
+	private float pavillonAngleX;
+	private float pavillonDragX;
+	private float pavillonDragY;
+	private boolean pavillonDragger = false;
 
 	public Vis(Network pedestrianNet, Network tramNet) {
         this.pedestrianNet = pedestrianNet;
@@ -126,9 +129,8 @@ public class Vis extends PApplet implements MouseListener {
         fr.setVisible(true);
         
         panel.addMouseListener(this);
-        
-        //panel.addMouseListener(new MouseClick());
-
+        panel.addMouseMotionListener(this);
+      
         size(WIDTH, HEIGHT);
         background(255);
         
@@ -144,9 +146,6 @@ public class Vis extends PApplet implements MouseListener {
     	
     	if (e.getButton() == 1) {
     		
-    		// Bei einem Mausklick wird die Messung automatisch zur�ckgesetzt
-    		//System.out.println("gepresst: [" + e.getX() + "] [" + e.getY() + "]");
-    		
     		densityWindowX1 = (float) (e.getX() / scale - xOffset);
     		densityWindowY1 = (float) (e.getY() / scale - yOffset );
     		
@@ -155,7 +154,20 @@ public class Vis extends PApplet implements MouseListener {
     		areasInRoot = 0;
     		
     	}
+    	
+    	if (e.getButton() == 2) {
+    		pavillonCenterX = (float) (e.getX() / scale - xOffset);
+    		pavillonCenterY = (float) (e.getY() / scale - yOffset);
+    		pavillonDragger  = true;
+    	}
 	}
+    
+    public void mouseDragged (MouseEvent e) {
+
+    	pavillonDragX = (float) (e.getX() / scale - xOffset);
+		pavillonDragY = (float) (e.getY() / scale - yOffset);
+    	
+    }
     
     public void mouseReleased( MouseEvent e ) {
     	if (e.getButton() == 1) {
@@ -165,7 +177,12 @@ public class Vis extends PApplet implements MouseListener {
     	}
 
     	if (e.getButton() == 2){
-    		pedestrianNet.createPavilion(e.getX() / scale, e.getY() / scale);
+    		pavillonAngleX = (float) (e.getX() / scale - xOffset);
+    		pavillonAngleY = (float) (e.getY() / scale - yOffset);
+    		double angle = Math.atan((pavillonAngleX-pavillonCenterX)/(pavillonAngleY-pavillonCenterY));
+    		if(!Double.isNaN(angle)) pedestrianNet.createPavilion(pavillonCenterX,pavillonCenterY, angle);
+    		pavillonDragger  = false;
+    		
 		}
 
 		if (e.getButton() == 3){
@@ -195,14 +212,14 @@ public class Vis extends PApplet implements MouseListener {
         if (keyPressed) {
             if (key == CODED) {
                 if (keyCode == UP) {
-                    yOffset += 10;
+                    yOffset += 5;
                 } else if (keyCode == DOWN) {
-                    yOffset -= 10;
+                    yOffset -= 5;
                 }
                 if (keyCode == RIGHT) {
-                    xOffset -= 10;
+                    xOffset -= 5;
                 } else if (keyCode == LEFT) {
-                    xOffset += 10;
+                    xOffset += 5;
                 }
             }
 
@@ -227,7 +244,7 @@ public class Vis extends PApplet implements MouseListener {
         }
         
         translate((float) xOffset*scale, (float) yOffset*scale);
-        
+          
         updateDensityWindow();
         
         for (PolygonSimple p :  polygonsInRoot){
@@ -243,15 +260,21 @@ public class Vis extends PApplet implements MouseListener {
 
 		if (areasInRoot > 0) densityInRoot = (numberInRoot / areasInRoot);
 
-        translate((float) xOffset, (float) yOffset);
+        //translate((float) xOffset, (float) yOffset);
+        
         pedestrianNet.draw(this,false);
         tramNet.draw(this,true);
 
 		this.noFill();
-	    this.rect(originX*scale, originY*scale, rootWidth*scale, rootHeight*scale, 3);
+	    this.rect(originX * scale, originY * scale, rootWidth * scale, rootHeight * scale, 3);
 	    this.fill(0);
 	    this.textSize(15);
 	    this.fill(0);
+	    
+	    if (pavillonDragger) {
+			System.out.println("Drag");
+			this.line(pavillonCenterX * scale, pavillonCenterY * scale, pavillonDragX * scale, pavillonDragY * scale);
+	    }
 	    
         synchronized (this.trams) {
         	for (TramInfo t : this.trams) {
