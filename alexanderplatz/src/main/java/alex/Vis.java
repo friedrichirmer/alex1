@@ -100,12 +100,12 @@ public class Vis extends PApplet implements MouseListener {
 	static boolean simPaused = false;
 	private static double currentTime;
 
-	int buttonX = 660;
-	int buttonY = 60;
+	int buttonX = 30;
+	int buttonY = 600;
 	int buttonWidth = 135;
 	int buttonHeight = 60;
-	int pauseButtonX = 660;
-	int pauseButtonY = 140;
+	int pauseButtonX = 30;
+	int pauseButtonY = 700;
 	int pauseButtonWidth = 135;
 	int pauseButtonHeight = 60;
 	int recordButtonX = 720;
@@ -371,15 +371,15 @@ public class Vis extends PApplet implements MouseListener {
 			rect(buttonX, buttonY, buttonWidth, buttonHeight);
 			textSize(32);
 			fill(255);
-			text("ALARM", 670, 100);
+			text("ALARM", 45, 640);
 		} else {
 			stroke(0);
 			fill(255,0,0);
 			rect(buttonX, buttonY, buttonWidth, buttonHeight);
 			textSize(24);
 			fill(255);
-			text("  ALARM  ", 670, 80);
-			text("activated", 670, 110);
+			text("  ALARM  ", 45, 630);
+			text("activated", 45, 650);
 		}
 		textSize(10);
 	}
@@ -411,14 +411,14 @@ public class Vis extends PApplet implements MouseListener {
 			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
 			textSize(32);
 			fill(255);
-			text("PAUSE", 670, 170);
+			text("PAUSE", 50, 740);
 		} else {
 			stroke(0);
 			fill(200,50,20);
 			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
-			textSize(24);
+			textSize(32);
 			fill(255);
-			text("PAUSED", 670, 170);
+			text("PAUSED", 50, 740);
 		}
 		textSize(10);
 	}
