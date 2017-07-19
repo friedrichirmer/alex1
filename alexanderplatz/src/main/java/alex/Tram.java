@@ -160,24 +160,13 @@ public class Tram {
 			Vehicle v = vehiclesAboutToCrash.get(0);
 			double distanceVehicleToFront = Math.sqrt( (Math.pow( (v.getX() - bottomLineCenterX), 2) ) + (Math.pow( (v.getY() - bottomLineCenterY), 2) ) );
 			
-			float fractionOfVelocityVectorToSub = (float) (distanceVehicleToFront/this.v.mag());
-			if(fractionOfVelocityVectorToSub > 1){
-//				System.out.println("~~~~~~~~~~ verlängerung von v ~~~~~~~~~~~~+");
-//				System.out.println("distance = " + distanceVehicleToFront);
-//				System.out.println("v.mag = " + this.v.mag());
-			} else{
-//				System.out.println("---- pedestrian in the way ---- distance to front =  " + distanceVehicleToFront);
-//				System.out.println(" old mag = " + this.v.mag());
-				PVector vCopy = this.v.get();
-				vCopy.normalize();
-				vCopy.mult((float)(distanceVehicleToFront));
-				if(vCopy.mag() > this.v.mag()){
-					this.v.mult(0.01f);
-				}
-				else{
-					this.v.sub(vCopy);
-				}
-//				System.out.println("new v.mag = " + this.v.mag());
+			PVector vCopy = this.v.get();
+			vCopy.normalize();
+			vCopy.mult((float)(distanceVehicleToFront));
+			if(vCopy.mag() > this.v.mag()){
+				this.v.mult(0.01f);
+			}else{
+				this.v.sub(vCopy);
 			}
 		}
 	}

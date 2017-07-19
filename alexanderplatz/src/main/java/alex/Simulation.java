@@ -69,15 +69,12 @@ public class Simulation {
 
     public static void main(String[] args) {
 
-    	//Network network = new RectangleNetCreator().createNetwork();
-    	//Network network = new TwoRoomsWithCorridorNetworkCreator().createNetwork();
     	Network pedestrianNetwork = new AlexanderplatzNetworkCreator().createNetwork();
         getListOfNodeIds(pedestrianNetwork);
         
     	Simulation simulation = new Simulation(pedestrianNetwork);
     	NetworkUtils.createListOfNodeIds(pedestrianNetwork, simulation);
     	simulation.addRandomVehicles(pedestrianNetwork, simulation, NUMBER_OF_RANDOM_VEHICLES);
-//      Simulation simulation = makeTestScenario(network);
         simulation.run();
         
     }
@@ -99,8 +96,6 @@ public class Simulation {
         for(Node node: this.tramFactory.getTramExitNodes()){
         	createTram(tramNetwork, 3*Math.random(), node);
         }
-//        createTestTramOnPedNetwork();
-
         while (time < MAX_TIME) {
             time = roundAndPrintTime(time);
             Vis.drawTime(time);
@@ -169,12 +164,9 @@ public class Simulation {
         for (Iterator<Vehicle> vehicleIterator = this.vehiclesInSimulation.iterator(); vehicleIterator.hasNext();) {
             Vehicle vehicle = vehicleIterator.next();
 
-            //mit kdTree
             List<Vehicle> neighboursToConsider = currentKDTree.getClosestNeighboursOfVehicle(vehicle, nrOfNeighboursToConsider, visualRangeX, visualRangeY);
             vehicle.update(neighboursToConsider, time, allStaticWallsInSimulation, tramsInSimulation);
 
-            //ohne kdTree
-//            	vehicle.update(vehiclesInSimulation, time, allWallsInSimulation);
             vehicle.move(time);
             VehicleInfo vehicleInfo = new VehicleInfo(vehicle.getX(), vehicle.getY(), vehicle.getPhi(), vehicle.getRadius(),
                                                     vehicle.getForceTarget(), vehicle.getForceVehicles(), vehicle.getForceWalls(), vehicle.momentSpeed);
@@ -285,7 +277,6 @@ public class Simulation {
     		System.out.println("couldnt create tram route");
     	}
     	this.allTrams.add(tram);
-    	System.out.println("create a tram going to node " + exitNode.getId());
     }
 
     private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
@@ -296,7 +287,7 @@ public class Simulation {
         Node finishNode = network.nodes.get(finishNodeId);
         Vehicle v = new Vehicle(network, startNode, finishNode, startTime, vehicleId, route);
         simulation.addVehicle(v);
-        System.out.println("Random Vehicle " + vehicleId + " is created");
+//        System.out.println("Random Vehicle " + vehicleId + " is created");
         v.placeVehicleSomwhereOnCurrentLink();
     }
 
