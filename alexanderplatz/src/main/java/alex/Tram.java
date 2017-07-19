@@ -90,8 +90,8 @@ public class Tram {
 	private void reactToVehiclesInWay(KDTree kdtree){
 		
 //		where is the center going to be in 0.5 second ! (not dependent on time step)
-		double projectedX =  this.centerX +  0.5 * this.v.x;
-		double projectedY =  this.centerY +  0.5 * this.v.y;
+		double projectedX =  this.centerX +  0.3 * this.v.x;
+		double projectedY =  this.centerY +  0.3 * this.v.y;
 
 		//rotation angle
 		double alpha;
@@ -157,17 +157,19 @@ public class Tram {
 		if(vehiclesAboutToCrash.size() == 0){
 			System.out.println("+++no pedestrian in the way+++");
 		}else{
-			Vehicle v = vehiclesAboutToCrash.get(0);
-			double distanceVehicleToFront = Math.sqrt( (Math.pow( (v.getX() - bottomLineCenterX), 2) ) + (Math.pow( (v.getY() - bottomLineCenterY), 2) ) );
+//			Vehicle v = vehiclesAboutToCrash.get(0);
+//			double distanceVehicleToFront = Math.sqrt( (Math.pow( (v.getX() - bottomLineCenterX), 2) ) + (Math.pow( (v.getY() - bottomLineCenterY), 2) ) );
+//			
+//			PVector vCopy = this.v.get();
+//			vCopy.normalize();
+//			vCopy.mult((float)(distanceVehicleToFront));
+//			if(vCopy.mag() > this.v.mag()){
+//				this.v.mult(0.001f);
+//			}else{
+//				this.v.sub(vCopy);
+//			}
 			
-			PVector vCopy = this.v.get();
-			vCopy.normalize();
-			vCopy.mult((float)(distanceVehicleToFront));
-			if(vCopy.mag() > this.v.mag()){
-				this.v.mult(0.001f);
-			}else{
-				this.v.sub(vCopy);
-			}
+			this.v.mult(0.0001f);
 		}
 	}
 	

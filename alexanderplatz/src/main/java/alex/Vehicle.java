@@ -279,12 +279,13 @@ public class Vehicle {
 	private void calcTramForce(Tram tram){
     	for(Wall w : tram.getWalls()){
     		if(w.equals(tram.getBottomWall())){
-    			calcWallForce(w, 100, 10000, 40);
+    			calcWallForce(w, 3, 10000, 15);
     		}
     		else{
-    			calcWallForce(w, 50 , 1000, 10);
+    			calcWallForce(w, 1 , 100, 3);
     		}
     	}
+//		calcWallForce(tram.getBottomWall(), 5, 10000, 15);
     }
 	
 	/**

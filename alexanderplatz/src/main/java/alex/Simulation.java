@@ -37,10 +37,11 @@ import network.Wall;
  */
 public class Simulation {
 
+	private double time = 0;
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 100;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 1000;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -56,6 +57,7 @@ public class Simulation {
 	private Network tramNetwork;
 	private TramNetworkCreator tramFactory = new TramNetworkCreator();
 	private boolean evacuationReroutingHappened = false;
+
 
 	public List<Vehicle> getVehicles() {
         return allVehicles;
@@ -74,7 +76,12 @@ public class Simulation {
         
     	Simulation simulation = new Simulation(pedestrianNetwork);
     	NetworkUtils.createListOfNodeIds(pedestrianNetwork, simulation);
-    	simulation.addRandomVehicles(pedestrianNetwork, simulation, NUMBER_OF_RANDOM_VEHICLES);
+    	
+    	List<Integer> entryNodesThatShouldNotBeUsed= new ArrayList<Integer>();
+    	entryNodesThatShouldNotBeUsed.add(44);
+    	entryNodesThatShouldNotBeUsed.add(31);
+    	
+    	simulation.addRandomVehicles(pedestrianNetwork, simulation, NUMBER_OF_RANDOM_VEHICLES, entryNodesThatShouldNotBeUsed, Simulation.MAX_TIME * 0.05);
         simulation.run();
         
     }
@@ -89,7 +96,6 @@ public class Simulation {
     }
 
     private void run() {
-        double time = 0;
         KDTree currentKDTree = new KDTree(this.vehiclesInSimulation);
         int oldNrOfVehInSim = vehiclesInSimulation.size();
 
@@ -220,15 +226,19 @@ public class Simulation {
 //        	System.out.println("--check after clearing before adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
 
         boolean vehicleHasLeft = false;
+        Integer nrOfLeftVehicles = 0;
         for (Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator(); vehicleIterator.hasNext();) {
             Vehicle vehicle = vehicleIterator.next();
             if (vehicle.getFinished() == true) {
                   vehicleIterator.remove();
                   vehicleHasLeft = true;
+                  nrOfLeftVehicles ++;
              }  else if(vehicle.entersSimulation(time)){
                 this.vehiclesInSimulation.add(vehicle);
              }
         }
+        //for each left vehicle, make another vehicle show up within the next 5 seconds
+        addRandomVehicles(pedestrianNetwork, this, nrOfLeftVehicles,new ArrayList<Integer>(), 5);
         return vehicleHasLeft;
     }
 
@@ -251,7 +261,7 @@ public class Simulation {
         }
     }
 
-    private void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles) {
+    private void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles, List<Integer> entryNodeIDsToExclude, double timeBin) {
         System.out.println("Creating " + numberOfRandomVehicles + " random vehicles");
         
         DijkstraV2 router = new DijkstraV2(network);
@@ -259,16 +269,20 @@ public class Simulation {
         int nrRoutesNull = 0;
         for (int i = 0; i < numberOfRandomVehicles; i++){
 
-//            Integer startNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
-//            Integer finishNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
+        	Integer startNodeId = Integer.MAX_VALUE;
+        	// exclude some nodes from initial traffic generation
+        	while(startNodeId == Integer.MAX_VALUE || entryNodeIDsToExclude.contains(startNodeId)){
+        		startNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
+        	}
+            Integer finishNodeId =  network.getEntryExitNodes().get(((int) (Math.random() * network.getEntryExitNodes().size()))).getId();
 
-            Integer startNodeId =  network.getEntryExitNodes().get(6).getId();
-            Integer finishNodeId =  network.getEntryExitNodes().get(2).getId();
+//            Integer startNodeId =  network.getEntryExitNodes().get(6).getId();
+//            Integer finishNodeId =  network.getEntryExitNodes().get(2).getId();
 
             if (!startNodeId.equals(finishNodeId)){
             	List<Link> route = router.calculateRoute(network.getNodes().get(startNodeId), network.getNodes().get(finishNodeId));
                 if (!(route == null)) {
-                    this.createRandomDeparture(network, sim, startNodeId, finishNodeId, route);
+                    this.createRandomDeparture(network, sim, startNodeId, finishNodeId, route, timeBin);
                 }
                 else{
                 	nrRoutesNull ++;
@@ -293,8 +307,8 @@ public class Simulation {
     	this.allTrams.add(tram);
     }
 
-    private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
-        Double startTime = (Math.random() * (0.0001*MAX_TIME));
+    private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route, double timeBin) {
+        Double startTime = this.time + (Math.random() * timeBin); //
         String doubleDigitStartTime = new DecimalFormat("#.##").format(startTime);
         String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + doubleDigitStartTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
