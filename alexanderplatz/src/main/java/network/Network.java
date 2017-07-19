@@ -105,8 +105,8 @@ public class Network {
 	private void drawLinks(PApplet p, boolean isTramNetwork) {
 		for (LinkInfo linkInfo : this.linkInfos) {
 			if(isTramNetwork){
-				p.fill(0,0,255);
-				p.stroke(0,0,255);
+				p.fill(210,180,140);
+				p.stroke(210,180,140);
 			} else {
 				p.fill(0);
 				p.stroke(0);

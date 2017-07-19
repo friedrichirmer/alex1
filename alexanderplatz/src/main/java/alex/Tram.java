@@ -89,9 +89,9 @@ public class Tram {
 	
 	private void reactToVehiclesInWay(KDTree kdtree){
 		
-//		where is the center going to be in 1 second ! (not dependent on time step)
-		double projectedX =  this.centerX +  this.v.x;
-		double projectedY =  this.centerY +  this.v.y;
+//		where is the center going to be in 0.5 second ! (not dependent on time step)
+		double projectedX =  this.centerX +  0.5 * this.v.x;
+		double projectedY =  this.centerY +  0.5 * this.v.y;
 
 		//rotation angle
 		double alpha;
