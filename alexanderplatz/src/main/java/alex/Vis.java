@@ -94,13 +94,19 @@ public class Vis extends PApplet implements MouseListener {
     
     public static double xScaleAndOffset = xOffset * scale;
     public static double yScaleAndOffset= yOffset * scale;
-	public static boolean alarmActivated = false;
+	static boolean alarmActivated = false;
+	static boolean simPaused = false;
 	private static double currentTime;
 
 	int buttonX = 660;
 	int buttonY = 60;
 	int buttonWidth = 135;
 	int buttonHeight = 60;
+	int pauseButtonX = 660;
+	int pauseButtonY = 140;
+	int pauseButtonWidth = 135;
+	int pauseButtonHeight = 60;
+	
 	private float pavillonCenterX;
 	private float pavillonCenterY;
 	private float pavillonAngleY;
@@ -108,6 +114,7 @@ public class Vis extends PApplet implements MouseListener {
 	private float pavillonDragX;
 	private float pavillonDragY;
 	private boolean pavillonDragger = false;
+	
 
 	public Vis(Network pedestrianNet, Network tramNet) {
         this.pedestrianNet = pedestrianNet;
@@ -187,27 +194,34 @@ public class Vis extends PApplet implements MouseListener {
 		}
 
 		if (e.getButton() == 3){
-			boolean overButton = checkIfOverButton(e);
-			if (overButton){
+			if ( checkIfOverAlarmButton(e)){
 				alarmActivated = true;
+			} else if( checkIfOverPauseButton(e)){
+				simPaused = !(simPaused);
 			}
 		}
 	}
 
-	private boolean checkIfOverButton(MouseEvent e) {
+	private boolean checkIfOverAlarmButton(MouseEvent e) {
 		if (mouseX >= buttonX && mouseX <= buttonX + buttonWidth &&
 				mouseY >= buttonY && mouseY <= buttonY + buttonHeight){
     		return true;
 		} else return false;
 	}
 
-
+	private boolean checkIfOverPauseButton(MouseEvent e) {
+		if (mouseX >= pauseButtonX && mouseX <= pauseButtonX + pauseButtonWidth &&
+				mouseY >= pauseButtonY && mouseY <= pauseButtonY + pauseButtonHeight){
+    		return true;
+		} else return false;
+	}
+	
 	@Override
     public void draw() {
         background(255); // eraser
 
 		drawAlarmButton();
-
+		drawPauseButton();
         pushMatrix();
 
         if (keyPressed) {
@@ -329,6 +343,25 @@ public class Vis extends PApplet implements MouseListener {
 			fill(255);
 			text("  ALARM  ", 670, 80);
 			text("activated", 670, 110);
+		}
+		textSize(10);
+	}
+	
+	private void drawPauseButton() {
+		if (!simPaused){
+			stroke(0);
+			fill(0);
+			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
+			textSize(32);
+			fill(255);
+			text("PAUSE", 670, 170);
+		} else {
+			stroke(0);
+			fill(0);
+			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
+			textSize(24);
+			fill(255);
+			text("PAUSED", 670, 170);
 		}
 		textSize(10);
 	}

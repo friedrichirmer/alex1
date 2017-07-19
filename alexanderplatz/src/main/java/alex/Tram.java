@@ -164,7 +164,7 @@ public class Tram {
 			vCopy.normalize();
 			vCopy.mult((float)(distanceVehicleToFront));
 			if(vCopy.mag() > this.v.mag()){
-				this.v.mult(0.01f);
+				this.v.mult(0.001f);
 			}else{
 				this.v.sub(vCopy);
 			}

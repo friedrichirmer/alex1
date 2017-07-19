@@ -100,45 +100,30 @@ public class Simulation {
             time = roundAndPrintTime(time);
             Vis.drawTime(time);
             if (Vis.alarmActivated){
-                if (!evacuationReroutingHappened){
-                    Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator();
-                    while (vehicleIterator.hasNext()){
-                        Vehicle vehicleToEvacuate = vehicleIterator.next();
-                        if (!(pedestrianNetwork.evacuationNodes.contains(vehicleToEvacuate.destinationNode))){
-                            Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
-                                    vehicleToEvacuate.getY());
-                            DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
-                            Random random = new Random();
-                            Node newDestination = pedestrianNetwork.evacuationNodes.get(0);
-                            vehicleToEvacuate.route = router.calculateRoute(currentStartNode, newDestination);
-                            vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
-                            vehicleToEvacuate.mapOfEnterLeaveTimes.clear();
-                            vehicleToEvacuate.mapOfEnterLeaveTimes.put(vehicleToEvacuate.currentLink.getId(), new Double[]{time, null});
-                            System.out.println("The vehicle " + vehicleToEvacuate.getId() + " will be evacuated to the point " + newDestination.getId());
-                        }
-                    }
-                    evacuationReroutingHappened = true;
-                }
+                handleAlarm(time);
+            }
+            
+            if(!Vis.simPaused){
+            	boolean vehicleHasLeft = updateVehicleListAndCheckIfVehicleHasLeft(time);
+            	currentKDTree = getNewKdTree(time, currentKDTree, oldNrOfVehInSim, vehicleHasLeft);
+            	updateLinkWeights(time);
+            	
+            	Set<Wall> allStaticWallsInSimulation = new HashSet<Wall>();
+            	
+            	allStaticWallsInSimulation.addAll(this.pedestrianNetwork.staticWalls);
+            	List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
+            	updateTramListAndTramPositions(currentKDTree, tramInfoList, time);
+            	
+            	List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
+            	updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, vehicleInfoList);
+            	
+            	this.vis.update(time, vehicleInfoList,tramInfoList);
+            	
+            	if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi(vehiclesInSimulation);
+            	
+            	oldNrOfVehInSim = this.vehiclesInSimulation.size();
             }
 
-            boolean vehicleHasLeft = updateVehicleListAndCheckIfVehicleHasLeft(time);
-            currentKDTree = getNewKdTree(time, currentKDTree, oldNrOfVehInSim, vehicleHasLeft);
-            updateLinkWeights(time);
-
-            Set<Wall> allStaticWallsInSimulation = new HashSet<Wall>();
-
-            allStaticWallsInSimulation.addAll(this.pedestrianNetwork.staticWalls);
-            List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
-            updateTramListAndTramPositions(currentKDTree, tramInfoList, time);
-
-            List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
-            updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, vehicleInfoList);
-
-            this.vis.update(time, vehicleInfoList,tramInfoList);
-
-            if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi(vehiclesInSimulation);
-
-            oldNrOfVehInSim = this.vehiclesInSimulation.size();
 
             time += TIME_STEP;
 
@@ -151,6 +136,31 @@ public class Simulation {
         }
 
     }
+
+	/**
+	 * @param time
+	 */
+	private void handleAlarm(double time) {
+		if (!evacuationReroutingHappened){
+		    Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator();
+		    while (vehicleIterator.hasNext()){
+		        Vehicle vehicleToEvacuate = vehicleIterator.next();
+		        if (!(pedestrianNetwork.evacuationNodes.contains(vehicleToEvacuate.destinationNode))){
+		            Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
+		                    vehicleToEvacuate.getY());
+		            DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
+		            Random random = new Random();
+		            Node newDestination = pedestrianNetwork.evacuationNodes.get(0);
+		            vehicleToEvacuate.route = router.calculateRoute(currentStartNode, newDestination);
+		            vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
+		            vehicleToEvacuate.mapOfEnterLeaveTimes.clear();
+		            vehicleToEvacuate.mapOfEnterLeaveTimes.put(vehicleToEvacuate.currentLink.getId(), new Double[]{time, null});
+		            System.out.println("The vehicle " + vehicleToEvacuate.getId() + " will be evacuated to the point " + newDestination.getId());
+		        }
+		    }
+		    evacuationReroutingHappened = true;
+		}
+	}
 
     private double roundAndPrintTime(double time) {
         time *= 100;
