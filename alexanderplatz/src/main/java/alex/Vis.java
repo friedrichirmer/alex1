@@ -350,14 +350,14 @@ public class Vis extends PApplet implements MouseListener {
 	private void drawPauseButton() {
 		if (!simPaused){
 			stroke(0);
-			fill(0);
+			fill(0,200,50);
 			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
 			textSize(32);
 			fill(255);
 			text("PAUSE", 670, 170);
 		} else {
 			stroke(0);
-			fill(0);
+			fill(200,50,20);
 			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
 			textSize(24);
 			fill(255);
