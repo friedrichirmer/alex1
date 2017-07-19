@@ -20,12 +20,8 @@ package alex;
  * *********************************************************************** */
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.DecimalFormat;
+import java.util.*;
 
 import network.AlexanderplatzNetworkCreator;
 import network.Link;
@@ -44,7 +40,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 800;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 10;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -58,6 +54,7 @@ public class Simulation {
 	private Network pedestrianNetwork;
 	private Network tramNetwork;
 	private TramNetworkCreator tramFactory = new TramNetworkCreator();
+	private boolean evacuationReroutingHappened = false;
 
 	public List<Vehicle> getVehicles() {
         return allVehicles;
@@ -103,6 +100,28 @@ public class Simulation {
 
         while (time < MAX_TIME) {
             time = roundAndPrintTime(time);
+
+            if (Vis.alarmActivated){
+                if (!evacuationReroutingHappened){
+                    Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator();
+                    while (vehicleIterator.hasNext()){
+                        Vehicle vehicleToEvacuate = vehicleIterator.next();
+                        if (!(pedestrianNetwork.evacuationNodes.contains(vehicleToEvacuate.destinationNode))){
+                            Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
+                                    vehicleToEvacuate.getY());
+                            DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
+                            Random random = new Random();
+                            Node newDestination = pedestrianNetwork.evacuationNodes.get(0);
+                            vehicleToEvacuate.route = router.calculateRoute(currentStartNode, newDestination);
+                            vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
+                            vehicleToEvacuate.mapOfEnterLeaveTimes.clear();
+                            vehicleToEvacuate.mapOfEnterLeaveTimes.put(vehicleToEvacuate.currentLink.getId(), new Double[]{time, null});
+                            System.out.println("The vehicle " + vehicleToEvacuate.getId() + " will be evacuated to the point " + newDestination.getId());
+                        }
+                    }
+                    evacuationReroutingHappened = true;
+                }
+            }
 
             boolean vehicleHasLeft = updateListAndCheckIfVehicleHasLeft(time);
             currentKDTree = getNewKdTree(time, currentKDTree, oldNrOfVehInSim, vehicleHasLeft);
@@ -266,14 +285,13 @@ public class Simulation {
     	Node to = pedestrianNetwork.getNodes().get(39);
     	List<Link> route = router.calculateRoute(from, to);
     	Tram tram = new Tram(from.getX(),from.getY() , route);
-
     	this.tramsInSimulation.add(tram);
     }
 
     private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {
-    	
-        double startTime = (Math.random() * (0.1*MAX_TIME));
-        String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + startTime + "_" + (int) Math.random()*10;
+        Double startTime = (Math.random() * (0.0001*MAX_TIME));
+        String doubleDigitStartTime = new DecimalFormat("#.##").format(startTime);
+        String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + doubleDigitStartTime + "_" + (int) Math.random()*10;
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
         Vehicle v = new Vehicle(network, startNode, finishNode, startTime, vehicleId, route);

@@ -34,7 +34,7 @@ import network.Wall;
 import processing.core.PVector;
 
 public class Vehicle {
-    private List<Link> route;
+    List<Link> route;
     private double startTime;
     private double vtx = 0;
     private double vty = 0;
@@ -64,11 +64,9 @@ public class Vehicle {
 	private Network network;
 	private boolean finished;
 	private int counterV = 1;
-	private Node destinationNode;
+	public Node destinationNode;
 	private static Random random = new Random(41);
-	
 	public final Map<Vehicle,PVector> forces = new HashMap<Vehicle,PVector>();
-	
 	private PVector forceWalls;
 	private PVector forceVehicles;
 	private PVector forceTarget;
@@ -76,11 +74,13 @@ public class Vehicle {
     private boolean isInTheSimulation = false;
 	private double mass;
 	private final double walkParallelThreshold = 1.0;	//set to Double.MAX_Value to disable parallel walking
-	private Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
+	Map<Integer, Double[]> mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
 	private double constantA = 2000;
 	private double constantB = 0.08;
 	private double constantK = 120000;
 	private double constantKSmall = 240000;
+	public boolean isEvacuating;
+	Link currentLink;
 
 	public List<Link> getRoute() {
 		return route;
@@ -118,6 +118,7 @@ public class Vehicle {
         this.mass = 60 + random.nextInt(40);
 		this.mapOfEnterLeaveTimes.put(route.get(0).getId(), new Double[]{startTime, null});
         this.destinationNode = destinationNode;
+        this.isEvacuating = false;
 	}
 	
     public boolean isInTheSimulation() {
@@ -145,7 +146,7 @@ public class Vehicle {
 //            return;
 //        }
 //        isInTheSimulation = true;
-		Link currentLink = getCurrentLink();
+		currentLink = getCurrentLink();
 		setToZeroPushXY();
 		calculateAndDrawForcesFromOtherVehicles(vehs);
 		calculateAndDrawWallForces(staticWallSet);
@@ -424,12 +425,12 @@ public class Vehicle {
         vtx = vx;
         vty = vy;
 
-		Link currentLink = getCurrentLink();
+		currentLink = getCurrentLink();
 		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
 			moveVehicleToNextLinkOfRoute(time);
-        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getInitialWeight() + 1 && !(this.finished = true)){
+        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getInitialWeight() + 1 && !(this.finished)){
 			rerouteVehicleIfStucked(time);
 		}
     }
@@ -453,7 +454,8 @@ public class Vehicle {
             Node newStartNode = network.findNearestNode(this.x, this.y);
             DijkstraV2 router = new DijkstraV2(network);
             this.route = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
-        }
+        	System.out.println("The route for the vehicle ");
+		}
 	}
 
 	public double getX() {
@@ -512,4 +514,13 @@ public class Vehicle {
 	public double getSpeed() {
 		return momentSpeed;
 	}
+
+	public Node getDestinationNode() {
+		return destinationNode;
+	}
+
+	public void setDestinationNode(Node destinationNode) {
+		this.destinationNode = destinationNode;
+	}
+
 }

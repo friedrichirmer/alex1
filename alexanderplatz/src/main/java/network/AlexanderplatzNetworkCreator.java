@@ -25,9 +25,18 @@ public class AlexanderplatzNetworkCreator {
         Node uTchibo = network.createNode(39.6,50,23);
         Node uKFC = network.createNode(30.5,56.5,24);
         Node uZentral = network.createNode(35.1,41.2,25);
+        network.evacuationNodes.add(uSaturn);
+        network.evacuationNodes.add(uKFC);
+        network.evacuationNodes.add(uPrimark);
+        network.evacuationNodes.add(uMediaM);
+        network.evacuationNodes.add(uTchibo);
+        network.evacuationNodes.add(uZentral);
         Node sBahn1 = network.createNode(20.8,45,26);
+        network.evacuationNodes.add(sBahn1);
         Node sBahn2 = network.createNode(15,38.6,27);
+        network.evacuationNodes.add(sBahn2);
         Node sBahn3 = network.createNode(8.9,32,28);
+        network.evacuationNodes.add(sBahn3);
         Node primark = network.createNode(31.9,24.5,29);
 		Node saturn = network.createNode(49.8,40.7,30);
 		Node ampelLinks = network.createNode(0.9,23.8,31);
@@ -88,7 +97,8 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node6,node8,1);
         network.createLink(node7,node2,1);
 
-        network.createLink(node14,node13,1);        network.createLink(node14,node8,1);
+        network.createLink(node14,node13,1);
+        network.createLink(node14,node8,1);
         network.createLink(node15,node16,1);
         network.createLink(node15,node6,1);
         network.createLink(node15,node7,1);
@@ -351,7 +361,8 @@ public class AlexanderplatzNetworkCreator {
 		network.entryExitNodes.add(newYorker);
 		network.entryExitNodes.add(sparkasse);
 		network.entryExitNodes.add(bruecke);
-		network.entryExitNodes.add(ampelParkInn);		network.entryExitNodes.add(cUndA);
+		network.entryExitNodes.add(ampelParkInn);
+		network.entryExitNodes.add(cUndA);
 		network.entryExitNodes.add(node3);
 
 

@@ -98,7 +98,7 @@ public class Vis extends PApplet implements MouseListener {
     
     public static double xScaleAndOffset = xOffset * scale;
     public static double yScaleAndOffset= yOffset * scale;
-	private boolean alarmActivated = false;
+	public static boolean alarmActivated = false;
 
 	int buttonX = 660;
 	int buttonY = 60;
