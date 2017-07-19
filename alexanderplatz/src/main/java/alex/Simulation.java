@@ -203,7 +203,7 @@ public class Simulation {
             tramInfoList.add(tramInfo);
         }
     	for(Node exit : passedExitNodes){
-    		createTram(tramNetwork, time + 3, exit);
+    		createTram(tramNetwork, time + Math.random() * 4, exit);
     	}
     }
 
