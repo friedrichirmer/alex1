@@ -45,7 +45,7 @@ public class Vehicle {
     private double length = 0.2;
     private double width = 0.2;
     double desiredSpeed = 1.34;
-    private double maxSpeed;
+    public static final double MAX_SPEED = 2;
     private double tau = 0.5;
     private double rad;
     private double x;
@@ -60,7 +60,7 @@ public class Vehicle {
 
     private String id;
 
-    private int routeIndex = 0;
+    public int routeIndex = 0;
 	private Network network;
 	private boolean finished;
 	private int counterV = 1;
@@ -93,7 +93,6 @@ public class Vehicle {
         this.route = route;
     	System.out.println("route: " + route.toString());
         this.rad = 0.25 + random.nextDouble()*0.1;
-        this.maxSpeed = 2;
         this.vtx = 0;
         this.finished = false;
         this.id = id;
@@ -216,9 +215,9 @@ public class Vehicle {
 		vy = vty + Simulation.TIME_STEP *(forceY/80);
 		momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
 		//	Begrenzung der Kraefte
-		if (momentSpeed > maxSpeed) {
-            vx = (vx / momentSpeed) * maxSpeed;
-            vy = (vy / momentSpeed) * maxSpeed;
+		if (momentSpeed > MAX_SPEED) {
+            vx = (vx / momentSpeed) * MAX_SPEED;
+            vy = (vy / momentSpeed) * MAX_SPEED;
         }
 		this.momentSpeed = Math.sqrt((vx*vx)+(vy*vy));
 	}
@@ -409,7 +408,7 @@ public class Vehicle {
         vtx = vx;
         vty = vy;
 
-		Double timeWhenEnteredLink = this.mapOfEnterLeaveTimes.get(currentLink.getId())[0];
+		Double timeWhenEnteredLink = mapOfEnterLeaveTimes.get(currentLink.getId())[0];
 		
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);

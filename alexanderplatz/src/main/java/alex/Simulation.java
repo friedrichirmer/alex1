@@ -76,11 +76,11 @@ public class Simulation {
         
     	Simulation simulation = new Simulation(pedestrianNetwork);
     	NetworkUtils.createListOfNodeIds(pedestrianNetwork, simulation);
-    	
+
     	List<Integer> entryNodesThatShouldNotBeUsed= new ArrayList<Integer>();
     	entryNodesThatShouldNotBeUsed.add(44);
     	entryNodesThatShouldNotBeUsed.add(31);
-    	
+
     	simulation.addRandomVehicles(pedestrianNetwork, simulation, NUMBER_OF_RANDOM_VEHICLES, entryNodesThatShouldNotBeUsed, Simulation.MAX_TIME * 0.05);
         simulation.run();
         
@@ -148,6 +148,7 @@ public class Simulation {
 	/**
 	 * @param time
 	 */
+
 	private void handleAlarm(double time) {
 		if (!evacuationReroutingHappened){
 		    Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator();
@@ -157,13 +158,20 @@ public class Simulation {
 		            Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
 		                    vehicleToEvacuate.getY());
 		            DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
-		            Random random = new Random();
-		            Node newDestination = pedestrianNetwork.evacuationNodes.get(random.nextInt(pedestrianNetwork.evacuationNodes.size()));
-		            vehicleToEvacuate.route = router.calculateRoute(currentStartNode, newDestination);
-		            vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
-		            vehicleToEvacuate.mapOfEnterLeaveTimes.clear();
-		            vehicleToEvacuate.mapOfEnterLeaveTimes.put(vehicleToEvacuate.currentLink.getId(), new Double[]{time, null});
-		            System.out.println("The vehicle " + vehicleToEvacuate.getId() + " will be evacuated to the point " + newDestination.getId());
+		            Node newDestinationNode = pedestrianNetwork.findNearestEvacuationPoint(vehicleToEvacuate.getX(), vehicleToEvacuate.getY());
+		            List<Link> newRoute = new ArrayList<Link>();
+		            newRoute = router.calculateRoute(currentStartNode, newDestinationNode);
+		            if (!(newRoute == null)){
+                        vehicleToEvacuate.mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
+		                vehicleToEvacuate.destinationNode = newDestinationNode;
+		                vehicleToEvacuate.route = new ArrayList<Link>();
+		                vehicleToEvacuate.route = newRoute;
+		                vehicleToEvacuate.routeIndex = 0;
+		                vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
+		                vehicleToEvacuate.mapOfEnterLeaveTimes.put(vehicleToEvacuate.currentLink.getId(), new Double[]{time, null});
+		                System.out.println("The vehicle " + vehicleToEvacuate.getId() + " will be evacuated to the point " + vehicleToEvacuate.destinationNode.getId());
+                    }
+                    else continue;
 		        }
 		    }
 		    evacuationReroutingHappened = true;
@@ -314,7 +322,7 @@ public class Simulation {
     private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route, double timeBin) {
         Double startTime = this.time + (Math.random() * timeBin); //
         String doubleDigitStartTime = new DecimalFormat("#.##").format(startTime);
-        String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + doubleDigitStartTime + "_" + (int) Math.random()*10;
+        String vehicleId = "Vehicle_" + startNodeId + "_to_" + finishNodeId + "_at_" + doubleDigitStartTime + "_" + (int) (Math.random()*1000);
         Node startNode = network.nodes.get(startNodeId);
         Node finishNode = network.nodes.get(finishNodeId);
         Vehicle v = new Vehicle(network, startNode, finishNode, startTime, vehicleId, route);

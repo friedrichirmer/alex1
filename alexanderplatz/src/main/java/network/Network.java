@@ -7,7 +7,7 @@ import static java.lang.Math.sqrt;
 
 public class Network {
     public final Map<Integer, Node> nodes = new HashMap<Integer,Node>();
-
+	public List<Node> allNodesList = new ArrayList<Node>();
 	public Map<Integer, Link> getLinks() {
 		return links;
 	}
@@ -31,9 +31,10 @@ public class Network {
 	}
 
 	public Node createNode(double x, double y, int id) {
-   		Node n = new Node(x*proportion,y*proportion,id);
-   		this.nodes.put(id,n);
-   		return n;
+   		Node node = new Node(x*proportion,y*proportion,id);
+   		this.nodes.put(id,node);
+   		this.allNodesList.add(node);
+   		return node;
    	}
 
 	public Map<Integer, Node> getNodes() {
@@ -141,21 +142,30 @@ public class Network {
 	}
 
 	public Node findNearestNode(double x, double y) {
-   		Double minimalDistance = Double.POSITIVE_INFINITY;
-   		Integer currentClosest = 0;
-		currentClosest = iterateAllNodesAndCalculateMinimalDistance(x, y, minimalDistance, currentClosest);
+		Integer currentClosest = null;
+		currentClosest = iterateNodesAndCalculateMinimalDistance(x, y, currentClosest, allNodesList);
 		return nodes.get(currentClosest);
 	}
 
-	private Integer iterateAllNodesAndCalculateMinimalDistance(
-			double x, double y, Double minimalDistance, Integer currentClosest) {
-		Iterator<Map.Entry<Integer, Node>> iterator = nodes.entrySet().iterator();
-		while (iterator.hasNext()){
-            Node node = iterator.next().getValue();
+	public Node findNearestEvacuationPoint(double x, double y) {
+		Integer currentClosest = null;
+		currentClosest = iterateNodesAndCalculateMinimalDistance(x, y, currentClosest, evacuationNodes);
+		return nodes.get(currentClosest);
+	}
+
+
+
+	private Integer iterateNodesAndCalculateMinimalDistance(
+			double x, double y, Integer currentClosest, List<Node> nodeList) {
+		Double minimalDistance = Double.POSITIVE_INFINITY;
+		Iterator<Node> nodeIterator = nodeList.iterator();
+		while (nodeIterator.hasNext()){
+            Node node = nodeIterator.next();
             Double distance = sqrt((x - node.getX()) * (x - node.getX()) +
                  (y - node.getY()) * (y - node.getY()));
             if (distance < minimalDistance){
                 currentClosest = node.getId();
+                minimalDistance = distance;
         	}
      	}
 		return currentClosest;

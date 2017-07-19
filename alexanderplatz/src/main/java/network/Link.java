@@ -27,7 +27,7 @@ public class Link {
         double dx = from.getX() - to.getX();
         double dy = from.getY() - to.getY();
         
-        this.currentWeight = Math.sqrt(dx * dx + dy * dy);
+        this.currentWeight = Math.sqrt(dx * dx + dy * dy) / Vehicle.MAX_SPEED;
         this.initialWeight = this.currentWeight;
         System.out.println("Initial currentWeight of the link " + this.id + " is " + this.currentWeight);
         this.length = Math.sqrt(dx * dx + dy * dy);
