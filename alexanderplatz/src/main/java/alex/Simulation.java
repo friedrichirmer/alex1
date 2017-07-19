@@ -103,7 +103,7 @@ public class Simulation {
 
         while (time < MAX_TIME) {
             time = roundAndPrintTime(time);
-
+            Vis.drawTime(time);
             if (Vis.alarmActivated){
                 if (!evacuationReroutingHappened){
                     Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator();

@@ -88,13 +88,14 @@ public class Vis extends PApplet implements MouseListener {
 	private double avgSpeed;
 	private List<Double> speedList = new ArrayList<Double>();
 
-    public static float xOffset = 0;
-    public static float yOffset = 0;
+    public static float xOffset = 20;
+    public static float yOffset = 20;
     public static float scale = 3;
     
     public static double xScaleAndOffset = xOffset * scale;
     public static double yScaleAndOffset= yOffset * scale;
 	public static boolean alarmActivated = false;
+	private static double currentTime;
 
 	int buttonX = 660;
 	int buttonY = 60;
@@ -298,14 +299,17 @@ public class Vis extends PApplet implements MouseListener {
 		
         this.fill(0);
         this.textSize(10);
+        
         this.text("Voronoi-Dichte: ", 10, 15);
         this.text("Mittlere Geschwindikkeit: ", 10, 30);
         this.text("Mittlerer Fluss: ", 10, 45);
+        this.text("Zeit: ", 10, 60);
         
-        this.text(dichte  + " [Anzahl Personen / m^2]", 130, 15);
-        this.text(speed + " [m/2]", 130, 30);
-        this.text(flow, 130, 45);
-
+        this.text(dichte  + " [Anzahl Personen / m^2]", 150, 15);
+        this.text(speed + " [m/s]", 150, 30);
+        this.text(flow +"[Anzahl Personen / (m*s)]", 150, 45);
+        this.text(Double.toString(currentTime), 150, 60);
+        this.text("[s]",178,60);
         
     }
 
@@ -338,6 +342,7 @@ public class Vis extends PApplet implements MouseListener {
         synchronized (this.trams) {
             this.trams = new ArrayList<TramInfo>(trams);
         }
+       
         
     }
 	
@@ -466,6 +471,11 @@ public class Vis extends PApplet implements MouseListener {
 			Double s = speedList.get(i);
 			avgSpeed = ((avgSpeed * i) + s ) / (i+1);
 		}
+	}
+
+	public static void drawTime(double time) {
+		 
+        currentTime = time;
 	}
 		   
 }
