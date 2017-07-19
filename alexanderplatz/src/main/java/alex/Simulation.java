@@ -157,7 +157,7 @@ public class Simulation {
  		        if(!this.vehiclesInSimulation.contains(vehicleToEvacuate)){
 		        	vehicleIterator.remove();
 		        }else{
-		        	
+
 //		        if (!(pedestrianNetwork.evacuationNodes.contains(vehicleToEvacuate.destinationNode))){
 		        	Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
 		        			vehicleToEvacuate.getY());

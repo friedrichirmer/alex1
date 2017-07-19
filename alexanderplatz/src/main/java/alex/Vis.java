@@ -108,6 +108,9 @@ public class Vis extends PApplet implements MouseListener {
 	int pauseButtonY = 140;
 	int pauseButtonWidth = 135;
 	int pauseButtonHeight = 60;
+	int recordButtonX = 720;
+	int recordButtonY = 240;
+	int recordButtonRadius = 60;
 	
 	private float pavillonCenterX;
 	private float pavillonCenterY;
@@ -116,7 +119,8 @@ public class Vis extends PApplet implements MouseListener {
 	private float pavillonDragX;
 	private float pavillonDragY;
 	private boolean pavillonDragger = false;
-	
+	private boolean isRecording = false;
+
 
 	public Vis(Network pedestrianNet, Network tramNet) {
         this.pedestrianNet = pedestrianNet;
@@ -200,7 +204,23 @@ public class Vis extends PApplet implements MouseListener {
 				alarmActivated = true;
 			} else if( checkIfOverPauseButton(e)){
 				simPaused = !(simPaused);
+			} else if (checkIfOverRecordButton(e)){
+				if (isRecording){
+					isRecording = false;
+				} else {
+					isRecording = true;
+				}
 			}
+		}
+	}
+
+	private boolean checkIfOverRecordButton(MouseEvent e) {
+		float disX = recordButtonX - mouseX;
+		float disY = recordButtonY - mouseY;
+		if (sqrt(sq(disX) + sq(disY)) < recordButtonRadius ) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -221,9 +241,6 @@ public class Vis extends PApplet implements MouseListener {
 	@Override
     public void draw() {
         background(255); // eraser
-
-		drawAlarmButton();
-		drawPauseButton();
         pushMatrix();
 		drawEvacuationPoints();
 
@@ -242,23 +259,17 @@ public class Vis extends PApplet implements MouseListener {
             }
 
             else {
-            	
                 if (key == '+') {
-                	
                     scale += 0.2;
                     yOffset -= 15/scale;
                     xOffset -= 15/scale;
-                    
                 } else if (key == '-') {
-                	
                     scale -= 0.2;
                     yOffset += 15/scale;
                     xOffset += 15/scale;
-                    
                 }
                 
             }
-            
         }
         
         translate((float) xOffset*scale, (float) yOffset*scale);
@@ -329,7 +340,15 @@ public class Vis extends PApplet implements MouseListener {
         this.text(flow +"[Anzahl Personen / (m*s)]", 150, 45);
         this.text(Double.toString(currentTime), 150, 60);
         this.text("[s]",178,60);
-        
+
+		if (isRecording){
+			saveFrame("output/alexVideo-####.png");
+		}
+
+		drawAlarmButton();
+		drawPauseButton();
+		drawRecordButton();
+
     }
 
 	private void drawEvacuationPoints() {
@@ -364,6 +383,26 @@ public class Vis extends PApplet implements MouseListener {
 		}
 		textSize(10);
 	}
+
+	private void drawRecordButton() {
+		if (!isRecording){
+			stroke(0);
+			fill(255,0,0);
+			ellipse(recordButtonX, recordButtonY, recordButtonRadius, recordButtonRadius);
+			textSize(12);
+			fill(0);
+			text("RECORD", recordButtonX - 30, recordButtonY);
+		} else {
+			stroke(0);
+			fill(0,200,0);
+			ellipse(recordButtonX, recordButtonY, recordButtonRadius, recordButtonRadius);
+			textSize(12);
+			fill(0);
+			text("RECORDING", recordButtonX - 30, recordButtonY);
+		}
+		textSize(10);
+	}
+
 	
 	private void drawPauseButton() {
 		if (!simPaused){
