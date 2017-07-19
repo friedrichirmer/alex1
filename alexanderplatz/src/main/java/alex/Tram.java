@@ -37,7 +37,6 @@ public class Tram {
 	
 	private double wishVelocity = 500;
 	PVector v = new PVector(0,0);
-	PVector vFront = new PVector(0,0);
 	private final double tau = 1;
 	private double bottomCenterX;
 	private double bottomCenterY;
@@ -72,14 +71,6 @@ public class Tram {
 		// Berechnung der Wunschrichtung vom Fahrzeugmittelpunkt aus
 		double dx = currentLink.getTo().getX() - this.centerX;
     	double dy = currentLink.getTo().getY() - this.centerY;
-
-    	vFront = new PVector((float) (currentLink.getTo().getX()- this.bottomCenterX) , (float) (currentLink.getTo().getY() - this.bottomCenterY) );
-    	vFront.normalize();
-    	vFront.mult((float) wishVelocity);
-    	
-		// Berechnung der Wunschrichtung von der Mitte der Fahrzeugfront aus
-//        double dx = currentLink.getTo().getX() - bottomCenterX;
-//    	double dy = currentLink.getTo().getY() - bottomCenterY;
     	
     	double dist = Math.sqrt(dx*dx+dy*dy);
     	dx /= dist;
@@ -87,14 +78,9 @@ public class Tram {
     	
     	double resultForceX = (dx* this.wishVelocity);
     	double resultForceY = (dy* this.wishVelocity);
-//    	this.v.add( new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) ) ) ;
-
     	
-    	//von der Mitte aus
     	this.v = new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) )  ;
     	
-    	//von der Front aus
-//    	this.v = vFront.get();
 	}
 	
 	private void reactToVehiclesInWay(KDTree kdtree){

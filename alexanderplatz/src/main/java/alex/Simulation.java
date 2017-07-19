@@ -95,8 +95,8 @@ public class Simulation {
         KDTree currentKDTree = new KDTree(this.vehiclesInSimulation);
         int oldNrOfVehInSim = vehiclesInSimulation.size();
 
-//        createTram(tramNetwork);
-        createTestTramOnPedNetwork();
+        createTram(tramNetwork);
+//        createTestTramOnPedNetwork();
 
         while (time < MAX_TIME) {
             time = roundAndPrintTime(time);

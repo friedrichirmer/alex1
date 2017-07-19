@@ -296,10 +296,10 @@ public class Vehicle {
 	private void calcTramForce(Tram tram){
     	for(Wall w : tram.getWalls()){
     		if(w.equals(tram.getBottomWall())){
-    			calcWallForce(w, 80, 500, 100);
+    			calcWallForce(w, 5, 10000, 40);
     		}
     		else{
-    			calcWallForce(w, 40, 100, 20);
+    			calcWallForce(w,10, 100, 5);
     		}
     	}
     }
