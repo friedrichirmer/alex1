@@ -75,6 +75,7 @@ public class AlexanderplatzNetworkCreator {
         Node node15 = network.createNode(39,39,15);
         Node node16 = network.createNode(41.4,49,16);
         Node node17 = network.createNode(26.4,50,17);
+        Node node18 = network.createNode(50,52,18);
         
         network.createLink(node1,node2,1);
         network.createLink(node2,node3,1);
@@ -94,9 +95,9 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node13,node9,1);
         network.createLink(node5,node11,1);
         network.createLink(node10,node12,1);
+        network.createLink(node15,node12,1);
         network.createLink(node6,node8,1);
         network.createLink(node7,node2,1);
-
         network.createLink(node14,node13,1);
         network.createLink(node14,node8,1);
         network.createLink(node15,node16,1);
@@ -110,6 +111,8 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node14,node15,1);
         network.createLink(node7,node17,1);
         network.createLink(node5,node15,1);
+        network.createLink(node18,node16,1);
+        network.createLink(node18,node10,1);
 
   
         network.createLink(node2,node1,1);
@@ -130,6 +133,7 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node9,node13,1);
         network.createLink(node11,node5,1);
         network.createLink(node12,node10,1);
+        network.createLink(node12,node15,1);
         network.createLink(node8,node6,1);
         network.createLink(node2,node7,1);
         network.createLink(node13,node14,1);
@@ -145,11 +149,14 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node15,node14,1);
         network.createLink(node17,node7,1);
         network.createLink(node15,node5,1);
+        network.createLink(node16,node18,1);
+        network.createLink(node10,node18,1);
         
         //links von entryExitNodes ins Netz
         network.createLink(uSaturn,node9,1);
         network.createLink(uSaturn,node14,1);
         network.createLink(uPrimark,node10,1);
+        network.createLink(primark,alexOase,1);
         network.createLink(uMediaM,node8,1);
         network.createLink(uMediaM,node2,1);
         network.createLink(uMediaM,node16,1);
@@ -169,17 +176,24 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(sBahn3,node5,1);
         network.createLink(sBahn3,node11,1);
         network.createLink(primark,node10,1);
+        network.createLink(primark,reno,1);
         network.createLink(saturn,node8,1);
+        network.createLink(saturn,node2,1);
         network.createLink(saturn,node16,1);
+        network.createLink(saturn,node18,1);
+        network.createLink(saturn,alexOase,1);
         network.createLink(ampelLinks,node11,1);
         network.createLink(ampelOben,node13,1);
         network.createLink(ampelRechts,node1,1);
         network.createLink(ampelMediaM,node2,1);
         network.createLink(ampelMediaM,node3,1);
+        network.createLink(ampelMediaM,node18,1);
         network.createLink(alexOase,node8,1);
         network.createLink(alexOase,node7,1);
         network.createLink(alexOase,node15,1);
+        network.createLink(alexOase,node5,1);
         network.createLink(doenerInn,node12,1);
+        network.createLink(doenerInn,node13,1);
         network.createLink(sushi,node11,1);
         network.createLink(sushi,node12,1);
         network.createLink(reno,node10,1);
@@ -197,6 +211,7 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(bruecke,node17,1);
         network.createLink(ampelParkInn,node9,1);
         network.createLink(ampelParkInn,node13,1);
+        network.createLink(ampelParkInn,node14,1);
         network.createLink(cUndA,node6,1);
         network.createLink(cUndA,node7,1);;
         
@@ -204,6 +219,7 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node9,uSaturn,1);
         network.createLink(node14,uSaturn,1);
         network.createLink(node10,uPrimark,1);
+        network.createLink(alexOase,primark,1);
         network.createLink(node8,uMediaM,1);
         network.createLink(node2,uMediaM,1);
         network.createLink(node16,uMediaM,1);
@@ -223,17 +239,24 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node11,sBahn3,1);
         network.createLink(sBahn3,sBahn2,1);
         network.createLink(node10,primark,1);
+        network.createLink(reno,primark,1);
         network.createLink(node8,saturn,1);
         network.createLink(node16,saturn,1);
+        network.createLink(node2,saturn,1);
+        network.createLink(node18,saturn,1);
+        network.createLink(alexOase,saturn,1);
         network.createLink(node11,ampelLinks,1);
         network.createLink(node13,ampelOben,1);
         network.createLink(node1,ampelRechts,1);
         network.createLink(node2,ampelMediaM,1);
         network.createLink(node3,ampelMediaM,1);
+        network.createLink(node18,ampelMediaM,1);
         network.createLink(node8,alexOase,1);
         network.createLink(node7,alexOase,1);
         network.createLink(node15,alexOase,1);
+        network.createLink(node5,alexOase,1);
         network.createLink(node12,doenerInn,1);
+        network.createLink(node13,doenerInn,1);
         network.createLink(node11,sushi,1);
         network.createLink(node12,sushi,1);
         network.createLink(node10,reno,1);
@@ -251,6 +274,7 @@ public class AlexanderplatzNetworkCreator {
         network.createLink(node17,bruecke,1);
         network.createLink(node9,ampelParkInn,1);
         network.createLink(node13,ampelParkInn,1);
+        network.createLink(node14,ampelParkInn,1);
         network.createLink(node6,cUndA,1);
         network.createLink(node7,cUndA,1);
         
