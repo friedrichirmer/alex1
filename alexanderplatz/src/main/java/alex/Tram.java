@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.annotation.Generated;
 
 import network.Link;
+import network.Node;
 import network.Wall;
 import processing.core.PVector;
 
@@ -30,7 +31,7 @@ public class Tram {
 	private Wall bottom;
 	
 	private double half_length = 4;
-	private double half_width = 2;
+	private double half_width = 1;
 	
 	private double centerX;
 	private double centerY;
@@ -41,6 +42,8 @@ public class Tram {
 	private double bottomCenterX;
 	private double bottomCenterY;
 	
+	private double startTime = Double.MAX_VALUE;
+	
 	/**
 	 * @param x1
 	 * @param y1
@@ -48,11 +51,12 @@ public class Tram {
 	 * @param y2
 	 */
 	
-	public Tram(double x, double y, List<Link> route) {
+	public Tram(double x, double y, List<Link> route, double startTime) {
 		this.centerX = x;
 		this.centerY = y;
 		this.route = route;
 		this.routeIndex = 0;
+		this.startTime = startTime;
 		calcVelocityVector();
 		setWalls();
 	}
@@ -254,6 +258,14 @@ public class Tram {
 	
 	}
 
+    /**
+     * checks whether the vehicle should enter the sim.
+     * so basically it checks whether vehicle's start time is smaller than given time
+     * @return
+     */
+    public boolean entersSimulation(double time){
+    	return (this.startTime <= time);
+    }
 
 	private void moveVehicleToNextLinkOfRoute() {
 		routeIndex++;
@@ -313,4 +325,7 @@ public class Tram {
 		return (float)(this.bottomCenterX);
 	}
 
+	public Node getDestinationNode(){
+		return this.route.get(this.route.size()-1).getTo();
+	}
 }

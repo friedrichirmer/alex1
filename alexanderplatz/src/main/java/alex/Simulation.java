@@ -40,7 +40,7 @@ public class Simulation {
     private static final double MAX_TIME = 500;
     static final double TIME_STEP = 0.02;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
-    private static final int NUMBER_OF_RANDOM_VEHICLES = 50;
+    private static final int NUMBER_OF_RANDOM_VEHICLES = 10;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
@@ -49,6 +49,7 @@ public class Simulation {
     private final Vis vis;
     private List<Vehicle> allVehicles = new ArrayList<>();
     private List<Vehicle> vehiclesInSimulation = new ArrayList<>();
+    private List<Tram> allTrams = new ArrayList<Tram>();
 	private List<Tram> tramsInSimulation = new ArrayList<Tram>();
 	
 	private Network pedestrianNetwork;
@@ -95,7 +96,9 @@ public class Simulation {
         KDTree currentKDTree = new KDTree(this.vehiclesInSimulation);
         int oldNrOfVehInSim = vehiclesInSimulation.size();
 
-        createTram(tramNetwork);
+        for(Node node: this.tramFactory.getTramExitNodes()){
+        	createTram(tramNetwork, 3*Math.random(), node);
+        }
 //        createTestTramOnPedNetwork();
 
         while (time < MAX_TIME) {
@@ -123,7 +126,7 @@ public class Simulation {
                 }
             }
 
-            boolean vehicleHasLeft = updateListAndCheckIfVehicleHasLeft(time);
+            boolean vehicleHasLeft = updateVehicleListAndCheckIfVehicleHasLeft(time);
             currentKDTree = getNewKdTree(time, currentKDTree, oldNrOfVehInSim, vehicleHasLeft);
             updateLinkWeights(time);
 
@@ -131,7 +134,7 @@ public class Simulation {
 
             allStaticWallsInSimulation.addAll(this.pedestrianNetwork.staticWalls);
             List<TramInfo> tramInfoList = new ArrayList<TramInfo>();
-            updateTramPositions(currentKDTree, tramInfoList);
+            updateTramListAndTramPositions(currentKDTree, tramInfoList, time);
 
             List<VehicleInfo> vehicleInfoList = new ArrayList<VehicleInfo>();
             updateVehiclePositions(time, currentKDTree, allStaticWallsInSimulation, vehicleInfoList);
@@ -179,23 +182,29 @@ public class Simulation {
         }
     }
 
-    private void updateTramPositions(KDTree currentKDTree, List<TramInfo> tramInfoList) {
-        boolean oneTramHasFinished = false;
-    	for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
+    private void updateTramListAndTramPositions(KDTree currentKDTree, List<TramInfo> tramInfoList, double time) {
+    	List<Node> passedExitNodes = new ArrayList<Node>();
+        this.tramsInSimulation.clear();
+        for(Iterator<Tram> tramIterator = this.allTrams.iterator(); tramIterator.hasNext();) {
             Tram tram = tramIterator.next();
-            tram.update(vehiclesInSimulation, currentKDTree);
-            tram.move();
-
-            if(!tram.isFinished()){
-                TramInfo tramInfo = new TramInfo(tram);
-                tramInfoList.add(tramInfo);
-            }
-            else{
+            
+            if(!tram.isFinished() && tram.entersSimulation(time)){
+            	this.tramsInSimulation.add(tram);
+            } else if(tram.isFinished()){
+            	passedExitNodes.add(tram.getDestinationNode());
                 tramIterator.remove();
-                oneTramHasFinished = true;
             }
         }
-    	if(oneTramHasFinished) createTram(tramNetwork);
+        for(Iterator<Tram> tramIterator = this.tramsInSimulation.iterator(); tramIterator.hasNext();) {
+        	Tram tram = tramIterator.next();
+        	tram.update(vehiclesInSimulation, currentKDTree);
+            tram.move();
+            TramInfo tramInfo = new TramInfo(tram);
+            tramInfoList.add(tramInfo);
+        }
+    	for(Node exit : passedExitNodes){
+    		createTram(tramNetwork, time + 3, exit);
+    	}
     }
 
     private void updateLinkWeights(double time) {
@@ -204,7 +213,7 @@ public class Simulation {
         }
     }
 
-    private boolean updateListAndCheckIfVehicleHasLeft(double time) {
+    private boolean updateVehicleListAndCheckIfVehicleHasLeft(double time) {
         this.vehiclesInSimulation.clear();
 //        	System.out.println("--check after clearing before adding-- \n oldNrOfVehInSim=" + oldNrOfVehInSim + "\n vehiclesInSimulation.size()=" + vehiclesInSimulation.size());
 
@@ -267,25 +276,16 @@ public class Simulation {
         System.out.println(" simulation allVehicles.size() = " + this.allVehicles.size());
     }
     
-    private void createTram(Network tramNetwork){
+    private void createTram(Network tramNetwork, double time, Node exitNode){
     	DijkstraV2 router = new DijkstraV2(tramNetwork);
-    	Node from = this.tramFactory.getrandomEntryNode();
-    	Node to = this.tramFactory.getTramExitNode(from);
-    	List<Link> route = router.calculateRoute(from, to);
-    	Tram tram = new Tram(from.getX(),from.getY() , route);
+    	Node entryNode = this.tramFactory.getCorrespondingEntryNode(exitNode);
+    	List<Link> route = router.calculateRoute(entryNode, exitNode);
+    	Tram tram = new Tram(entryNode.getX(),entryNode.getY() , route, time);
     	if(route == null || route.size() == 0){
     		System.out.println("couldnt create tram route");
     	}
-    	this.tramsInSimulation.add(tram);
-    }
-
-    private void createTestTramOnPedNetwork(){
-    	DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
-    	Node from = pedestrianNetwork.getNodes().get(12);
-    	Node to = pedestrianNetwork.getNodes().get(39);
-    	List<Link> route = router.calculateRoute(from, to);
-    	Tram tram = new Tram(from.getX(),from.getY() , route);
-    	this.tramsInSimulation.add(tram);
+    	this.allTrams.add(tram);
+    	System.out.println("create a tram going to node " + exitNode.getId());
     }
 
     private void createRandomDeparture(Network network, Simulation simulation, Integer startNodeId, Integer finishNodeId, List<Link> route) {

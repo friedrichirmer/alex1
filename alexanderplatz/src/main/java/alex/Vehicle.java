@@ -280,7 +280,7 @@ public class Vehicle {
 
 	public boolean placeVehicleSomwhereOnCurrentLink(){
     	if(this.routeIndex == 0){
-    		double rnd = Math.random();
+    		double rnd = 0.25*Math.random();
 			Link l = getCurrentLink();
 			double dx = l.getTo().getX()-l.getFrom().getX();
     		double dy = l.getTo().getY()-l.getFrom().getY();
@@ -296,10 +296,10 @@ public class Vehicle {
 	private void calcTramForce(Tram tram){
     	for(Wall w : tram.getWalls()){
     		if(w.equals(tram.getBottomWall())){
-    			calcWallForce(w, 5, 10000, 40);
+    			calcWallForce(w, 100, 10000, 40);
     		}
     		else{
-    			calcWallForce(w,10, 100, 5);
+    			calcWallForce(w, 50 , 1000, 10);
     		}
     	}
     }

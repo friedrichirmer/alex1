@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Work
@@ -29,6 +30,7 @@ public class TramNetworkCreator {
 		Node alexanderstr = network.createNode(56.4,23.2,101);
         Node klStr = network.createNode(1.1,22.4,102);
         Node sBahn = network.createNode(26.6,53.6,103);
+        
 		tramEntryNodes.add(alexanderstr);
 		tramEntryNodes.add(klStr);
 		tramEntryNodes.add(sBahn);
@@ -38,15 +40,14 @@ public class TramNetworkCreator {
         Node klStr2 = network.createNode(1.6,21.9,105);
         Node sBahn2 = network.createNode(26.1,53.1,106);
         Node stop = network.createNode(24.9,47,107);
-        
-//        network.tramExitSBahn.add(alexanderstr2);
-//        network.tramExitAlexanderstr.add(klStr2);
-//        network.tramExitAlexanderstr.add(sBahn2);
-//        network.tramExitKlStr.add(stop);
 		
         this.correspondingExitNodes.put(klStr, stop);
         this.correspondingExitNodes.put(alexanderstr, sBahn2);
         this.correspondingExitNodes.put(sBahn, alexanderstr2);
+        
+        this.tramExitNodes.add(stop);
+        this.tramExitNodes.add(sBahn2);
+        this.tramExitNodes.add(alexanderstr2);
         
 		//Nodes of network
         Node southDir = network.createNode(45.7,37.1,8);
@@ -71,14 +72,6 @@ public class TramNetworkCreator {
 	}
 	
 	public Node getTramExitNode (Node node){
-//		if (node.getId()==101){
-//			if (Math.random()<0.5) return tramExitAlexanderstr.get(0);
-//			else return tramExitAlexanderstr.get(1);
-//		}
-//		if (node.getId()==102){
-//			return tramExitSBahn.get(0);
-//		}
-//		else return tramExitKlStr.get(0);
 		return this.correspondingExitNodes.get(node);
 	}
 
@@ -87,4 +80,18 @@ public class TramNetworkCreator {
 		return this.tramEntryNodes.get(index);
 	}
 		
+	public Node getCorrespondingEntryNode(Node exit){
+		for(Entry<Node, Node> e : this.correspondingExitNodes.entrySet()){
+			if(e.getValue().equals(exit)) return e.getKey();
+		}
+		System.out.println("could not find corresponding entry node of tramExit: " + exit.getId());
+		for(Entry<Node, Node> e : this.correspondingExitNodes.entrySet()){
+			if(e.getKey().equals(exit)) return e.getValue();
+		}
+		return null;
+	}
+
+	public List<Node> getTramExitNodes() {
+		return this.tramExitNodes;
+	}
 }
