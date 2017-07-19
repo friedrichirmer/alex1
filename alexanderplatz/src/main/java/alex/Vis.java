@@ -508,7 +508,6 @@ public class Vis extends PApplet implements MouseListener {
 					
 					for (Vehicle v : vehiclesInRoot) {
 						if (v.getX() == s.x && v.getY() == s.y) {
-							System.out.println("Speed: " + v.getSpeed());
 							speedList.add(v.getSpeed());
 						}
 					}
