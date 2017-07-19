@@ -154,24 +154,28 @@ public class Simulation {
 		    Iterator<Vehicle> vehicleIterator = this.allVehicles.iterator();
 		    while (vehicleIterator.hasNext()){
 		        Vehicle vehicleToEvacuate = vehicleIterator.next();
-		        if (!(pedestrianNetwork.evacuationNodes.contains(vehicleToEvacuate.destinationNode))){
-		            Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
-		                    vehicleToEvacuate.getY());
-		            DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
-		            Node newDestinationNode = pedestrianNetwork.findNearestEvacuationPoint(vehicleToEvacuate.getX(), vehicleToEvacuate.getY());
-		            List<Link> newRoute = new ArrayList<Link>();
-		            newRoute = router.calculateRoute(currentStartNode, newDestinationNode);
-		            if (!(newRoute == null)){
-                        vehicleToEvacuate.mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
-		                vehicleToEvacuate.destinationNode = newDestinationNode;
-		                vehicleToEvacuate.route = new ArrayList<Link>();
-		                vehicleToEvacuate.route = newRoute;
-		                vehicleToEvacuate.routeIndex = 0;
-		                vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
-		                vehicleToEvacuate.mapOfEnterLeaveTimes.put(vehicleToEvacuate.currentLink.getId(), new Double[]{time, null});
-		                System.out.println("The vehicle " + vehicleToEvacuate.getId() + " will be evacuated to the point " + vehicleToEvacuate.destinationNode.getId());
-                    }
-                    else continue;
+		        if(!this.vehiclesInSimulation.contains(vehicleToEvacuate)){
+		        	vehicleIterator.remove();
+		        }else{
+		        	
+//		        if (!(pedestrianNetwork.evacuationNodes.contains(vehicleToEvacuate.destinationNode))){
+		        	Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
+		        			vehicleToEvacuate.getY());
+		        	DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
+		        	Node newDestinationNode = pedestrianNetwork.findNearestEvacuationPoint(vehicleToEvacuate.getX(), vehicleToEvacuate.getY());
+		        	List<Link> newRoute = new ArrayList<Link>();
+		        	newRoute = router.calculateRoute(currentStartNode, newDestinationNode);
+		        	if (!(newRoute == null)){
+		        		vehicleToEvacuate.mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();
+		        		vehicleToEvacuate.destinationNode = newDestinationNode;
+		        		vehicleToEvacuate.route = newRoute;
+		        		vehicleToEvacuate.routeIndex = 0;
+		        		vehicleToEvacuate.currentLink = vehicleToEvacuate.route.get(0);
+		        		vehicleToEvacuate.mapOfEnterLeaveTimes.put(vehicleToEvacuate.currentLink.getId(), new Double[]{time, null});
+		        		System.out.println("The vehicle " + vehicleToEvacuate.getId() + " will be evacuated to the point " + vehicleToEvacuate.destinationNode.getId());
+		        	}
+		        	else continue;
+//		        }
 		        }
 		    }
 		    evacuationReroutingHappened = true;
