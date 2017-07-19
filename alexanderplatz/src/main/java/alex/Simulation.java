@@ -122,10 +122,10 @@ public class Simulation {
             	if (Double.toString(time).endsWith("0")) this.vis.updateVoronoi(vehiclesInSimulation);
             	
             	oldNrOfVehInSim = this.vehiclesInSimulation.size();
+            	time += TIME_STEP;
             }
 
 
-            time += TIME_STEP;
 
             try {
                 Thread.sleep((long) (TIME_STEP * 1000));
