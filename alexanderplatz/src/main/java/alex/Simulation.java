@@ -39,7 +39,7 @@ public class Simulation {
 
 	private double time = 0;
     private static final double MAX_TIME = 500;
-    static final double TIME_STEP = 0.02;
+    static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 1000;
 
@@ -96,12 +96,14 @@ public class Simulation {
     }
 
     private void run() {
+    	
         KDTree currentKDTree = new KDTree(this.vehiclesInSimulation);
         int oldNrOfVehInSim = vehiclesInSimulation.size();
 
         for(Node node: this.tramFactory.getTramExitNodes()){
         	createTram(tramNetwork, 3*Math.random(), node);
         }
+        
         while (time < MAX_TIME) {
             time = roundAndPrintTime(time);
             Vis.drawTime(time);
@@ -238,7 +240,9 @@ public class Simulation {
              }
         }
         //for each left vehicle, make another vehicle show up within the next 5 seconds
-        addRandomVehicles(pedestrianNetwork, this, nrOfLeftVehicles,new ArrayList<Integer>(), 5);
+        if(!Vis.alarmActivated){
+        	addRandomVehicles(pedestrianNetwork, this, nrOfLeftVehicles,new ArrayList<Integer>(), 5);
+        }
         return vehicleHasLeft;
     }
 

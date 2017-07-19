@@ -36,7 +36,7 @@ public class Tram {
 	private double centerX;
 	private double centerY;
 	
-	private double wishVelocity = 500;
+	private double wishVelocity = 40;
 	PVector v = new PVector(0,0);
 	private final double tau = 1;
 	private double bottomCenterX;

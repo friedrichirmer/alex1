@@ -43,4 +43,8 @@ public class Node {
 	public List<Link> getOutLinks(){
 		return this.outLinks;
 	}
+	
+	public List<Link> getInLinks(){
+		return this.inLinks;
+	}
 }

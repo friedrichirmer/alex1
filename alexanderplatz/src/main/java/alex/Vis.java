@@ -38,6 +38,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -264,7 +265,9 @@ public class Vis extends PApplet implements MouseListener {
           
         updateDensityWindow();
         
-        for (PolygonSimple p :  polygonsInRoot){
+        Iterator<PolygonSimple> polygonIterator = polygonsInRoot.iterator();
+        while(polygonIterator.hasNext()){
+        	PolygonSimple p = polygonIterator.next();
         	double[] polyx = p.getXPoints();
         	double[] polyy = p.getYPoints();
    		          		 
@@ -339,6 +342,7 @@ public class Vis extends PApplet implements MouseListener {
                         (float) evacuationMarkingRadius,(float) evacuationMarkingRadius);
             }
         }
+		stroke(0);
 	}
 
 	private void drawAlarmButton() {

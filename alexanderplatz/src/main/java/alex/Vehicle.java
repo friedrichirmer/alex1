@@ -257,7 +257,7 @@ public class Vehicle {
 		Iterator<Wall> it = wallSet.iterator();
 		while(it.hasNext()){
             Wall wall = it.next();
-            calcWallForce(wall,1,1,1);
+            calcWallForce(wall,2,10,1);
         }
 	}
 
@@ -414,7 +414,7 @@ public class Vehicle {
         if (currentLink.hasVehicleReachedEndOfLink(this.x, this.y)) {
 			recordTravelTimeOnTheLastLink(time, currentLink, timeWhenEnteredLink);
 			moveVehicleToNextLinkOfRoute(time);
-        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getInitialWeight() + 1 && !(this.finished)){
+        } else if (time - timeWhenEnteredLink > this.getRoute().get(routeIndex).getInitialWeight() + 20 && !(this.finished)){
 			rerouteVehicleIfStucked(time);
 		}
     }

@@ -82,7 +82,7 @@ public class Network {
 	}
 
 	public void draw(PApplet p, boolean isTramNetwork) {
-		drawLinks(p, isTramNetwork);
+		if(isTramNetwork) drawLinks(p, isTramNetwork);
 		drawWalls(p);
 		drawNodes(p);
 	}
@@ -130,7 +130,7 @@ public class Network {
 			if(this.entryExitNodes.contains(node)){
 				
 				p.pushMatrix();
-				p.translate(xx, yy);
+//				p.translate(xx, yy);
 				p.fill(0,50,200);
 				p.ellipse((float)xx, (float)yy, 5, 5);
 				p.popMatrix();
