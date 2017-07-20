@@ -92,7 +92,7 @@ public class Vehicle {
         this.network = network;
         this.route = route;
     	System.out.println("route: " + route.toString());
-        this.rad = 0.25 + random.nextDouble()*0.1;
+        this.rad = 0.3 + random.nextDouble()*0.1;
         this.vtx = 0;
         this.finished = false;
         this.id = id;

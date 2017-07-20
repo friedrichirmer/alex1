@@ -97,6 +97,7 @@ public class Vis extends PApplet implements MouseListener {
     public static double xScaleAndOffset = xOffset * scale;
     public static double yScaleAndOffset= yOffset * scale;
 	static boolean alarmActivated = false;
+	double activationTime;
 	static boolean simPaused = false;
 	private static double currentTime;
 
@@ -202,6 +203,7 @@ public class Vis extends PApplet implements MouseListener {
 		if (e.getButton() == 3){
 			if ( checkIfOverAlarmButton(e)){
 				alarmActivated = true;
+				activationTime = currentTime;
 			} else if( checkIfOverPauseButton(e)){
 				simPaused = !(simPaused);
 			} else if (checkIfOverRecordButton(e)){
@@ -247,14 +249,14 @@ public class Vis extends PApplet implements MouseListener {
 		if (keyPressed) {
             if (key == CODED) {
                 if (keyCode == UP) {
-                    yOffset += 5;
+                    yOffset += 3;
                 } else if (keyCode == DOWN) {
-                    yOffset -= 5;
+                    yOffset -= 3;
                 }
                 if (keyCode == RIGHT) {
-                    xOffset -= 5;
+                    xOffset -= 3;
                 } else if (keyCode == LEFT) {
-                    xOffset += 5;
+                    xOffset += 3;
                 }
             }
 
@@ -341,11 +343,12 @@ public class Vis extends PApplet implements MouseListener {
         this.text(Double.toString(currentTime), 150, 60);
         this.text("[s]",178,60);
 
+        drawAlarmButton(currentTime);
+
 		if (isRecording){
 			saveFrame("output/alexVideo-####.png");
 		}
 
-		drawAlarmButton();
 		drawPauseButton();
 		drawRecordButton();
 
@@ -364,22 +367,24 @@ public class Vis extends PApplet implements MouseListener {
 		stroke(0);
 	}
 
-	private void drawAlarmButton() {
+	private void drawAlarmButton(double time) {
 		if (!alarmActivated){
 			stroke(0);
 			fill(0);
 			rect(buttonX, buttonY, buttonWidth, buttonHeight);
 			textSize(32);
 			fill(255);
-			text("ALARM", 45, 640);
+			text("ALARM", 670, 100);
 		} else {
 			stroke(0);
 			fill(255,0,0);
 			rect(buttonX, buttonY, buttonWidth, buttonHeight);
 			textSize(24);
 			fill(255);
-			text("  ALARM  ", 45, 630);
-			text("activated", 45, 650);
+			text("  ALARM  ", buttonX + 10, buttonY + 20);
+			text("activated", buttonX + 10, buttonY + 50);
+			textSize(12);
+			text("evacuation time " + (int) (currentTime - activationTime) + " [s]", buttonX + 10, buttonY + 70);
 		}
 		textSize(10);
 	}
@@ -390,15 +395,15 @@ public class Vis extends PApplet implements MouseListener {
 			fill(255,0,0);
 			ellipse(recordButtonX, recordButtonY, recordButtonRadius, recordButtonRadius);
 			textSize(12);
-			fill(0);
-			text("RECORD", recordButtonX - 30, recordButtonY);
+			fill(255);
+			text("RECORD", recordButtonX - 25, recordButtonY +5);
 		} else {
 			stroke(0);
 			fill(0,200,0);
 			ellipse(recordButtonX, recordButtonY, recordButtonRadius, recordButtonRadius);
-			textSize(12);
-			fill(0);
-			text("RECORDING", recordButtonX - 30, recordButtonY);
+			textSize(11);
+			fill(255);
+			text("RECORDING", recordButtonX - 30, recordButtonY +5);
 		}
 		textSize(10);
 	}
@@ -407,18 +412,18 @@ public class Vis extends PApplet implements MouseListener {
 	private void drawPauseButton() {
 		if (!simPaused){
 			stroke(0);
-			fill(0,200,50);
+			fill(200,200,200);
 			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
-			textSize(32);
+			textSize(26);
 			fill(255);
-			text("PAUSE", 50, 740);
+			text("|| PAUSE", 670, pauseButtonY + 35);
 		} else {
 			stroke(0);
-			fill(200,50,20);
+			fill(20,50,20);
 			rect(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
-			textSize(32);
+			textSize(26);
 			fill(255);
-			text("PAUSED", 50, 740);
+			text("|> PLAY", 670, pauseButtonY + 35);
 		}
 		textSize(10);
 	}

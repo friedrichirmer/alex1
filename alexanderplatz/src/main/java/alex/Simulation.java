@@ -31,21 +31,20 @@ import network.NetworkUtils;
 import network.Node;
 import network.TramNetworkCreator;
 import network.Wall;
-
 /**
  * Created by laemmel on 24/04/16.
  */
 public class Simulation {
 
 	private double time = 0;
-    private static final double MAX_TIME = 500;
+    public static final double MAX_TIME = 750;
     static final double TIME_STEP = 0.1;
     private static List<Integer> listOfNodesIds = new ArrayList<Integer>();
     private static final int NUMBER_OF_RANDOM_VEHICLES = 1000;
 
     public double visualRangeX = 5;
     public double visualRangeY = 5;
-    public int nrOfNeighboursToConsider = 100;
+    public int nrOfNeighboursToConsider = 50;
 
     private final Vis vis;
     private List<Vehicle> allVehicles = new ArrayList<>();
