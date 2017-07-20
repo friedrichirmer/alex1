@@ -36,7 +36,7 @@ public class Tram {
 	private double centerX;
 	private double centerY;
 	
-	private double wishVelocity = 40;
+	private double wishVelocity = 5;
 	PVector v = new PVector(0,0);
 	private final double tau = 1;
 	private double bottomCenterX;
@@ -83,7 +83,7 @@ public class Tram {
     	double resultForceX = (dx* this.wishVelocity);
     	double resultForceY = (dy* this.wishVelocity);
     	
-    	this.v = new PVector( (float) (Simulation.TIME_STEP *(resultForceX)) , (float) (Simulation.TIME_STEP *(resultForceY)) )  ;
+    	this.v = new PVector( (float) ((resultForceX)) , (float) ((resultForceY)) )  ;
     	
 	}
 	
@@ -168,7 +168,7 @@ public class Tram {
 //			}else{
 //				this.v.sub(vCopy);
 //			}
-			
+//			
 			this.v.mult(0.0001f);
 		}
 	}
