@@ -32,7 +32,6 @@ import network.Node;
 import network.TramNetworkCreator;
 import network.Wall;
 /**
- * Created by laemmel on 24/04/16.
  */
 public class Simulation {
 

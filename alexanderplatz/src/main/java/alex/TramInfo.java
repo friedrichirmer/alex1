@@ -35,9 +35,7 @@ public class TramInfo {
 	public void draw(PApplet p){
 		p.strokeWeight(2);
 		p.stroke(20,120,200);
-//		p.rect((float)left.getX1(), (float)left.getY1(), width, length);
 		p.fill(20,120,200);
-//		p.ellipse(xCenter * Vis.scale, yCenter* Vis.scale, 5, 5);
 		p.ellipse(xBottom * Vis.scale, yBottom * Vis.scale, 5, 5);
 		drawWalls(p);
 	}

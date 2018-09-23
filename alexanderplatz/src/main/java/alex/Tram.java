@@ -36,20 +36,13 @@ public class Tram {
 	private double centerX;
 	private double centerY;
 	
-	private double wishVelocity = 5;
+	private double desiredVelocity = 5;
 	PVector v = new PVector(0,0);
 	private final double tau = 1;
 	private double bottomCenterX;
 	private double bottomCenterY;
 	
 	private double startTime = Double.MAX_VALUE;
-	
-	/**
-	 * @param x1
-	 * @param y1
-	 * @param x2
-	 * @param y2
-	 */
 	
 	public Tram(double x, double y, List<Link> route, double startTime) {
 		this.centerX = x;
@@ -72,7 +65,7 @@ public class Tram {
 	private void calcVelocityVector(){
 		Link currentLink = this.route.get(routeIndex);
 		
-		// Berechnung der Wunschrichtung vom Fahrzeugmittelpunkt aus
+		//calculation of desired direction based on center point of vehicle
 		double dx = currentLink.getTo().getX() - this.centerX;
     	double dy = currentLink.getTo().getY() - this.centerY;
     	
@@ -80,8 +73,8 @@ public class Tram {
     	dx /= dist;
     	dy /= dist;
     	
-    	double resultForceX = (dx* this.wishVelocity);
-    	double resultForceY = (dy* this.wishVelocity);
+    	double resultForceX = (dx* this.desiredVelocity);
+    	double resultForceY = (dy* this.desiredVelocity);
     	
     	this.v = new PVector( (float) ((resultForceX)) , (float) ((resultForceY)) )  ;
     	
@@ -174,8 +167,6 @@ public class Tram {
 	}
 	
 	public void move(){
-//        this.x = this.x + Simulation.TIME_STEP * this.vX;
-//        this.y = this.y + Simulation.TIME_STEP * this.vY;
         this.centerX = this.centerX + Simulation.TIME_STEP * this.v.x;
         this.centerY = this.centerY + Simulation.TIME_STEP * this.v.y;
         
@@ -188,7 +179,28 @@ public class Tram {
 		}
 	}
 	
+	
 	private void setWalls() {
+		/*
+		 * 		~~~~~~~~~~~WIDTH~~~~~~~~~~
+		 * 
+		 * 		-----------TOP----------- 				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		L						 R				L
+		 *		E			C			 I				E
+		 *		F						 G				N
+		 *		T						 H				G
+		 *		'						 T				T
+		 *		'						 '				H
+		 *		'						 '				~
+		 *		'						 '				~
+		 *		'						 ' 				~
+		 * 		----------BOTTOM----------				~
+		 */
 		
 		double alpha;
 		if(this.v.x >= 0){
@@ -225,28 +237,6 @@ public class Tram {
 		bottomCenterX = this.centerX - (half_length * Math.sin(alpha));
 		bottomCenterY = this.centerY + (half_length * Math.cos(alpha));
 		
-		/*
-		 * 		~~~~~~~~~~~WIDTH~~~~~~~~~~
-		 * 
-		 * 		-----------TOP----------- 				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		L						 R				L
-		 *		E			C			 I				E
-		 *		F						 G				N
-		 *		T						 H				G
-		 *		'						 T				T
-		 *		'						 '				H
-		 *		'						 '				~
-		 *		'						 '				~
-		 *		'						 ' 				~
-		 * 		----------BOTTOM----------				~
-		 */
-		
-	
 	}
 
     /**

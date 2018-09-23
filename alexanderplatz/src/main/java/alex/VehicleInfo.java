@@ -26,7 +26,6 @@ import processing.core.PVector;
 
 
 /**
- * Created by laemmel on 24/04/16.
  */
 public class VehicleInfo {
 

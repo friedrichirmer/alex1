@@ -43,7 +43,7 @@ public class KDTree {
 		
 		if(this.origin.size() != 1){
 			
-			//sortieren und rï¿½nder merken
+			//sort and save borders
 			if(depth % 2 == 0){
 				Collections.sort(this.origin, new YComparator());
 				this.yMin = origin.get(0).getY();
@@ -60,7 +60,7 @@ public class KDTree {
 				this.xMax = origin.get(origin.size()-1).getX();
 			}
 			
-			//teilen
+			//divide
 			int midIndex;
 			if(this.origin.size() % 2 == 0){
 				midIndex = this.origin.size()/2;
@@ -79,7 +79,7 @@ public class KDTree {
 				rightChild = new KDTree(r, this);
 			}
 			else{
-				//achtung bei der subList-Methode ist die Obergrenze exklusiv!!
+				//attention: last index is excluded when using subList method
 				leftChild = new KDTree(this.origin.subList(0, midIndex), this );
 				rightChild = new KDTree(this.origin.subList(midIndex, this.origin.size()), this);
 			}
@@ -183,7 +183,7 @@ public class KDTree {
 		if( (left <= this.xMax && this.xMax <= right) || (left <= this.xMin && this.xMin <= right) )
 			if( (this.yMin >= bottom && this.yMin <= top) || (this.yMax <= top && this.yMax >= bottom) || (this.yMin <= bottom && this.yMax >= top) ) return true;
 
-		//case 2b: die x-Ausdehnung der Partition ist größer als die der Range UND entweder obere oder untere Kante liegt in y-Ausdehnung der Range
+		//case 2b: die x-Ausdehnung der Partition ist groesser als die der Range UND entweder obere oder untere Kante liegt in y-Ausdehnung der Range
 		if( (this.xMin <= left && this.xMax >= right) && ( (bottom <= this.yMin && this.yMin <= top) || (bottom <= this.yMax && this.yMax <= top) ) ) return true;
 		
 		return false;
