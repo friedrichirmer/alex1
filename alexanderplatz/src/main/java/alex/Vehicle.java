@@ -435,7 +435,7 @@ public class Vehicle {
 	private void rerouteVehicleIfStucked(double time) {
 		if (time % 5 == 0 && new Random().nextDouble() < 0.1){
             Node newStartNode = network.findNearestNode(this.x, this.y);
-            DijkstraV2 router = new DijkstraV2(network);
+            Dijkstra router = new Dijkstra(network);
             List<Link> newRoute = router.calculateRoute(network.getNodes().get(newStartNode.getId()), network.getNodes().get(destinationNode.getId()));
             if (!(newRoute == null)){
             	this.mapOfEnterLeaveTimes = new HashMap<Integer, Double[]>();

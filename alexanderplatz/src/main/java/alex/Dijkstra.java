@@ -1,109 +1,146 @@
 package alex;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import network.Link;
 import network.Network;
 import network.Node;
 
 public class Dijkstra {
-	
-	private static Map<Node,Double> nodeWeights = new HashMap<Node,Double>();
-	private static Map<Node,Node> predecessor = new HashMap<Node,Node>();
+	private final Network network;
+	private Map<Node, DijkstraNode> correspondingNodes = new HashMap<Node, DijkstraNode>();
+	private List<DijkstraNode> remainingNodes = new ArrayList<DijkstraNode>();
 
-	private static Network network;
-	private static Node source;
-	
 
-	public static List<Link> returnRoute(Network network, Node originNode, Node destinationNode) {
-
-		List<Node> qu = new ArrayList<Node>();
-		Dijkstra.network = network;
-
-		initializeQuListOfNodes(qu);
-
-		nodeWeights.replace(originNode, (double)0);
-		source = originNode;
-		Node currentNode = originNode;
-
-		expandAllNodesInTheQuList(destinationNode, qu, currentNode);
-
-		List<Link> path = reconstructPath(destinationNode);
-		return path;
+	public Dijkstra(Network network) {
+		this.network = network;
 	}
 
-	
-
-
-	private static void expandAllNodesInTheQuList(Node destinationNode, List<Node> qu, Node currentNode) {
-		while (!currentNode.equals(destinationNode)) {
-			qu.remove(currentNode);
-			expandNode(currentNode);
-			Node next = qu.get(0);
-			for (int i = 0; i < qu.size(); i++) {
-				Node node = qu.get(i);
-				if (nodeWeights.get(node) < nodeWeights.get(next)) {
-					next = node;
-				}
-			}
-			currentNode = next;
-		}
-	}
-
-	private static void initializeQuListOfNodes(List<Node> qu) {
-		for (int i = 1; i<= Dijkstra.network.nodes.size(); i++) {
-			Node node = Dijkstra.network.getNodes().get(i);
-			nodeWeights.put(node, Double.POSITIVE_INFINITY);
-			predecessor.put(node, null);
-			qu.add(node);
-		}
-	}
-
-	private static void expandNode(Node currentNode) {
-		for (int i=1;i<network.links.size();i++) {
-			Link link =  network.links.get(i);
-			if (link.getFrom() == currentNode) {
-				
-				Node newVertex = link.getTo();
-				double cost;
-				if(currentNode == null) System.out.println("currentNode ist null");
-				if(link == null) System.out.println("link ist null");
-				cost = nodeWeights.get(currentNode) + link.getCurrentWeight();
-				if(cost < nodeWeights.get(newVertex)) {
-					nodeWeights.put(newVertex, cost);
-					predecessor.put(newVertex, currentNode);
-				}
-			}
-		}
-	}
-	
-	private static List<Link> reconstructPath(Node dstn) {
+	public List<Link> calculateRoute(Node start, Node destination) {
 		
-		List<Link> l = new ArrayList<Link>();
-		List<Link> lback = new ArrayList<Link>();
-
-		Node ncurr = dstn;
+		if(start.equals(destination)){
+			List<Link> route = new ArrayList<Link>();
+			route.add(destination.getInLinks().get(0));
+			System.out.println("~~~~~~~~~~~~~~~destinattion equals start node~~~~~~~~~~~~~~~");
+			return route;
+		}
 		
-		while (ncurr != null) {
+		this.correspondingNodes.clear();
+		this.remainingNodes.clear();
+		
+		initiate(start);
+
+		DijkstraNode current = this.remainingNodes.remove(0);
+
+		while (current.getNode() != destination) {
+//			System.out.println("remaining nodes size = " + remainingNodes.size());
+			expandDijkstraNode(current);
+			current = this.remainingNodes.remove(0);
+		}
+		List<Link> route = getRoute(destination); 
+		if (!(route.size() == 0)) {
+
+			return route;
+		} else return null;
+	}
+
+	    private void expandDijkstraNode(DijkstraNode current) {
+	    	for(Link link : current.getNode().getOutLinks()){
+	    		double weight = link.getCurrentWeight();
+	    		double newCost = current.getCost() + weight;
+	    		Node toNode = link.getTo();
+	    		DijkstraNode toDijk = this.correspondingNodes.get(toNode);
+	    		if(newCost < toDijk.getCost()){
+	    			toDijk.setCost(newCost);
+	    			toDijk.setPredecessor(current.getNode());
+	    			if(!this.remainingNodes.contains(toDijk)) this.remainingNodes.add(toDijk);
+	    		}
+	    	}
+	    	Collections.sort(this.remainingNodes);
+		}
+
+		private void initiate(Node start) {
+//			System.out.println("network.nodes.size = " + network.nodes.size());
+			for (Node node : network.nodes.values()){
+	            
+	    		double nodeCost;
+	            if(node.getId() == start.getId()){
+	            	nodeCost = 0.;
+	            }
+	            else{
+	            	nodeCost = Double.MAX_VALUE;
+	            }
+	            DijkstraNode dijk = new DijkstraNode(node, nodeCost);
+	            this.remainingNodes.add(dijk);
+	            this.correspondingNodes.put(node, dijk);
+	        }
+	    	Collections.sort(this.remainingNodes);
+//	    	System.out.println("remainingNodes.size = " + remainingNodes.size());
+	    }
+
+		private List<Link> getRoute(Node end){
+			DijkstraNode current = this.correspondingNodes.get(end);
+			List<Link> route = new ArrayList<Link>();
+			Node predecessor = current.getPredecessor();
 			
-			Node next = predecessor.get(ncurr);
-			for (int i=1;i<network.links.size();i++) {
-				Link li =  network.links.get(i);
-				if (li.getFrom().equals(next) && li.getTo().equals(ncurr)) {
-					l.add(li);
+			while(predecessor != null){
+				for(Link l : predecessor.getOutLinks()){
+					if(l.getTo().equals(current.getNode())){
+						route.add(0, l);
+						break;
+					}
 				}
+				
+				current = this.correspondingNodes.get(current.getPredecessor());
+				predecessor = current.getPredecessor();
+				
 			}
-			ncurr = next;
-		}		
-		
-		int j = l.size() - 1;		
-		
-		for (int i=1;i<=l.size(); i++) {
-			lback.add(l.get(j));
-			j--;
+			return route;
 		}
-		
-		return lback;
-		
-	}
+	   
+	    class DijkstraNode implements Comparable{
+	    	private Node node;
+	    	private Node predecessor;
+	    	private double cost;
+	    	
+	    	public DijkstraNode(Node node, double cost) {	
+	    		this.node = node;
+	    		this.cost = cost;
+	    		this.predecessor = null;
+			}
+	    	
+	    	void setCost(double cost){
+	    		this.cost = cost;
+	    	}
+	    	
+	    	void setPredecessor(Node predecessor){
+	    		this.predecessor = predecessor;
+	    	}
+	    	
+	    	Node getPredecessor(){
+	    		return this.predecessor;
+	    	}
+	    	
+	    	double getCost(){
+	    		return this.cost;
+	    	}
+	    	
+	    	Node getNode(){
+	    		return this.node;
+	    	}
+
+			@Override
+			public int compareTo(Object o) {
+				if (!(o instanceof DijkstraNode)) throw new RuntimeException("cannot compare a DijkstraNode with an object of another type");
+				
+				double otherCost = ((DijkstraNode) o).getCost();
+				return (cost < otherCost) ? -1 : ( (cost == otherCost) ? 0 : 1 )  ;
+			}
+	    	
+	    }
+	    
 }

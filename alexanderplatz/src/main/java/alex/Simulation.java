@@ -159,7 +159,7 @@ public class Simulation {
 //		        if (!(pedestrianNetwork.evacuationNodes.contains(vehicleToEvacuate.destinationNode))){
 		        	Node currentStartNode = pedestrianNetwork.findNearestNode(vehicleToEvacuate.getX(),
 		        			vehicleToEvacuate.getY());
-		        	DijkstraV2 router = new DijkstraV2(pedestrianNetwork);
+		        	Dijkstra router = new Dijkstra(pedestrianNetwork);
 		        	Node newDestinationNode = pedestrianNetwork.findNearestEvacuationPoint(vehicleToEvacuate.getX(), vehicleToEvacuate.getY());
 		        	List<Link> newRoute = new ArrayList<Link>();
 		        	newRoute = router.calculateRoute(currentStartNode, newDestinationNode);
@@ -278,7 +278,7 @@ public class Simulation {
     private void addRandomVehicles(Network network, Simulation sim, int numberOfRandomVehicles, List<Integer> entryNodeIDsToExclude, double timeBin) {
         System.out.println("Creating " + numberOfRandomVehicles + " random vehicles");
         
-        DijkstraV2 router = new DijkstraV2(network);
+        Dijkstra router = new Dijkstra(network);
         
         int nrRoutesNull = 0;
         for (int i = 0; i < numberOfRandomVehicles; i++){
@@ -311,7 +311,7 @@ public class Simulation {
     }
     
     private void createTram(Network tramNetwork, double time, Node exitNode){
-    	DijkstraV2 router = new DijkstraV2(tramNetwork);
+    	Dijkstra router = new Dijkstra(tramNetwork);
     	Node entryNode = this.tramFactory.getCorrespondingEntryNode(exitNode);
     	List<Link> route = router.calculateRoute(entryNode, exitNode);
     	Tram tram = new Tram(entryNode.getX(),entryNode.getY() , route, time);

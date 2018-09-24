@@ -10,6 +10,7 @@ import java.util.PriorityQueue;
 
 public class KDTree {
 
+	private static final int INITIAL_DEPTH = 1;
 	private List<Vehicle> origin;
 	private KDTree leftChild;
 	private KDTree rightChild;
@@ -32,7 +33,7 @@ public class KDTree {
 	}
 
 	public KDTree buildKDTree (){
-		return this.buildKDTree(1);
+		return this.buildKDTree(INITIAL_DEPTH);
 	}
 	
 	private KDTree buildKDTree (int depth){
@@ -70,6 +71,7 @@ public class KDTree {
 			}
 			
 			if(this.origin.size() == 2){
+				
 				List<Vehicle> l = new ArrayList<Vehicle>();
 				l.add(this.origin.get(0));
 				List<Vehicle> r = new ArrayList<Vehicle>();
@@ -103,6 +105,14 @@ public class KDTree {
 		return this;
 	}
 	
+	/***
+	 * 
+	 * @param xMin
+	 * @param yMin
+	 * @param xMax
+	 * @param yMax
+	 * @return
+	 */
 	List<Vehicle> searchKDTree(double xMin, double yMin, double xMax, double yMax){
 		
 		if(this.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
@@ -123,7 +133,7 @@ public class KDTree {
 	List<Vehicle> getClosestNeighboursToPoint(final double x, final double y, int nrOfNeighbours, double rangeMinX,  double rangeMinY, double rangeMaxX, double rangeMaxY){
 		List<Vehicle> allNeighbours = this.searchKDTree(rangeMinX, rangeMinY, rangeMaxX, rangeMaxY);
 		
-		PriorityQueue<Vehicle> qq = new PriorityQueue<>(new Comparator<Vehicle>(){
+		PriorityQueue<Vehicle> queue = new PriorityQueue<>(new Comparator<Vehicle>(){
 
 			@Override
 			public int compare(Vehicle o1, Vehicle o2) {
@@ -136,18 +146,18 @@ public class KDTree {
 		});
 		
 		for(Vehicle v : allNeighbours){
-			qq.add(v);
-			if(qq.size() > nrOfNeighbours) qq.poll();
+			queue.add(v);
+			if(queue.size() > nrOfNeighbours) queue.poll();
 		}
 		
-		return Arrays.asList(qq.toArray(new Vehicle[qq.size()]));		
+		return Arrays.asList(queue.toArray(new Vehicle[queue.size()]));		
 		
 	}
 	
 	private List<Vehicle> processSearch(double xMin, double yMin, double xMax, double yMax){
 		List<Vehicle> report = new ArrayList<Vehicle>();
 		if(this.origin.size() != 1){		
-			//linken Baum abfragen
+			// search in left tree
 			if(this.leftChild != null){
 				if(this.leftChild.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
 					report.addAll(leftChild.origin);
@@ -156,7 +166,7 @@ public class KDTree {
 					report.addAll(leftChild.processSearch(xMin, yMin, xMax, yMax));
 				}
 			}
-			//rechten Baum abfragen
+			// search in right tree
 			if(this.rightChild != null){
 				if(this.rightChild.isFullyContainedInRange(xMin, yMin, xMax, yMax)){
 					report.addAll(rightChild.origin);
@@ -180,6 +190,7 @@ public class KDTree {
 		//case 1: Range is fully contained in this partition
 		if(this.xMin <= left && this.yMin <= bottom && this.xMax >= right && this.yMax >= top)	return true;
 		
+		// cse 2a
 		if( (left <= this.xMax && this.xMax <= right) || (left <= this.xMin && this.xMin <= right) )
 			if( (this.yMin >= bottom && this.yMin <= top) || (this.yMax <= top && this.yMax >= bottom) || (this.yMin <= bottom && this.yMax >= top) ) return true;
 
@@ -205,13 +216,13 @@ public class KDTree {
 	@Override
 	public String toString(){
 		String str = "ROOT : \t " + this.printVehicleList();
-		if(leftChild != null)		str+= "LEFTCHILD: \t " + this.leftChild.printVehicleList();
+		if(leftChild != null) str+= "LEFTCHILD: \t " + this.leftChild.printVehicleList();
 		if(rightChild!= null) str+= "RIGHTCHILD: \t " + this.rightChild.printVehicleList();
 		
 		str+= "\n minY = " + this.yMin + " maxY = " + this.yMax;
 		str+= "\n"
-			+ "  �\n"
-			+ " �\n";
+			+ "  ´\n"
+			+ " ´\n";
 				
 		if(this.leftChild != null)		str+= this.leftChild.toString();
 		
